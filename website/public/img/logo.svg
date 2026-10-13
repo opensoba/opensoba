@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="OpenSoba">
+  <title>OpenSoba</title>
+  <defs>
+    <linearGradient id="opensobaBroth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFC266"/>
+      <stop offset="1" stop-color="#F2871F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Service mesh: nodes connected by links, rising like steam / noodles -->
+  <g fill="none" stroke="#2E7D6B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 92 L128 44"/>
+    <path d="M178 92 L128 44"/>
+    <path d="M58 62 L78 92"/>
+    <path d="M198 62 L178 92"/>
+    <path d="M78 92 L178 92"/>
+    <path d="M128 44 L128 92"/>
+  </g>
+  <g fill="#2E7D6B">
+    <circle cx="128" cy="44" r="11"/>
+    <circle cx="78" cy="92" r="10"/>
+    <circle cx="178" cy="92" r="10"/>
+    <circle cx="58" cy="62" r="8"/>
+    <circle cx="198" cy="62" r="8"/>
+  </g>
+
+  <!-- Ramen bowl -->
+  <path d="M24 124 A104 104 0 0 0 232 124 Z" fill="url(#opensobaBroth)"/>
+  <rect x="12" y="112" width="232" height="20" rx="10" fill="#22304A"/>
+
+  <!-- Noodle swirl over the rim -->
+  <path d="M72 156 q28 -18 56 0 t56 0" fill="none" stroke="#22304A" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+</svg>

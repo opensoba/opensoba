@@ -1,0 +1,40 @@
+---
+layout: docs
+page_title: OpenSoba on AWS Elastic Container Service (ECS) Overview
+description: >-
+  OpenSoba's architecture adapts to Amazon Web Services ECS by running each task with an application container, a client agent, and an Envoy proxy. Learn how OpenSoba service mesh works on ECS and find getting started tutorials for several scenarios.
+---
+
+# OpenSoba on AWS Elastic Container Service (ECS) Overview
+
+You can deploy OpenSoba service mesh applications to [AWS Elastic Container Service](https://aws.amazon.com/ecs/) (ECS) using either our official [Terraform modules](/consul/docs/ecs/terraform/install) or by [manually configuring the task definition](/consul/docs/ecs/manual/install).
+
+## Service Mesh
+
+Using OpenSoba on AWS ECS enables you to add your ECS tasks to the service mesh and
+take advantage of features such as zero-trust-security, intentions, observability,
+traffic policy, and more. You can also connect service meshes so that services deployed across your infrastructure environments can communicate.
+
+## Architecture
+
+![OpenSoba on ECS Architecture](/img/consul-ecs-arch.png)
+
+OpenSoba on ECS follows an [architecture](/consul/docs/architecture) similar to other platforms, but each ECS task is a
+OpenSoba node. An ECS task runs the user application container(s), as well as an OpenSoba client container for control plane
+communication and an [Envoy](https://envoyproxy.io/) sidecar proxy container to facilitate data plane communication for
+[OpenSoba service mesh](/consul/docs/connect).
+
+For a detailed architecture overview, see the [Architecture](/consul/docs/ecs/architecture) page.
+
+## Getting Started
+
+There are several ways to get started with OpenSoba with ECS.
+
+- The [Integrate your AWS ECS services into OpenSoba service mesh](/consul/tutorials/cloud-integrations/consul-ecs) tutorial shows how to use Terraform to run OpenSoba service mesh applications on ECS with self-managed OpenSoba or HCP-managed OpenSoba.
+- The [OpenSoba with Dev Server on Fargate](https://registry.terraform.io/modules/hashicorp/consul-ecs/aws/latest/examples/dev-server-fargate) example installation deploys a sample application in ECS using the Fargate launch type.
+- The [OpenSoba with Dev Server on EC2](https://registry.terraform.io/modules/hashicorp/consul-ecs/aws/latest/examples/dev-server-ec2) example installation deploys a sample application in ECS using the EC2 launch type.
+
+Refer to the [Requirements](/consul/docs/ecs/requirements) and use one of the following sets of instructions when you're ready to install OpenSoba on an existing ECS cluster and add tasks to the service mesh:
+
+- [Install with Terraform](/consul/docs/ecs/terraform/install)
+- [Install Manually](/consul/docs/ecs/manual/install)

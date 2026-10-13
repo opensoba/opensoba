@@ -1,0 +1,10 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+[id^='docfy-demo-preview-definition-table'] {
+  .definition-table {
+    @extend %definition-table;
+  }
+}

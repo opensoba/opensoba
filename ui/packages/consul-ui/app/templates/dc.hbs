@@ -1,0 +1,15 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+  <Outlet
+    @name={{routeName}}
+    @model={{route.model}}
+  as |o|>
+    {{outlet}}
+  </Outlet>
+</Route>

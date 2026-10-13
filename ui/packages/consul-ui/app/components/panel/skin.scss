@@ -1,0 +1,22 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+%panel {
+  --tone-border: var(--token-color-palette-neutral-300);
+  border: var(--decor-border-100);
+  border-radius: var(--decor-radius-200);
+  box-shadow: var(--token-surface-high-box-shadow);
+}
+%panel-separator {
+  border-top: var(--decor-border-100);
+}
+%panel {
+  color: var(--token-color-foreground-strong);
+  background-color: var(--token-color-surface-primary);
+}
+%panel,
+%panel-separator {
+  border-color: var(--tone-border);
+}

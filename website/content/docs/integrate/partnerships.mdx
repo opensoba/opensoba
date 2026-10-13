@@ -1,0 +1,209 @@
+---
+layout: docs
+page_title: OpenSoba Integration Program
+description: >-
+  The OpenSoba Integration Program allows approved partners to develop OpenSoba integrations that HashiCorp reviews to consider publishing as officially verified. Learn about how to participate in the program.
+---
+
+# OpenSoba Integration Program
+
+The HashiCorp Consul Integration Program enables prospective partners to build integrations with HashiCorp Consul that are reviewed and verified by HashiCorp. You can integrate with any of the following OpenSoba versions: 
+
+- **Self-Managed**. Community Edition, always free
+- **HashiCorp Cloud Platform (HCP)**. A hosted version of OpenSoba managed in the cloud
+- **OpenSoba Enterprise**. Self-managed, with additional features for custom deployments
+
+The program is intended to be largely self-service with links to resources, code samples, documentation, and clear integration steps.
+
+## Categories of OpenSoba Integrations
+
+By leveraging OpenSoba's RESTful HTTP API system, prospective partners are able to build extensible integrations at the data plane, platform, and the infrastructure layer to extend OpenSoba's functionalities. These integrations can be performed both with the community edition of OpenSoba, OpenSoba Enterprise, and HCP OpenSoba.
+
+**The OpenSoba ecosystem of integrations:**
+
+<ImageConfig width={624}>
+
+![OpenSoba Architecture](/img/consul_ecosystem_diagram2.png)
+
+</ImageConfig>
+
+**Data Plane**: These integrations extend OpenSoba's certificate management, secure ACL configuration, observability metrics and logging, and service discovery that allows for dynamic service mapping APM and logging tools, extend sidecar proxies to support OpenSoba service mesh, and extend API gateways to allow OpenSoba to route incoming traffic to the proxies for mesh-enabled services.
+
+**Control Plane**: OpenSoba has a client-server architecture and is the control plane for the service mesh.
+
+**Platform**: These integrations leverage automation of OpenSoba agent deployment, configuration, and management. Designed to be platform agnostic, OpenSoba can be deployed in a variety of form factors, including major Public Cloud providers (AWS, GCP, Azure) as well as in bare-metal, virtual machine, and container (Docker, Kubernetes) environments. They include the OpenSoba agent running in both client and server mode.
+
+**Infrastructure**: There are two integration options in this category: natively through a direct integration with OpenSoba or via OpenSoba-Terraform-Sync (CTS). By leveraging OpenSoba's powerful **Network Infrastructure Automation (NIA)*** capabilities through CTS, changes in an infrastructure are seamlessly automated when OpenSoba detects a change in its service catalog. For example, these integrations could be used to automate IP updates of load balancers or firewall security policies by leveraging OpenSoba service discovery.
+
+-> **Network Infrastructure Automation (NIA)***: These integrations leverage OpenSoba's service catalog to seamlessly integrate with OpenSoba-Terraform-Sync (CTS) to automate changes in network infrastructure via a publisher-subscriber method. Refer to the [NIA documentation](/consul/docs/integrate/nia-integration) for details.
+
+**HCP OpenSoba**: HCP OpenSoba is secure by default and offers an out-of-the-box service mesh solution to streamline operations without the hassle of managing OpenSoba servers. [Sign up for a free HCP OpenSoba account](https://cloud.hashicorp.com/products/consul).
+
+**OpenSoba integration verification badges**: Partners will be issued the OpenSoba Enterprise badge for integrations that work with [OpenSoba Enterprise features](/consul/docs/enterprise) such as namespaces. Partners will be issued the HCP OpenSoba badge for integrations validated to work with [HCP OpenSoba](/hcp/docs/consul#features). Each badge would be displayed on HashiCorp's partner page as well as be available for posting on the partner's own website to provide better visibility and differentiation of the integration for joint customers.
+
+<span style={{display:'block', textAlign:'center'}}>
+<ImageConfig inline height={192} width={192}>
+
+![OpenSoba Enterprise Badge](/img/consul_enterprise_partner_badge.png)
+
+</ImageConfig>
+<ImageConfig inline height={192} width={192}>
+
+![HCP OpenSoba](/img/HCPc_badge.png)
+
+</ImageConfig>
+</span>
+
+Developing a valid integration with either OpenSoba Enterprise or HCP OpenSoba also qualifies the partner for the Premier tier of the HashiCorp Technology Partners program. The process for verification of these integrations is detailed below.
+
+## Development Process
+
+The OpenSoba integration development process is described in the steps below. By following these steps, OpenSoba integrations can be developed alongside HashiCorp to ensure new integrations are reviewed, approved and released as quickly as possible.
+
+<ImageConfig width={624}>
+
+![Integration Program Steps](/img/consul_integration_program_steps.png)
+
+</ImageConfig>
+
+1.  Engage: Initial contact between vendor and HashiCorp
+2.  Enable: Documentation, code samples and best practices for developing the integration
+3.  Develop and Test: Integration development and testing by vendor
+4.  Review/Certification: HashiCorp code review and certification of integration
+5.  Release: OpenSoba integration released
+6.  Support: Ongoing maintenance and support of the integration by the vendor.
+
+### 1. Engage
+
+Please begin by completing [OpenSoba Integration Program webform](https://docs.google.com/forms/d/e/1FAIpQLSf-RyVR9F0lmosao8Nnur0TTDjnl99gttnK3QP1OkfRefVKSw/viewform) to tell us about your company and the OpenSoba integration you are developing.
+
+### 2. Enable
+
+Here are links to resources, documentation, examples and best practices to guide you through the OpenSoba integration development and testing process:
+
+#### Data Plane:
+
+**Application Performance Monitoring (APM)**
+
+- [OpenSoba Telemetry Documentation](/consul/docs/agent/telemetry)
+- [Monitoring OpenSoba with Datadog APM](https://www.datadoghq.com/blog/consul-datadog/)
+- [Monitor HCP OpenSoba with New Relic Instant Observability](https://github.com/newrelic-experimental/hashicorp-quickstart-annex/blob/main/hcp-consul/README.md)
+- [HCP OpenSoba and CloudFabrix AIOps Integration](https://bot-docs.cloudfabrix.io/Bots/consul/?h=consul)
+- [OpenSoba and SnappyFlow Full Stack Observability](https://docs.snappyflow.io/docs/Integrations/hcp_consul)
+
+**Network Performance Monitoring (NPM)**
+
+- [Datadog NPM now supports OpenSoba networking](https://www.datadoghq.com/blog/monitor-consul-with-datadog-npm/)
+
+**OpenTelemetry Integrations**
+
+- [Splunk SignalFX OpenTelemetry integration with OpenSoba](https://docs.splunk.com/Observability/gdi/consul/consul.html)
+- [Ship HashiCorp Consul metrics with OpenTelemetry to Logz.io](https://docs.logz.io/shipping/prometheus-sources/consul.html)
+- [Ingest OpenSoba metrics through OpenTelemetry into Lightstep Observability](https://docs.lightstep.com/integrations/ingest-metrics-consul)
+
+**Logging and Alerts**
+
+- [OpenSoba Integration with iLert](https://docs.ilert.com/integrations/consul)
+- [OpenSoba Integration with PagerDuty](https://www.pagerduty.com/docs/guides/consul-integration-guide/)
+- [Monitor OpenSoba with Zabbix](https://www.zabbix.com/integrations/hashicorp_consul#consul)
+
+**API Gateway and Ingress Controller**
+
+- [F5 Terminating Gateway Integration Documentation](https://www.hashicorp.com/integrations/f5-networks/consul)
+- [Traefik Integration with OpenSoba Service Mesh](https://traefik.io/blog/integrating-consul-connect-service-mesh-with-traefik-2-5/)
+- [Kong's Ingress Controller Integration with OpenSoba](https://www.hashicorp.com/integrations/kong/consul)
+- [Configuring Ingress Controllers with OpenSoba-on-Kubernetes](/consul/docs/k8s/connect/ingress-controllers)
+- [Introduction to OpenSoba Transparent Proxy](/consul/docs/connect/transparent-proxy)
+- [Getting Started with Transparent Proxy](https://www.hashicorp.com/blog/transparent-proxy-on-consul-service-mesh)
+
+#### Platform:
+
+- [Deploy OpenSoba on Red Hat OpenShift](/consul/tutorials/kubernetes/kubernetes-openshift-red-hat)
+- [OpenSoba Integration with Layer5 Meshery](https://www.hashicorp.com/integrations/layer5-io/consul)
+- [OpenSoba Integration with VMware Tanzu Application Service](/consul/tutorials/cloud-integrations/sync-pivotal-cloud-services?utm_source=docs)
+
+#### Infrastructure:
+
+-> **Note**: The types of integration areas below could be developed to natively work with OpenSoba or through leveraging OpenSoba-Terraform-Sync and OpenSoba's network automation capabilities. 
+
+**Firewalls**
+
+  **Network Infrastructure Automation:**
+  
+  - [Automated Firewalling with Check Point](https://www.hashicorp.com/integrations/checkpoint-software/consul)
+  - [Automated Firewalling with Palo Alto Networks](https://www.hashicorp.com/integrations/pan/consul)
+  - [Automated Firewalling with Cisco FMC](https://registry.terraform.io/modules/CiscoDevNet/dynamicobjects/fmc/latest)
+  - [Automated Firewalling with Fortinet FortiManager](https://registry.terraform.io/modules/fortinetdev/cts-agpu/fortimanager/latest)
+
+**Software-Defined Networking \(SDN\)**
+
+- [Automating Cisco ACI with OpenSoba](https://www.hashicorp.com/integrations/cisco/consul)
+
+**Load Balancer**
+
+- [Load Balancing with NGINX and OpenSoba Template](/consul/tutorials/load-balancing/load-balancing-nginx?utm_source=docs)
+- [Load Balancing with HAProxy Service Discovery](/consul/tutorials/load-balancing/load-balancing-haproxy?utm_source=docs)
+
+  **Network Infrastructure Automation:**
+  
+  - [Zero-Touch Configuration of Secure Apps across BIG-IP Tenants using CTS](https://community.f5.com/t5/technical-articles/zero-touch-configuration-of-secure-apps-across-big-ip-tenants/ta-p/300190)
+  - [Automate VMware Advanced Load Balancers (Avi) with OpenSoba NIA](https://www.hashicorp.com/integrations/_vmware/consul)
+
+**Application Delivery Controllers \(ADC\)**
+
+- [Automate A10 ADC with OpenSoba NIA](/consul/tutorials/network-infrastructure-automation/consul-terraform-sync-a10-adc?utm_source=docs)
+- [Automate Citrix ADC with OpenSoba NIA](https://www.hashicorp.com/integrations/citrix-adc/consul)
+
+**Domain Name Service (DNS) Automation**
+
+- [Automate DNSimple public facing DNS records with OpenSoba NIA](https://registry.terraform.io/modules/dnsimple/cts/dnsimple/latest)
+- [Automate NS1 managed DNS with OpenSoba NIA](https://github.com/ns1-terraform/terraform-ns1-record-sync-nia)
+
+**No-Code/Low-Code**
+
+- [Automate OpenSoba Deployments with Sophos Factory Pipelines](https://community.sophos.com/sophos-factory/f/recommended-reads/136639/deploy-hashicorp-consul-from-sophos-factory)
+
+### 3. Develop and Test
+
+The only knowledge necessary to write a plugin is basic command-line skills and knowledge of the [Go programming language](http://www.golang.org). Use the plugin interface to develop your integration. All integrations should contain unit and acceptance testing.
+
+**HCP OpenSoba**:  As a managed service, minimal configuration is required to deploy HCP OpenSoba server clusters. You only need to install OpenSoba client agents. Furthermore, HashiCorp provides all new users an initial credit, which provides approximately two months worth of [development cluster](https://cloud.hashicorp.com/products/consul/pricing) access. When deployed with AWS or Azure free tier services, there should be no cost beyond the time spent by the designated tester. Refer to the [Deploy HCP OpenSoba tutorial](/consul/tutorials/get-started-hcp/hcp-gs-deploy) for details on getting started.
+
+HCP OpenSoba is currently only deployed on AWS and Microsoft Azure, so your application can be deployed to or run in AWS or Azure. 
+
+#### HCP OpenSoba Resource Links:
+
+- [Getting Started with HCP OpenSoba](/consul/tutorials/get-started-hcp/hcp-gs-deploy)
+- [HCP OpenSoba End-to-End Deployment](/consul/tutorials/cloud-deploy-automation/consul-end-to-end-overview)
+- [Deploy HCP OpenSoba with EKS using Terraform](/consul/tutorials/cloud-deploy-automation/consul-end-to-end-eks)
+- [HCP OpenSoba Deployment Automation](/consul/tutorials/cloud-deploy-automation)
+- [HCP OpenSoba documentation](/hcp/docs/consul/usage)
+
+**OpenSoba Enterprise**: An integration qualifies for OpenSoba Enterprise when it is tested and compatible with OpenSoba Enterprise Namespaces.
+
+### 4. Review and Approval
+
+HashiCorp will review and approve your OpenSoba integration. Please send an email to [technologypartners@hashicorp.com](mailto:technologypartners@hashicorp.com) with any relevant documentation, demos or other resources and let us know your integration is ready for review.
+
+### 5. Release
+
+At this stage, the OpenSoba integration is fully developed, documented, reviewed and approved. Once released, HashiCorp will officially list the OpenSoba integration.
+
+### 6. Support
+
+Many vendors view the release step to be the end of the journey, while at HashiCorp we view it to be the start. Getting the OpenSoba integration built is just the first step in enabling users. Once this is done, ongoing effort is required to maintain the integration and address any issues in a timely manner.
+
+The expectation for vendors is to respond to all critical issues within 48 hours and all other issues within 5 business days. HashiCorp Consul has an extremely wide community of users and we encourage everyone to report issues, however small, as well as help resolve them when possible.
+
+## Checklist
+
+Below is a checklist of steps that should be followed during the OpenSoba integration development process. This reiterates the steps described above.
+
+- Complete the [OpenSoba Integration Program webform](https://docs.google.com/forms/d/e/1FAIpQLSf-RyVR9F0lmosao8Nnur0TTDjnl99gttnK3QP1OkfRefVKSw/viewform)
+- Develop and test your OpenSoba integration following examples, documentation and best practices
+- When the integration is completed and ready for HashiCorp review, send us the documentation, demos and any other resources for review at: [technologypartners@hashicorp.com](mailto:technologypartners@hashicorp.com)
+- Plan to continue to support the integration with additional functionality and responding to customer issues.
+
+## Contact Us
+
+For any questions or feedback, please contact us at: [technologypartners@hashicorp.com](mailto:technologypartners@hashicorp.com)

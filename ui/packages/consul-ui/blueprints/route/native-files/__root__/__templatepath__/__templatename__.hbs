@@ -1,0 +1,17 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+
+  <route.Title @title="<%= classifiedModuleName %>" />
+
+  <Outlet
+    @name={{routeName}}
+  as |o|>
+    {{outlet}}
+  </Outlet>
+</Route>

@@ -1,0 +1,10 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+  {{did-insert (route-action 'replaceWith' 'dc.acls.tokens')}}
+</Route>

@@ -1,0 +1,13 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<input
+  {{did-insert (optional @didinsert)}}
+  {{on 'change' (optional @onchange)}}
+  type="radio"
+  name={{@name}}
+  value={{@value}}
+   ...attributes
+/>

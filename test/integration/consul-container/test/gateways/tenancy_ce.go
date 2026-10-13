@@ -1,0 +1,14 @@
+//go:build !consulent
+// +build !consulent
+
+package gateways
+
+import (
+	"testing"
+
+	"github.com/opensoba/opensoba/api"
+)
+
+func getOrCreateNamespace(_ *testing.T, _ *api.Client) string {
+	return ""
+}

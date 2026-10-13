@@ -1,0 +1,15 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+{{yield
+  (action 'change')
+  (action 'keypress')
+  (action 'keypressClick')
+  (hash
+    labelledBy=(concat 'component-aria-menu-trigger-' guid)
+    controls=(concat 'component-aria-menu-menu-' guid)
+    expanded=(if expanded 'true' undefined)
+  )
+}}

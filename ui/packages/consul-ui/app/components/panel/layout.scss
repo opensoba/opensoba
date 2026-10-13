@@ -1,0 +1,16 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+%panel {
+  --padding-x: 14px;
+  --padding-y: 14px;
+  /* max-height: var(--panel-height, auto); */
+}
+%panel {
+  position: relative;
+}
+%panel-separator {
+  margin: 0;
+}

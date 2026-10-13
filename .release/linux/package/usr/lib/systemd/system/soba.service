@@ -1,0 +1,21 @@
+[Unit]
+Description="OpenSoba - A service mesh solution"
+Documentation=https://github.com/opensoba/opensoba
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/soba.d/soba.hcl
+
+[Service]
+Type=notify
+EnvironmentFile=-/etc/soba.d/soba.env
+User=soba
+Group=soba
+ExecStart=/usr/bin/soba agent -config-dir=/etc/soba.d/
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

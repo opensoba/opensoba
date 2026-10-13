@@ -1,0 +1,53 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+{{#if @item}}
+  {{#let (service/external-source @item) as |externalSource|}}
+  {{#if (and @withInfo (eq externalSource 'consul-api-gateway'))}}
+        <dl class="tooltip-panel">
+          <dt>
+            <span
+              data-test-external-source={{externalSource}}
+              class="consul-external-source"
+              ...attributes
+            >
+              <FlightIcon @name={{icon-mapping externalSource}} class="mr-1.5 w-4 h-4"  />
+              Registered via {{t (concat "common.brand." externalSource)}}
+            </span>
+          </dt>
+          <dd>
+            <MenuPanel @position="left" @menu={{false}}>
+              <BlockSlot @name="header">
+                API Gateways manage north-south traffic from external services to services in the Datacenter. For more information, read our documentation.
+              </BlockSlot>
+              <BlockSlot @name="menu">
+                <li role="separator">
+                  About {{t (concat "common.brand." externalSource)}}
+                </li>
+                <li role="none" class="learn-link">
+                  <a tabindex="-1" role="menuitem" href={{concat (env 'CONSUL_DOCS_LEARN_URL')}} rel="noopener noreferrer" target="_blank">
+                    Learn guides
+                  </a>
+                </li>
+              </BlockSlot>
+            </MenuPanel>
+          </dd>
+        </dl>
+  {{else if externalSource}}
+    <span
+      data-test-external-source={{externalSource}}
+      class="consul-external-source"
+      ...attributes
+    >
+      <FlightIcon @name={{icon-mapping externalSource}} @color="var(--token-color-hashicorp-brand)" class="mr-1.5 h-4 w-4" />
+      {{#if @label}}
+        {{@label}}
+      {{else}}
+        Registered via {{t (concat "common.brand." externalSource)}}
+      {{/if}}
+    </span>
+  {{/if}}
+  {{/let}}
+{{/if}}

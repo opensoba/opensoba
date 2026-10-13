@@ -1,0 +1,120 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+  <DataLoader @src={{
+    uri '/${partition}/${nspace}/${dc}/policy/${id}'
+      (hash
+        partition=route.params.partition
+        nspace=route.params.nspace
+        dc=route.params.dc
+        id=(or route.params.id '')
+      )
+    }}
+  as |loader|>
+
+    <BlockSlot @name="error">
+      {{#if (eq loader.error.status '401')}}
+        <Consul::Acl::Disabled />
+      {{else}}
+        <AppError
+          @error={{loader.error}}
+          @login={{route.model.app.login.open}}
+        />
+      {{/if}}
+    </BlockSlot>
+
+    <BlockSlot @name="loaded">
+{{#let
+
+  route.params.dc
+  route.params.partition
+  route.params.nspace
+  (or route.params.id '')
+
+  loader.data
+  loader.data.isNew
+
+as |dc partition nspace id item create|}}
+  <AppView
+    @login={{route.model.app.login.open}}
+    >
+      <BlockSlot @name="breadcrumbs">
+          <ol>
+              <li><a data-test-back href={{href-to 'dc.acls.policies'}}>All Policies</a></li>
+          </ol>
+      </BlockSlot>
+      <BlockSlot @name="header">
+          <h1>
+    {{#if create }}
+            <route.Title @title="New Policy" />
+    {{else}}
+      {{#if (can "write policy" item=item)}}
+            <route.Title @title="Edit Policy" />
+      {{else}}
+            <route.Title @title="View Policy" />
+      {{/if}}
+    {{/if}}
+          </h1>
+      </BlockSlot>
+      <BlockSlot @name="content">
+  {{#if (not create) }}
+        <div class="definition-table">
+            <dl>
+              <dt>Policy ID</dt>
+              <dd>
+                <CopyableCode
+                  @value={{item.ID}}
+                  @name="Policy ID"
+                />
+              </dd>
+            </dl>
+        </div>
+  {{/if}}
+  {{#if (or (eq (policy/typeof item) 'policy-management') (eq (policy/typeof item) 'read-only'))}}
+    <Hds::Alert @type="inline" @icon="star-fill" class="mb-3 mt-2" as |A|>
+      <A.Title>Built-in policy</A.Title>
+      <A.Description>This policy is built into Consul's ACL system. You can use this special policy by adding it to a token. This policy is not editable or removable, but can be ignored by not applying it to any tokens.
+      </A.Description>
+      <A.Link::Standalone @text='Learn more'
+                          @href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#builtin-policies"
+                          @icon='docs-link'
+                          @iconPosition='trailing' />
+    </Hds::Alert>
+    <div class="definition-table">
+      <dl>
+        <dt>Name</dt>
+        <dd>{{item.Name}}</dd>
+        <dt>Valid Datacenters</dt>
+        <dd>{{ join ', ' (policy/datacenters item)}}</dd>
+        <dt>Description</dt>
+        <dd>{{item.Description}}</dd>
+      </dl>
+    </div>
+    <DataSource
+      @src={{uri '/${partition}/${nspace}/${dc}/tokens/for-policy/${id}'
+        (hash
+          partition=partition
+          nspace=nspace
+          dc=dc
+          id=id
+        )
+      }}
+    as |loader|>
+    {{#if (gt loader.data.length 0)}}
+      <TokenList @caption="Applied to the following tokens:" @items={{loader.data}} />
+    {{/if}}
+    </DataSource>
+  {{else}}
+        {{ partial 'dc/acls/policies/form'}}
+  {{/if}}
+      </BlockSlot>
+  </AppView>
+{{/let}}
+    </BlockSlot>
+  </DataLoader>
+</Route>

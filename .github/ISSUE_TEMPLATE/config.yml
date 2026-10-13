@@ -1,0 +1,11 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+blank_issues_enabled: true
+contact_links:
+  - name: OpenSoba Discussions
+    url: https://github.com/opensoba/opensoba/discussions
+    about: Ask questions and discuss OpenSoba with the community.
+  - name: OpenSoba Security Policy
+    url: https://github.com/opensoba/opensoba/security/policy
+    about: Please report security vulnerabilities privately using the repository security policy.

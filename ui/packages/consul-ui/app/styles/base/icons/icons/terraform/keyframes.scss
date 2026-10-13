@@ -1,0 +1,14 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+@keyframes icon-terraform {
+  100% {
+
+    -webkit-mask-image: var(--icon-terraform-color-16);
+    mask-image: var(--icon-terraform-color-16);
+    background-color: var(--icon-color, var(--color-terraform-500, currentColor));
+
+  }
+}

@@ -1,0 +1,15 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+
+%with-battery-charging-icon {
+  --icon-name: icon-battery-charging;
+  content: '';
+}
+%with-battery-charging-mask {
+  --icon-name: icon-battery-charging;
+  content: '';
+}
+  

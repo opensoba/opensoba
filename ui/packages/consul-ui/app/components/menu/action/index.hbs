@@ -1,0 +1,14 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Action
+  role="menuitem"
+  ...attributes
+  @href={{@href}}
+  {{on 'click' (if @href @disclosure.close (noop))}}
+  @external={{@external}}
+>
+  {{yield}}
+</Action>

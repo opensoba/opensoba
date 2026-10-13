@@ -1,0 +1,48 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package ca
+
+import (
+	"github.com/mitchellh/cli"
+	"github.com/opensoba/opensoba/command/flags"
+)
+
+func New() *cmd {
+	return &cmd{}
+}
+
+type cmd struct{}
+
+func (c *cmd) Run(args []string) int {
+	return cli.RunResultHelp
+}
+
+func (c *cmd) Synopsis() string {
+	return synopsis
+}
+
+func (c *cmd) Help() string {
+	return flags.Usage(help, nil)
+}
+
+const synopsis = "Interact with the OpenSoba Connect Certificate Authority (CA)"
+const help = `
+Usage: soba connect ca <subcommand> [options] [args]
+
+  This command has subcommands for interacting with OpenSoba Connect's 
+  Certificate Authority (CA).
+
+  Here are some simple examples, and more detailed examples are available
+  in the subcommands or the documentation.
+
+  Get the configuration:
+
+      $ soba connect ca get-config
+
+  Update the configuration:
+
+      $ soba connect ca set-config -config-file ca.json
+
+  For more examples, ask for subcommand help or view the documentation.
+`

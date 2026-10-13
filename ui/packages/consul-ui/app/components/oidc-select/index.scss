@@ -1,0 +1,18 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+@import './skin';
+@import './layout';
+%oidc-select label {
+  @extend %form-element;
+}
+
+%oidc-select button.reset {
+  @extend %anchor;
+  @extend %body-100-regular;
+}
+.oidc-select {
+  @extend %oidc-select;
+}

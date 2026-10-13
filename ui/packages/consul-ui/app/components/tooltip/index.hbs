@@ -1,0 +1,16 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<div
+  class="tooltip"
+  ...attributes
+  {{tooltip
+    options=(hash
+      triggerTarget="parentNode"
+    )
+  }}
+>
+  {{yield}}
+</div>

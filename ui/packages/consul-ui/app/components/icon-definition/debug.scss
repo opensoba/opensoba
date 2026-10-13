@@ -1,0 +1,13 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+#docfy-demo-preview-icon-definition {
+  dl {
+    @extend %icon-definition;
+  }
+  .lock-delay dt::before {
+    @extend %with-delay-mask, %as-pseudo;
+  }
+}

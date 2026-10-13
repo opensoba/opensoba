@@ -1,0 +1,11 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+%route-title {
+  @extend %visually-hidden;
+}
+.route-title {
+  @extend %route-title;
+}

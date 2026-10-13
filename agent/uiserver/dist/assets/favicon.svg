@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="OpenSoba">
+  <title>OpenSoba</title>
+  <rect width="64" height="64" rx="14" fill="#22304A"/>
+  <g fill="none" stroke="#7FD1BE" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 26 L32 14 L42 26"/>
+    <path d="M32 14 L32 26"/>
+    <path d="M22 26 L42 26"/>
+  </g>
+  <g fill="#7FD1BE">
+    <circle cx="32" cy="14" r="4.2"/>
+    <circle cx="22" cy="26" r="3.6"/>
+    <circle cx="42" cy="26" r="3.6"/>
+  </g>
+  <path d="M9 32 A23 23 0 0 0 55 32 Z" fill="#F2871F"/>
+  <rect x="6" y="29" width="52" height="6" rx="3" fill="#FFC266"/>
+</svg>

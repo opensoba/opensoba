@@ -1,0 +1,146 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+  <DataLoader @src={{
+    uri '/${partition}/${nspace}/${dc}/token/${id}'
+      (hash
+        partition=route.params.partition
+        nspace=route.params.nspace
+        dc=route.params.dc
+        id=(or route.params.id '')
+      )
+    }}
+  as |loader|>
+
+    <BlockSlot @name="error">
+      {{#if (eq loader.error.status '401')}}
+        <Consul::Acl::Disabled />
+      {{else}}
+        <AppError
+          @error={{loader.error}}
+          @login={{route.model.app.login.open}}
+        />
+      {{/if}}
+    </BlockSlot>
+
+    <BlockSlot @name="loaded">
+{{#let
+
+  route.params.dc
+  route.params.partition
+  route.params.nspace
+
+  loader.data
+  loader.data.isNew
+as |dc partition nspace item create|}}
+  <AppView
+    @login={{route.model.app.login.open}}
+  >
+      <BlockSlot @name="breadcrumbs">
+          <ol>
+              <li><a data-test-back href={{href-to 'dc.acls.tokens'}}>All Tokens</a></li>
+          </ol>
+      </BlockSlot>
+      <BlockSlot @name="header">
+          <h1>
+    {{#if create}}
+              <route.Title @title="New Token" />
+    {{else}}
+              <route.Title @title="Edit Token" />
+    {{/if}}
+          </h1>
+      </BlockSlot>
+      <BlockSlot @name="actions">
+  {{#if (not create)}}
+    <Hds::ButtonSet>
+    {{#if (not-eq item.AccessorID token.AccessorID)}}
+        <ConfirmationDialog @message="Are you sure you want to use this ACL token?">
+          <BlockSlot @name="action" as |confirm|>
+            <Hds::Button
+              @text='Use'
+              @color='secondary'
+              data-test-use
+              {{ action confirm 'use' item }}
+            />
+          </BlockSlot>
+          <BlockSlot @name="dialog" as |execute cancel message|>
+            <p>
+                {{message}}
+            </p>
+            <Hds::ButtonSet>
+              <Hds::Button
+                @text='Confirm Use'
+                @color='critical'
+                data-test-confirm-use
+                {{action execute}}
+              />
+              <Hds::Button
+                @text='Cancel'
+                @color='secondary'
+                {{action cancel}}
+              />
+            </Hds::ButtonSet>
+          </BlockSlot>
+        </ConfirmationDialog>
+    {{/if}}
+    {{#if (can "duplicate token" item=item)}}
+      <Hds::Button
+        @text='Duplicate'
+        @color='secondary'
+        data-test-clone
+        {{ action "clone" item }}
+      />
+    {{/if}}
+    </Hds::ButtonSet>
+  {{/if}}
+      </BlockSlot>
+      <BlockSlot @name="content">
+          {{#if (token/is-legacy item)}}
+            <Hds::Alert @type='inline' class='mb-6' as |A|>
+              <A.Title>Update</A.Title>
+              <A.Description>We have upgraded our ACL system by allowing you to create reusable policies which you can then apply to tokens. Don't worry, even though this token was written in the old style, it is still valid. However, we do recommend upgrading your old tokens to the new style.</A.Description>
+              <A.Link::Standalone @text='Learn more'
+                                  @href="{{env 'CONSUL_DOCS_URL'}}/guides/acl-migrate-tokens.html"
+                                  @icon='docs-link'
+                                  @iconPosition='trailing' />
+            </Hds::Alert>
+          {{/if}}
+  {{#if (not create) }}
+        <div class="definition-table">
+            <dl>
+              <dt>AccessorID</dt>
+              <dd>
+                <CopyableCode
+                  @value={{item.AccessorID}}
+                  @name="AccessorID"
+                />
+              </dd>
+              <dt>Token</dt>
+              <dd>
+                <CopyableCode
+                  @obfuscated={{true}}
+                  @value={{item.SecretID}}
+                  @name="Token"
+                />
+              </dd>
+  {{#if (and (not (token/is-legacy item)) (not create))}}
+              <dt>Scope</dt>
+              <dd>
+                {{if item.Local 'local' 'global' }}
+              </dd>
+  {{/if}}
+            </dl>
+        </div>
+  {{/if}}
+          {{ partial 'dc/acls/tokens/form'}}
+      </BlockSlot>
+  </AppView>
+{{/let}}
+    </BlockSlot>
+  </DataLoader>
+</Route>

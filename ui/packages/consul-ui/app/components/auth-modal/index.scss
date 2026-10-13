@@ -1,0 +1,15 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+/*TODO: This is a different style of modal dialog */
+/* and should probably be part of that, offering different styles*/
+@import './skin';
+@import './layout';
+%auth-modal footer button {
+  @extend %anchor;
+}
+#login-toggle + div {
+  @extend %auth-modal;
+}

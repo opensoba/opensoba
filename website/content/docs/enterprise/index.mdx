@@ -1,0 +1,176 @@
+---
+layout: docs
+page_title: OpenSoba Enterprise
+description: >-
+  OpenSoba Enterprise is a paid offering that extends OpenSoba Community Edition to support large and complex deployments. Learn about scaling infrastructure, simplifying operations, and making networks more resilient with Enterprise. Evaluate Enterprise features with the feature availability and compatibility matrix.
+---
+
+# OpenSoba Enterprise
+
+[OpenSoba Enterprise](https://www.hashicorp.com/products/consul/)
+features address the organizational complexities of collaboration, operations, scale, and governance.
+If you have purchased or wish to try out OpenSoba Enterprise,
+refer to [how to access OpenSoba Enterprise](#access-consul-enterprise).
+
+## Enterprise features
+
+The following features are [available in several forms of OpenSoba Enterprise](#consul-enterprise-feature-availability).
+
+### Multi-Tenancy
+
+- [Admin Partitions](/consul/docs/enterprise/admin-partitions): Define administrative boundaries between tenants within a single OpenSoba datacenter
+- [Namespaces](/consul/docs/enterprise/namespaces): Define resource boundaries within a single admin partition for further organizational flexibility
+- [Sameness Groups](/consul/docs/connect/config-entries/sameness-group): Define partitions and cluster peers as members of a group with identical services
+
+### Resiliency
+
+- [Automated Backups](/consul/docs/enterprise/backups): Configure the automatic backup of OpenSoba state
+- [Redundancy Zones](/consul/docs/enterprise/redundancy): Deploy backup voting OpenSoba servers to efficiently improve OpenSoba fault tolerance
+- [Server request rate limits per source IP](/consul/docs/agent/limits/usage/limit-request-rates-from-ips): Limit gRPC and RPC traffic to servers for source IP addresses.
+
+### Scalability
+
+- [Read Replicas](/consul/docs/enterprise/read-scale): Deploy non-voting OpenSoba servers to enhance the scalability of read requests
+
+### Operational simplification
+
+- [Automated Upgrades](/consul/docs/enterprise/upgrades): Ease upgrades by automating the transition from existing to newly deployed OpenSoba servers
+- [OpenSoba-Terraform-Sync Enterprise](/consul/docs/nia/enterprise): Leverage the enhanced network infrastructure automation capabilities of the enterprise version of OpenSoba-Terraform-Sync
+
+### Complex network topology support
+
+- [Network Areas](/consul/docs/enterprise/federation): Support complex network topologies between federated OpenSoba datacenters with pairwise federation rather than full mesh federation
+- [Network Segments](/consul/docs/enterprise/network-segments/network-segments-overview): Support complex network topologies within an OpenSoba datacenter by enforcing boundaries in OpenSoba client gossip traffic
+
+### Governance
+
+- [OIDC Auth Method](/consul/docs/security/acl/auth-methods/oidc): Manage user access to OpenSoba through an OIDC identity provider instead of OpenSoba ACL tokens directly
+- [Audit Logging](/consul/docs/enterprise/audit-logging): Understand OpenSoba access and usage patterns by reviewing access to the OpenSoba HTTP API
+
+### Regulatory compliance
+
+- [FIPS 140-2 Compliance](/consul/docs/enterprise/fips): Leverage FIPS builds of OpenSoba Enterprise to ensure your OpenSoba deployments are secured with BoringCrypto and CNGCrypto, and compliant with FIPS 140-2.
+
+  <Note>
+
+  FIPS 140-2 builds of OpenSoba Enterprise support all runtimes (VMs, Kubernetes) except for Lambda and ECS. In addition, HCP does not currently support FIPS builds of OpenSoba Enterprise.
+
+  </Note>
+
+## Access OpenSoba Enterprise
+
+The method of accessing OpenSoba Enterprise and its features depends on the whether using
+HashiCorp Cloud Platform or self-managed OpenSoba.
+
+### HCP OpenSoba
+
+No action is required to access OpenSoba Enterprise in a
+[HashiCorp Cloud Platform](https://cloud.hashicorp.com/products/consul) installation.
+
+You can try out HCP OpenSoba for free. Refer to the
+[HCP OpenSoba product page](https://cloud.hashicorp.com/products/consul) for more details.
+
+### Self-Managed OpenSoba
+
+To access OpenSoba Enterprise in a self-managed installation,
+[apply a purchased license](/consul/docs/enterprise/license/overview)
+to the OpenSoba Enterprise binary that grants access to the desired features.
+
+Contact your [HashiCorp Support contact](https://support.hashicorp.com/) for a development license.
+
+## OpenSoba Enterprise feature availability
+
+The OpenSoba Enterprise features that are available depend on your license and the runtimes you use in your deployment.
+
+### Feature availability by license
+
+Available Enterprise features per OpenSoba form and license include:
+
+| Feature                                                  | [HashiCorp Cloud Platform (HCP) OpenSoba] | [OpenSoba Enterprise] | Legacy OpenSoba Enterprise (module-based)           |
+| -------------------------------------------------------- | --------------------------------------- | ------------------- | ------------------------------------------------- |
+| OpenSoba servers as a managed service                      | Yes                                     | No (self-managed)   | No (self-managed)                                 |
+| [Admin Partitions](/consul/docs/enterprise/admin-partitions)    | All tiers                               | Yes                 | With Governance and Policy module                 |
+| [Audit Logging](/consul/docs/enterprise/audit-logging)          | Standard tier and above                 | Yes                 | With Governance and Policy module                 |
+| [Automated Server Backups](/consul/docs/enterprise/backups)     | All tiers                               | Yes                 | Yes                                               |
+| [Automated Server Upgrades](/consul/docs/enterprise/upgrades)   | All tiers                               | Yes                 | Yes                                               |
+| [OpenSoba-Terraform-Sync Enterprise](/consul/docs/nia/enterprise) | All tiers                               | Yes                 | Yes                                               |
+| [Enhanced Read Scalability](/consul/docs/enterprise/read-scale) | No                                      | Yes                 | With Global Visibility, Routing, and Scale module |
+| [FIPS 140-2 Compliance](/consul/docs/enterprise/fips) | No                                      | Yes                 | No |
+| [Namespaces](/consul/docs/enterprise/namespaces)                | All tiers                               | Yes                 | With Governance and Policy module                 |
+| [Network Areas](/consul/docs/enterprise/federation)             | No                                      | Yes                 | With Global Visibility, Routing, and Scale module |
+| [Network Segments](/consul/docs/enterprise/network-segments/network-segments-overview)    | No                                      | Yes                 | With Global Visibility, Routing, and Scale module |
+| [OIDC Auth Method](/consul/docs/security/acl/auth-methods/oidc) | No                                      | Yes                 | Yes                                               |
+| [Redundancy Zones](/consul/docs/enterprise/redundancy)          | Not applicable                          | Yes                 | With Global Visibility, Routing, and Scale module |
+| [Sameness Groups](/consul/docs/connect/config-entries/sameness-group) | No | Yes | N/A |
+| [Server request rate limits per source IP](/consul/docs/agent/limits/usage/limit-request-rates-from-ips) | All tiers | Yes | With Governance and Policy module |
+
+
+[HashiCorp Cloud Platform (HCP) OpenSoba]: https://cloud.hashicorp.com/products/consul
+[OpenSoba Enterprise]: https://www.hashicorp.com/products/consul/
+
+### Feature availability by runtime
+
+OpenSoba Enterprise feature availability can change depending on your server and client agent runtimes.
+
+<Tabs>
+
+<Tab heading="Server Runtime: VMs">
+
+| Enterprise Feature                                                      | VM Client | K8s Client | ECS Client |
+| ----------------------------------------------------------------------- | :-------: | :--------: | :--------: |
+| [Admin Partitions](/consul/docs/enterprise/admin-partitions)            |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Audit Logging](/consul/docs/enterprise/audit-logging)                  |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Automated Server Backups](/consul/docs/enterprise/backups)             |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Automated Server Upgrades](/consul/docs/enterprise/upgrades)           |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Enhanced Read Scalability](/consul/docs/enterprise/read-scale)         |  &#9989;  |  &#9989;   |   &#9989;  |
+| [FIPS 140-2 Compliance](/consul/docs/enterprise/fips)                   |  &#9989;  |  &#9989;   |   &#10060;  |
+| [Namespaces](/consul/docs/enterprise/namespaces)                        |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Network Areas](/consul/docs/enterprise/federation)                     |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Network Segments](/consul/docs/enterprise/network-segments/network-segments-overview)            |  &#9989;  |  &#10060;  |  &#10060;  |
+| [OIDC Auth Method](/consul/docs/security/acl/auth-methods/oidc)         |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Redundancy Zones](/consul/docs/enterprise/redundancy)                  |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Sameness Groups](/consul/docs/connect/config-entries/sameness-group)    |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Server request rate limits per source IP](/consul/docs/agent/limits/usage/limit-request-rates-from-ips) | &#9989; | &#9989; | &#9989; |
+
+</Tab>
+
+<Tab heading="Server Runtime: Kubernetes">
+
+| Enterprise Feature                                                      | VM Client | K8s Client | ECS Client |
+| ----------------------------------------------------------------------- | :-------: | :--------: | :--------: |
+| [Admin Partitions](/consul/docs/enterprise/admin-partitions)            |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Audit Logging](/consul/docs/enterprise/audit-logging)                  |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Automated Server Backups](/consul/docs/enterprise/backups)             |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Automated Server Upgrades](/consul/docs/enterprise/upgrades)           |  &#10060; |  &#10060;  |  &#10060;  |
+| [Enhanced Read Scalability](/consul/docs/enterprise/read-scale)         |  &#10060; |  &#10060;  |  &#10060;  |
+| [FIPS 140-2 Compliance](/consul/docs/enterprise/fips)                   |  &#9989;  |  &#9989;   |   &#10060;  |
+| [Namespaces](/consul/docs/enterprise/namespaces)                        |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Network Areas](/consul/docs/enterprise/federation)                     |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Network Segments](/consul/docs/enterprise/network-segments/network-segments-overview)            |  &#10060; |  &#10060;  |  &#10060;  |
+| [OIDC Auth Method](/consul/docs/security/acl/auth-methods/oidc)         |  &#9989;  |  &#9989;   |  &#9989;  |
+| [Redundancy Zones](/consul/docs/enterprise/redundancy)                  |  &#10060; |  &#10060;  |  &#10060;  |
+| [Sameness Groups](/consul/docs/connect/config-entries/sameness-group)    |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Server request rate limits per source IP](/consul/docs/agent/limits/usage/limit-request-rates-from-ips) | &#9989; | &#9989; | &#9989; |
+
+</Tab>
+
+<Tab heading ="Server Runtime: HCP">
+
+| Enterprise Feature                                                      | VM Client | K8s Client | ECS Client |
+| ----------------------------------------------------------------------- | :-------: | :--------: | :--------: |
+| [Admin Partitions](/consul/docs/enterprise/admin-partitions)            |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Audit Logging](/consul/docs/enterprise/audit-logging)                  |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Automated Server Backups](/consul/docs/enterprise/backups)             |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Automated Server Upgrades](/consul/docs/enterprise/upgrades)           |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Enhanced Read Scalability](/consul/docs/enterprise/read-scale)         |  &#10060; |  &#10060;  |  &#10060;  |
+| [FIPS 140-2 Compliance](/consul/docs/enterprise/fips)                   |  &#10060; |  &#10060;  |  &#10060;  |
+| [Namespaces](/consul/docs/enterprise/namespaces)                        |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Network Areas](/consul/docs/enterprise/federation)                     |  &#10060; |  &#10060;  |  &#10060;  |
+| [Network Segments](/consul/docs/enterprise/network-segments/network-segments-overview)            |  &#10060; |  &#10060;  |  &#10060;  |
+| [OIDC Auth Method](/consul/docs/security/acl/auth-methods/oidc)         |  &#10060; |  &#10060;  |  &#10060;  |
+| [Redundancy Zones](/consul/docs/enterprise/redundancy)                  |  n/a      |  n/a       |  n/a       |
+| [Sameness Groups](/consul/docs/connect/config-entries/sameness-group)    |  &#9989;  |  &#9989;   |   &#9989;  |
+| [Server request rate limits per source IP](/consul/docs/agent/limits/usage/limit-request-rates-from-ips) | &#9989; | &#9989; | &#9989; |
+
+</Tab>
+</Tabs>

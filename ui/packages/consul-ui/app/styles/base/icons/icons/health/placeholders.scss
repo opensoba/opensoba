@@ -1,0 +1,15 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+
+%with-health-icon {
+  --icon-name: icon-health;
+  content: '';
+}
+%with-health-mask {
+  --icon-name: icon-health;
+  content: '';
+}
+  

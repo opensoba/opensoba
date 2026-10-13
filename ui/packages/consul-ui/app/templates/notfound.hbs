@@ -1,0 +1,17 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<Route
+  @name={{routeName}}
+as |route|>
+  <AppError
+    @login={{route.model.app.login.open}}
+    @error={{hash
+      status=404
+      message="Unable to find that page"
+    }}
+  />
+</Route>
+

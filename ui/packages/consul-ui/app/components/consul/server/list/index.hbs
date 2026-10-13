@@ -1,0 +1,24 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<div
+  class={{class-map
+    'consul-server-list'
+  }}
+  ...attributes
+>
+  <ul>
+{{#each @items as |item|}}
+    <li>
+      <a href={{href-to 'dc.nodes.show' item.Name}}>
+        <Consul::Server::Card
+          @item={{item}}
+        />
+      </a>
+    </li>
+{{/each}}
+  </ul>
+</div>
+

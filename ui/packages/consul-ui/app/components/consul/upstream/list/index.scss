@@ -1,0 +1,13 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+%consul-upstream-list {
+  dl.partition dt::before {
+    @extend %with-user-team-mask, %as-pseudo;
+  }
+}
+.consul-upstream-list {
+  @extend %consul-upstream-list;
+}

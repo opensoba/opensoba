@@ -1,0 +1,4 @@
+```release-note:bug
+rpc: Adds a deadline to client RPC calls, so that streams will no longer hang
+indefinitely in unstable network conditions. [[GH-8504](https://github.com/opensoba/opensoba/issues/8504)]
+```

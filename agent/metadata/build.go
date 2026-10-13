@@ -1,0 +1,15 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package metadata
+
+import (
+	"github.com/hashicorp/go-version"
+	"github.com/hashicorp/serf/serf"
+)
+
+// Build extracts the OpenSoba version info for a member.
+func Build(m *serf.Member) (*version.Version, error) {
+	str := versionFormat.FindString(m.Tags["build"])
+	return version.NewVersion(str)
+}

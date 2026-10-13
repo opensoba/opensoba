@@ -1,0 +1,13 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+{{#let @components.MenuSeparator as |MenuSeparator|}}
+<MenuSeparator>
+  <BlockSlot @name="label">
+    {{@label}}
+  </BlockSlot>
+</MenuSeparator>
+{{yield}}
+{{/let}}
