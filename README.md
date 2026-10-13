@@ -4,7 +4,6 @@
 </h1>
 
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-brightgreen.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/opensoba/opensoba)](https://goreportcard.com/report/github.com/opensoba/opensoba)
 
 OpenSoba is a distributed, highly available, datacenter-aware solution to
 connect and configure applications across dynamic, distributed infrastructure.
