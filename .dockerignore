@@ -1,3 +1,13 @@
-pkg/
+# Keep the Docker build context small; only Go sources and packaging files are
+# needed to compile the "soba" binary (the web UI is already embedded).
 .git
-bin/
+.github
+ui
+website
+docs
+pkg
+bin
+dist
+*.md
+soba
+soba.exe

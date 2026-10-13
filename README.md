@@ -75,6 +75,21 @@ go build -o soba .
 ./soba version
 ```
 
+## Releases and container image
+
+Prebuilt `soba` archives for the same OS/arch set that upstream Consul v1.16.4
+shipped (darwin, freebsd, linux, solaris, windows) are attached to every
+[release](https://github.com/opensoba/opensoba/releases), together with a
+`SHA256SUMS` file.
+
+A multi-arch container image is published to the GitHub Container Registry:
+
+```shell
+docker run --rm -p 8500:8500 ghcr.io/opensoba/opensoba:latest
+```
+
+See [RELEASING.md](./RELEASING.md) for how releases are produced.
+
 ## Documentation
 
 Upstream Consul documentation is a useful reference for the concepts and the

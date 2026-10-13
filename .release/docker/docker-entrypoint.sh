@@ -1,117 +1,109 @@
 #!/usr/bin/dumb-init /bin/sh
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
+# Copyright (c) The OpenSoba Authors
+#
+# Container entrypoint for the OpenSoba agent (binary: soba).
+#
+# Every SOBA_* variable below also accepts the legacy CONSUL_* spelling, so
+# existing container setups keep working:
+#
+#   SOBA_BIND / SOBA_BIND_INTERFACE           -> agent -bind
+#   SOBA_CLIENT / SOBA_CLIENT_INTERFACE       -> agent -client
+#   SOBA_DATA_DIR                             (default /soba/data)
+#   SOBA_CONFIG_DIR                           (default /soba/config)
+#   SOBA_LOCAL_CONFIG                         extra JSON config
+#   SOBA_UID / SOBA_GID                       run-as ids
+#   SOBA_DISABLE_PERM_MGMT                    skip the chown/drop-privileges step
+#   SOBA_ALLOW_PRIVILEGED_PORTS               setcap on the binary before dropping privileges
 
 set -e
 
-# Note above that we run dumb-init as PID 1 in order to reap zombie processes
-# as well as forward signals to all processes in its session. Normally, sh
-# wouldn't do either of these functions so we'd leak zombies as well as do
-# unclean termination of all our sub-processes.
-# As of docker 1.13, using docker run --init achieves the same outcome.
-
-# You can set CONSUL_BIND_INTERFACE to the name of the interface you'd like to
-# bind to and this will look up the IP and pass the proper -bind= option along
-# to OpenSoba.
-if [ -z "$CONSUL_BIND" ]; then
-  if [ -n "$CONSUL_BIND_INTERFACE" ]; then
-    CONSUL_BIND_ADDRESS=$(ip -o -4 addr list $CONSUL_BIND_INTERFACE | head -n1 | awk '{print $4}' | cut -d/ -f1)
-    if [ -z "$CONSUL_BIND_ADDRESS" ]; then
-      echo "Could not find IP for interface '$CONSUL_BIND_INTERFACE', exiting"
-      exit 1
-    fi
-
-    CONSUL_BIND="-bind=$CONSUL_BIND_ADDRESS"
-    echo "==> Found address '$CONSUL_BIND_ADDRESS' for interface '$CONSUL_BIND_INTERFACE', setting bind option..."
+# env_or SOBA_X -> $SOBA_X if set and non-empty, otherwise $CONSUL_X.
+env_or() {
+  eval "val=\${$1-}"
+  if [ -z "$val" ]; then
+    eval "val=\${CONSUL_${1#SOBA_}-}"
   fi
-fi
+  printf '%s' "$val"
+}
 
-# You can set CONSUL_CLIENT_INTERFACE to the name of the interface you'd like to
-# bind client intefaces (HTTP, DNS, and RPC) to and this will look up the IP and
-# pass the proper -client= option along to OpenSoba.
-if [ -z "$CONSUL_CLIENT" ]; then
-  if [ -n "$CONSUL_CLIENT_INTERFACE" ]; then
-    CONSUL_CLIENT_ADDRESS=$(ip -o -4 addr list $CONSUL_CLIENT_INTERFACE | head -n1 | awk '{print $4}' | cut -d/ -f1)
-    if [ -z "$CONSUL_CLIENT_ADDRESS" ]; then
-      echo "Could not find IP for interface '$CONSUL_CLIENT_INTERFACE', exiting"
-      exit 1
-    fi
+iface_ip() {
+  ip -o -4 addr list "$1" | head -n1 | awk '{print $4}' | cut -d/ -f1
+}
 
-    CONSUL_CLIENT="-client=$CONSUL_CLIENT_ADDRESS"
-    echo "==> Found address '$CONSUL_CLIENT_ADDRESS' for interface '$CONSUL_CLIENT_INTERFACE', setting client option..."
+bind_opt=""
+iface="$(env_or SOBA_BIND_INTERFACE)"
+if [ -n "$iface" ]; then
+  addr="$(iface_ip "$iface")"
+  if [ -z "$addr" ]; then
+    echo "Could not find IP for interface '$iface', exiting" >&2
+    exit 1
   fi
+  bind_opt="-bind=$addr"
+  echo "==> Found address '$addr' for interface '$iface', setting bind option..."
 fi
 
-# CONSUL_DATA_DIR is exposed as a volume for possible persistent storage. The
-# CONSUL_CONFIG_DIR isn't exposed as a volume but you can compose additional
-# config files in there if you use this image as a base, or use CONSUL_LOCAL_CONFIG
-# below.
-if [ -z "$CONSUL_DATA_DIR" ]; then
-  CONSUL_DATA_DIR=/consul/data
+client_opt=""
+iface="$(env_or SOBA_CLIENT_INTERFACE)"
+if [ -n "$iface" ]; then
+  addr="$(iface_ip "$iface")"
+  if [ -z "$addr" ]; then
+    echo "Could not find IP for interface '$iface', exiting" >&2
+    exit 1
+  fi
+  client_opt="-client=$addr"
+  echo "==> Found address '$addr' for interface '$iface', setting client option..."
 fi
 
-if [ -z "$CONSUL_CONFIG_DIR" ]; then
-  CONSUL_CONFIG_DIR=/consul/config
+data_dir="$(env_or SOBA_DATA_DIR)"
+[ -n "$data_dir" ] || data_dir=/soba/data
+config_dir="$(env_or SOBA_CONFIG_DIR)"
+[ -n "$config_dir" ] || config_dir=/soba/config
+
+local_config="$(env_or SOBA_LOCAL_CONFIG)"
+if [ -n "$local_config" ]; then
+  echo "$local_config" > "$config_dir/local.json"
 fi
 
-# You can also set the CONSUL_LOCAL_CONFIG environemnt variable to pass some
-# OpenSoba configuration JSON without having to bind any volumes.
-if [ -n "$CONSUL_LOCAL_CONFIG" ]; then
-	echo "$CONSUL_LOCAL_CONFIG" > "$CONSUL_CONFIG_DIR/local.json"
-fi
-
-# If the user is trying to run OpenSoba directly with some arguments, then
-# pass them to OpenSoba.
+# If the user passes flags directly, prepend the binary name.
 if [ "${1:0:1}" = '-' ]; then
   set -- soba "$@"
 fi
 
-# Look for OpenSoba subcommands.
+# Expand known subcommands.
 if [ "$1" = 'agent' ]; then
   shift
   set -- soba agent \
-    -data-dir="$CONSUL_DATA_DIR" \
-    -config-dir="$CONSUL_CONFIG_DIR" \
-    $CONSUL_BIND \
-    $CONSUL_CLIENT \
+    -data-dir="$data_dir" \
+    -config-dir="$config_dir" \
+    $bind_opt \
+    $client_opt \
     "$@"
 elif [ "$1" = 'version' ]; then
   # This needs a special case because there's no help output.
   set -- soba "$@"
 elif soba --help "$1" 2>&1 | grep -q "soba $1"; then
-  # We can't use the return code to check for the existence of a subcommand, so
-  # we have to use grep to look for a pattern in the help output.
+  # The exit code can't tell us whether a subcommand exists, so match the help.
   set -- soba "$@"
 fi
 
-# If we are running OpenSoba, make sure it executes as the proper user.
-if [ "" = 'soba' -a -z "${CONSUL_DISABLE_PERM_MGMT+x}" ]; then
-  # Allow to setup user and group via envrironment
-  if [ -z "$CONSUL_UID" ]; then
-    CONSUL_UID="$(id -u soba)"
-  fi
+# Drop privileges when running the agent, unless explicitly disabled.
+if [ "$1" = 'soba' ] && [ -z "$(env_or SOBA_DISABLE_PERM_MGMT)" ]; then
+  uid="$(env_or SOBA_UID)"
+  [ -n "$uid" ] || uid="$(id -u soba)"
+  gid="$(env_or SOBA_GID)"
+  [ -n "$gid" ] || gid="$(id -g soba)"
 
-  if [ -z "$CONSUL_GID" ]; then
-    CONSUL_GID="$(id -g soba)"
-  fi
+  # If the data/config dirs are bind mounted they may be root-owned.
+  [ "$(stat -c %u "$data_dir")" = "$uid" ] || chown "$uid:$gid" "$data_dir"
+  [ "$(stat -c %u "$config_dir")" = "$uid" ] || chown "$uid:$gid" "$config_dir"
 
-  # If the data or config dirs are bind mounted then chown them.
-  # Note: This checks for root ownership as that's the most common case.
-  if [ "$(stat -c %u "$CONSUL_DATA_DIR")" != "${CONSUL_UID}" ]; then
-    chown ${CONSUL_UID}:${CONSUL_GID} "$CONSUL_DATA_DIR"
-  fi
-  if [ "$(stat -c %u "$CONSUL_CONFIG_DIR")" != "${CONSUL_UID}" ]; then
-    chown ${CONSUL_UID}:${CONSUL_GID} "$CONSUL_CONFIG_DIR"
-  fi
-
-  # If requested, set the capability to bind to privileged ports before
-  # we drop to the non-root user. Note that this doesn't work with all
-  # storage drivers (it won't work with AUFS).
-  if [ ! -z ${CONSUL_ALLOW_PRIVILEGED_PORTS+x} ]; then
+  if [ -n "$(env_or SOBA_ALLOW_PRIVILEGED_PORTS)" ]; then
     setcap "cap_net_bind_service=+ep" /bin/soba
   fi
 
-  set -- su-exec ${CONSUL_UID}:${CONSUL_GID} "$@"
+  set -- su-exec "$uid:$gid" "$@"
 fi
 
 exec "$@"
