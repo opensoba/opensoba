@@ -1,0 +1,22 @@
+# yamllint configuration for OpenSoba.
+#
+# Tuned for GitHub Actions workflows, which need the reserved "on:" key and
+# commonly contain longer (unbreakable) lines than the yamllint defaults allow.
+---
+extends: default
+
+ignore: |
+  .changelog/
+  ui/
+  website/
+
+rules:
+  # GitHub Actions workflows must not start with "---" and need the "on:" key.
+  document-start: disable
+  truthy:
+    allowed-values: ['true', 'false', 'on']
+    check-keys: true
+  line-length:
+    max: 120
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true

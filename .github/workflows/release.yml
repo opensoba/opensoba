@@ -28,17 +28,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { goos: darwin,  goarch: amd64 }
-          - { goos: darwin,  goarch: arm64 }
-          - { goos: freebsd, goarch: 386 }
-          - { goos: freebsd, goarch: amd64 }
-          - { goos: linux,   goarch: 386 }
-          - { goos: linux,   goarch: amd64 }
-          - { goos: linux,   goarch: arm }
-          - { goos: linux,   goarch: arm64 }
-          - { goos: solaris, goarch: amd64 }
-          - { goos: windows, goarch: 386 }
-          - { goos: windows, goarch: amd64 }
+          - {goos: darwin, goarch: amd64}
+          - {goos: darwin, goarch: arm64}
+          - {goos: freebsd, goarch: 386}
+          - {goos: freebsd, goarch: amd64}
+          - {goos: linux, goarch: 386}
+          - {goos: linux, goarch: amd64}
+          - {goos: linux, goarch: arm}
+          - {goos: linux, goarch: arm64}
+          - {goos: solaris, goarch: amd64}
+          - {goos: windows, goarch: 386}
+          - {goos: windows, goarch: amd64}
     steps:
       - uses: actions/checkout@v4
 
@@ -61,9 +61,11 @@ jobs:
           VERSION="$(cat version/VERSION)"
           BIN=soba
           [ "${GOOS}" = windows ] && BIN=soba.exe
-          go build -trimpath \
-            -ldflags "-X github.com/opensoba/opensoba/version.GitCommit=${GITHUB_SHA} -X github.com/opensoba/opensoba/version.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            -o "${BIN}" .
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          PKG=github.com/opensoba/opensoba/version
+          LDFLAGS="-X ${PKG}.GitCommit=${GITHUB_SHA}"
+          LDFLAGS="${LDFLAGS} -X ${PKG}.BuildDate=${BUILD_DATE}"
+          go build -trimpath -ldflags "${LDFLAGS}" -o "${BIN}" .
           mkdir -p out
           zip -q "out/soba_${VERSION}_${GOOS}_${GOARCH}.zip" "${BIN}"
 

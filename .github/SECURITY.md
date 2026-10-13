@@ -13,7 +13,7 @@ Please **do not** open a public GitHub issue for security vulnerabilities.
 Use GitHub's [private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability)
 via the **Security → Report a vulnerability** tab of this repository:
 
-- https://github.com/opensoba/opensoba/security/advisories/new
+- <https://github.com/opensoba/opensoba/security/advisories/new>
 
 We will acknowledge reports as quickly as possible and coordinate a fix
 and disclosure timeline with you.

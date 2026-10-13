@@ -8,4 +8,4 @@ contact_links:
     about: Ask questions and discuss OpenSoba with the community.
   - name: OpenSoba Security Policy
     url: https://github.com/opensoba/opensoba/security/policy
-    about: Please report security vulnerabilities privately using the repository security policy.
+    about: Report security vulnerabilities privately.
