@@ -1,0 +1,3 @@
+```release-note:feature
+auth: Add OIDC auth method support for single sign-on in the UI and via `soba login -type=oidc`.
+```

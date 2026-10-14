@@ -1,0 +1,3 @@
+```release-note:improvement
+build: Rename Consul-named code packages and UI packages to sabo/OpenSoba and remove HashiCorp product branding.
+```

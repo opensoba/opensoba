@@ -1,3 +1,13 @@
+## 1.16.5 (Unreleased)
+
+FEATURES:
+
+* auth: Add OIDC auth method support for single sign-on in the UI and via `soba login -type=oidc`.
+
+IMPROVEMENTS:
+
+* build: Rename Consul-named code packages and UI packages to sabo/OpenSoba and remove HashiCorp product branding.
+
 ## 1.16.4 (December 12, 2023)
 
 SECURITY:
