@@ -43,9 +43,6 @@ import (
 	cachetype "github.com/opensoba/opensoba/agent/cache-types"
 	"github.com/opensoba/opensoba/agent/checks"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
-	rpcRate "github.com/opensoba/opensoba/agent/consul/rate"
-	"github.com/opensoba/opensoba/agent/consul/servercert"
 	"github.com/opensoba/opensoba/agent/dns"
 	external "github.com/opensoba/opensoba/agent/grpc-external"
 	grpcDNS "github.com/opensoba/opensoba/agent/grpc-external/services/dns"
@@ -60,6 +57,9 @@ import (
 	"github.com/opensoba/opensoba/agent/rpcclient"
 	"github.com/opensoba/opensoba/agent/rpcclient/configentry"
 	"github.com/opensoba/opensoba/agent/rpcclient/health"
+	"github.com/opensoba/opensoba/agent/sabo"
+	rpcRate "github.com/opensoba/opensoba/agent/sabo/rate"
+	"github.com/opensoba/opensoba/agent/sabo/servercert"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/systemd"
 	"github.com/opensoba/opensoba/agent/token"
@@ -166,7 +166,7 @@ type delegate interface {
 	// - all segments
 	//
 	// This is limited to segments and partitions that the node is a member of.
-	LANMembers(f consul.LANMemberFilter) ([]serf.Member, error)
+	LANMembers(f sabo.LANMemberFilter) ([]serf.Member, error)
 
 	// GetLANCoordinate returns the coordinate of the node in the LAN gossip
 	// pool.
@@ -202,7 +202,7 @@ type delegate interface {
 	SnapshotRPC(args *structs.SnapshotRequest, in io.Reader, out io.Writer, replyFn structs.SnapshotReplyFn) error
 	Shutdown() error
 	Stats() map[string]map[string]string
-	ReloadConfig(config consul.ReloadableConfig) error
+	ReloadConfig(config sabo.ReloadableConfig) error
 	enterpriseDelegate
 }
 
@@ -654,7 +654,7 @@ func (a *Agent) Start(ctx context.Context) error {
 
 		// Check for a last seen timestamp and exit if deemed stale before attempting to join
 		// Serf/Raft or listen for requests.
-		if err := a.checkServerLastSeen(consul.ReadServerMetadata); err != nil {
+		if err := a.checkServerLastSeen(sabo.ReadServerMetadata); err != nil {
 			deadline := time.Now().Add(time.Minute)
 			for time.Now().Before(deadline) {
 				a.logger.Error("startup error", "error", err)
@@ -668,7 +668,7 @@ func (a *Agent) Start(ctx context.Context) error {
 			go a.persistServerMetadata()
 		}
 
-		incomingRPCLimiter := consul.ConfiguredIncomingRPCLimiter(
+		incomingRPCLimiter := sabo.ConfiguredIncomingRPCLimiter(
 			&lib.StopChannelContext{StopCh: a.shutdownCh},
 			serverLogger,
 			consulCfg,
@@ -685,7 +685,7 @@ func (a *Agent) Start(ctx context.Context) error {
 			},
 		)
 
-		server, err := consul.NewServer(consulCfg, a.baseDeps.Deps, a.externalGRPCServer, incomingRPCLimiter, serverLogger)
+		server, err := sabo.NewServer(consulCfg, a.baseDeps.Deps, a.externalGRPCServer, incomingRPCLimiter, serverLogger)
 		if err != nil {
 			return fmt.Errorf("Failed to start OpenSoba server: %v", err)
 		}
@@ -720,7 +720,7 @@ func (a *Agent) Start(ctx context.Context) error {
 			},
 		)
 
-		client, err := consul.NewClient(consulCfg, a.baseDeps.Deps)
+		client, err := sabo.NewClient(consulCfg, a.baseDeps.Deps)
 		if err != nil {
 			return fmt.Errorf("Failed to start OpenSoba client: %v", err)
 		}
@@ -914,7 +914,7 @@ func (a *Agent) listenAndServeGRPC() error {
 	// TODO(agentless): rather than asserting the concrete type of delegate, we
 	// should add a method to the Delegate interface to build a ConfigSource.
 	var cfg xds.ProxyConfigSource = localproxycfg.NewConfigSource(a.proxyConfig)
-	if server, ok := a.delegate.(*consul.Server); ok {
+	if server, ok := a.delegate.(*sabo.Server); ok {
 		catalogCfg := catalogproxycfg.NewConfigSource(catalogproxycfg.Config{
 			NodeName:          a.config.NodeName,
 			LocalState:        a.State,
@@ -1327,8 +1327,8 @@ func (a *Agent) reloadWatches(cfg *config.RuntimeConfig) error {
 
 // newConsulConfig translates a RuntimeConfig into a consul.Config.
 // TODO: move this function to a different file, maybe config.go
-func newConsulConfig(runtimeCfg *config.RuntimeConfig, logger hclog.Logger) (*consul.Config, error) {
-	cfg := consul.DefaultConfig()
+func newConsulConfig(runtimeCfg *config.RuntimeConfig, logger hclog.Logger) (*sabo.Config, error) {
+	cfg := sabo.DefaultConfig()
 
 	// This is set when the agent starts up
 	cfg.NodeID = runtimeCfg.NodeID
@@ -1551,7 +1551,7 @@ func newConsulConfig(runtimeCfg *config.RuntimeConfig, logger hclog.Logger) (*co
 
 	// Duplicate our own serf config once to make sure that the duplication
 	// function does not drift.
-	cfg.SerfLANConfig = consul.CloneSerfLANConfig(cfg.SerfLANConfig)
+	cfg.SerfLANConfig = sabo.CloneSerfLANConfig(cfg.SerfLANConfig)
 
 	cfg.PeeringEnabled = runtimeCfg.PeeringEnabled
 	cfg.PeeringTestAllowPeerRegistrations = runtimeCfg.PeeringTestAllowPeerRegistrations
@@ -1573,12 +1573,12 @@ func newConsulConfig(runtimeCfg *config.RuntimeConfig, logger hclog.Logger) (*co
 }
 
 // Setup the serf and memberlist config for any defined network segments.
-func segmentConfig(config *config.RuntimeConfig) ([]consul.NetworkSegment, error) {
-	var segments []consul.NetworkSegment
+func segmentConfig(config *config.RuntimeConfig) ([]sabo.NetworkSegment, error) {
+	var segments []sabo.NetworkSegment
 
 	for _, s := range config.Segments {
 		// TODO: use consul.CloneSerfLANConfig(config.SerfLANConfig) here?
-		serfConf := consul.DefaultConfig().SerfLANConfig
+		serfConf := sabo.DefaultConfig().SerfLANConfig
 
 		serfConf.MemberlistConfig.BindAddr = s.Bind.IP.String()
 		serfConf.MemberlistConfig.BindPort = s.Bind.Port
@@ -1604,7 +1604,7 @@ func segmentConfig(config *config.RuntimeConfig) ([]consul.NetworkSegment, error
 			}
 		}
 
-		segments = append(segments, consul.NetworkSegment{
+		segments = append(segments, sabo.NetworkSegment{
 			Name:       s.Name,
 			Bind:       serfConf.MemberlistConfig.BindAddr,
 			Advertise:  serfConf.MemberlistConfig.AdvertiseAddr,
@@ -1622,7 +1622,7 @@ func segmentConfig(config *config.RuntimeConfig) ([]consul.NetworkSegment, error
 // name. This allows overwriting handlers for the golang net/rpc
 // service which does not allow this.
 func (a *Agent) registerEndpoint(name string, handler interface{}) error {
-	srv, ok := a.delegate.(*consul.Server)
+	srv, ok := a.delegate.(*sabo.Server)
 	if !ok {
 		panic("agent must be a server")
 	}
@@ -1646,7 +1646,7 @@ func (a *Agent) RPC(ctx context.Context, method string, args interface{}, reply 
 	}
 
 	// audit log only on consul clients
-	_, ok := a.delegate.(*consul.Client)
+	_, ok := a.delegate.(*sabo.Client)
 	if ok {
 		a.writeAuditRPCEvent(method, "OperationStart")
 	}
@@ -1749,7 +1749,7 @@ func (a *Agent) ShutdownAgent() error {
 	var err error
 	if a.delegate != nil {
 		err = a.delegate.Shutdown()
-		if _, ok := a.delegate.(*consul.Server); ok {
+		if _, ok := a.delegate.(*sabo.Server); ok {
 			a.logger.Info("consul server down")
 		} else {
 			a.logger.Info("consul client down")
@@ -1831,7 +1831,7 @@ func (a *Agent) JoinLAN(addrs []string, entMeta *acl.EnterpriseMeta) (n int, err
 // JoinWAN is used to have the agent join a WAN cluster
 func (a *Agent) JoinWAN(addrs []string) (n int, err error) {
 	a.logger.Info("(WAN) joining", "wan_addresses", addrs)
-	if srv, ok := a.delegate.(*consul.Server); ok {
+	if srv, ok := a.delegate.(*sabo.Server); ok {
 		n, err = srv.JoinWAN(addrs)
 	} else {
 		err = fmt.Errorf("Must be a server to join WAN cluster")
@@ -1851,7 +1851,7 @@ func (a *Agent) JoinWAN(addrs []string) (n int, err error) {
 // when federation state replication ships back at least one primary mesh
 // gateway (not via fallback config).
 func (a *Agent) PrimaryMeshGatewayAddressesReadyCh() <-chan struct{} {
-	if srv, ok := a.delegate.(*consul.Server); ok {
+	if srv, ok := a.delegate.(*sabo.Server); ok {
 		return srv.PrimaryMeshGatewayAddressesReadyCh()
 	}
 	return nil
@@ -1859,7 +1859,7 @@ func (a *Agent) PrimaryMeshGatewayAddressesReadyCh() <-chan struct{} {
 
 // PickRandomMeshGatewaySuitableForDialing is a convenience function used for writing tests.
 func (a *Agent) PickRandomMeshGatewaySuitableForDialing(dc string) string {
-	if srv, ok := a.delegate.(*consul.Server); ok {
+	if srv, ok := a.delegate.(*sabo.Server); ok {
 		return srv.PickRandomMeshGatewaySuitableForDialing(dc)
 	}
 	return ""
@@ -1868,7 +1868,7 @@ func (a *Agent) PickRandomMeshGatewaySuitableForDialing(dc string) string {
 // RefreshPrimaryGatewayFallbackAddresses is used to update the list of current
 // fallback addresses for locating mesh gateways in the primary datacenter.
 func (a *Agent) RefreshPrimaryGatewayFallbackAddresses(addrs []string) error {
-	if srv, ok := a.delegate.(*consul.Server); ok {
+	if srv, ok := a.delegate.(*sabo.Server); ok {
 		srv.RefreshPrimaryGatewayFallbackAddresses(addrs)
 		return nil
 	}
@@ -1893,7 +1893,7 @@ func (a *Agent) ForceLeave(node string, prune bool, entMeta *acl.EnterpriseMeta)
 func (a *Agent) ForceLeaveWAN(node string, prune bool, entMeta *acl.EnterpriseMeta) error {
 	a.logger.Info("(WAN) Force leaving node", "node", node)
 
-	srv, ok := a.delegate.(*consul.Server)
+	srv, ok := a.delegate.(*sabo.Server)
 	if !ok {
 		return fmt.Errorf("Must be a server to force-leave a node from the WAN cluster")
 	}
@@ -1926,13 +1926,13 @@ func (a *Agent) LANMembersInAgentPartition() []serf.Member {
 // - all segments
 //
 // This is limited to segments and partitions that the node is a member of.
-func (a *Agent) LANMembers(f consul.LANMemberFilter) ([]serf.Member, error) {
+func (a *Agent) LANMembers(f sabo.LANMemberFilter) ([]serf.Member, error) {
 	return a.delegate.LANMembers(f)
 }
 
 // WANMembers is used to retrieve the WAN members
 func (a *Agent) WANMembers() []serf.Member {
-	if srv, ok := a.delegate.(*consul.Server); ok {
+	if srv, ok := a.delegate.(*sabo.Server); ok {
 		return srv.WANMembers()
 	}
 	return nil
@@ -2013,7 +2013,7 @@ OUTER:
 		select {
 		case <-time.After(intv):
 			members := a.LANMembersInAgentPartition()
-			grok, err := consul.CanServersUnderstandProtocol(members, 3)
+			grok, err := sabo.CanServersUnderstandProtocol(members, 3)
 			if err != nil {
 				a.logger.Error("Failed to check servers", "error", err)
 				continue
@@ -4259,8 +4259,8 @@ func (a *Agent) reloadConfigInternal(newCfg *config.RuntimeConfig) error {
 		return err
 	}
 
-	cc := consul.ReloadableConfig{
-		RequestLimits: &consul.RequestLimits{
+	cc := sabo.ReloadableConfig{
+		RequestLimits: &sabo.RequestLimits{
 			Mode:      newCfg.RequestLimitsMode,
 			ReadRate:  newCfg.RequestLimitsReadRate,
 			WriteRate: newCfg.RequestLimitsWriteRate,
@@ -4275,8 +4275,8 @@ func (a *Agent) reloadConfigInternal(newCfg *config.RuntimeConfig) error {
 		HeartbeatTimeout:      newCfg.ConsulRaftHeartbeatTimeout,
 		ElectionTimeout:       newCfg.ConsulRaftElectionTimeout,
 		RaftTrailingLogs:      newCfg.RaftTrailingLogs,
-		Reporting: consul.Reporting{
-			License: consul.License{
+		Reporting: sabo.Reporting{
+			License: sabo.License{
 				Enabled: newCfg.Reporting.License.Enabled,
 			},
 		},
@@ -4561,7 +4561,7 @@ func (a *Agent) proxyDataSources() proxycfg.DataSources {
 		ExportedPeeredServices:          proxycfgglue.CacheExportedPeeredServices(a.cache),
 	}
 
-	if server, ok := a.delegate.(*consul.Server); ok {
+	if server, ok := a.delegate.(*sabo.Server); ok {
 		deps := proxycfgglue.ServerDataSourceDeps{
 			Datacenter:     a.config.Datacenter,
 			EventPublisher: a.baseDeps.EventPublisher,
@@ -4601,7 +4601,7 @@ func (a *Agent) proxyDataSources() proxycfg.DataSources {
 // persistServerMetadata periodically writes a server's metadata to a file
 // in the configured data directory.
 func (a *Agent) persistServerMetadata() {
-	file := filepath.Join(a.config.DataDir, consul.ServerMetadataFile)
+	file := filepath.Join(a.config.DataDir, sabo.ServerMetadataFile)
 
 	// Create a timer with no initial tick to allow metadata to be written immediately.
 	t := time.NewTimer(0)
@@ -4613,13 +4613,13 @@ func (a *Agent) persistServerMetadata() {
 			// Reset the timer to the larger periodic interval.
 			t.Reset(1 * time.Hour)
 
-			f, err := consul.OpenServerMetadata(file)
+			f, err := sabo.OpenServerMetadata(file)
 			if err != nil {
 				a.logger.Error("failed to open existing server metadata", "error", err)
 				continue
 			}
 
-			if err := consul.WriteServerMetadata(f); err != nil {
+			if err := sabo.WriteServerMetadata(f); err != nil {
 				f.Close()
 				a.logger.Error("failed to write server metadata", "error", err)
 				continue
@@ -4641,8 +4641,8 @@ func (a *Agent) persistServerMetadata() {
 //
 // Example: if the server recorded a last seen timestamp of now-7d, and we configure a max age
 // of 3d, then we should prevent the server from rejoining.
-func (a *Agent) checkServerLastSeen(readFn consul.ServerMetadataReadFunc) error {
-	filename := filepath.Join(a.config.DataDir, consul.ServerMetadataFile)
+func (a *Agent) checkServerLastSeen(readFn sabo.ServerMetadataReadFunc) error {
+	filename := filepath.Join(a.config.DataDir, sabo.ServerMetadataFile)
 
 	// Read server metadata file.
 	md, err := readFn(filename)

@@ -17,10 +17,10 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
 	"github.com/opensoba/opensoba/agent/grpc-middleware/testutil/testservice"
 	"github.com/opensoba/opensoba/agent/metadata"
 	"github.com/opensoba/opensoba/agent/pool"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/tlsutil"
 )
 
@@ -98,10 +98,10 @@ func newTestServer(t *testing.T, logger hclog.Logger, name, dc string, tlsConf *
 	}
 }
 
-// fakeRPCListener mimics agent/consul.Server.listen to handle the RPCType byte.
+// fakeRPCListener mimics agent/sabo.Server.listen to handle the RPCType byte.
 // In the future we should be able to refactor Server and extract this RPC
 // handling logic so that we don't need to use a fake.
-// For now, since this logic is in agent/consul, we can't easily use Server.listen
+// For now, since this logic is in agent/sabo, we can't easily use Server.listen
 // so we fake it.
 type fakeRPCListener struct {
 	t                   *testing.T

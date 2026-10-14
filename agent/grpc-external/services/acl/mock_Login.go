@@ -3,7 +3,7 @@
 package acl
 
 import (
-	authmethod "github.com/opensoba/opensoba/agent/consul/authmethod"
+	authmethod "github.com/opensoba/opensoba/agent/sabo/authmethod"
 	mock "github.com/stretchr/testify/mock"
 
 	structs "github.com/opensoba/opensoba/agent/structs"

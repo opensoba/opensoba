@@ -31,8 +31,8 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/cache"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
-	"github.com/opensoba/opensoba/agent/consul/rate"
+	"github.com/opensoba/opensoba/agent/sabo"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/uiserver"
 	"github.com/opensoba/opensoba/api"
@@ -314,7 +314,7 @@ func withRemoteAddrHandler(next http.Handler) http.Handler {
 		addrPort, err := netip.ParseAddrPort(req.RemoteAddr)
 		if err == nil {
 			remoteAddr := net.TCPAddrFromAddrPort(addrPort)
-			ctx := consul.ContextWithRemoteAddr(req.Context(), remoteAddr)
+			ctx := sabo.ContextWithRemoteAddr(req.Context(), remoteAddr)
 			req = req.WithContext(ctx)
 		}
 		next.ServeHTTP(resp, req)
@@ -416,7 +416,7 @@ func (s *HTTPHandlers) wrap(handler endpoint, methods []string) http.HandlerFunc
 			}
 
 			// Connect CA rate limiter.
-			if err.Error() == consul.ErrRateLimited.Error() {
+			if err.Error() == sabo.ErrRateLimited.Error() {
 				return true
 			}
 

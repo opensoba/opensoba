@@ -91,14 +91,14 @@ on the multiplexed RPC port ([`ports.server`]).
 
 The leader's storage backend serializes the operation to protobuf and applies it
 to the Raft log. As we need to share the Raft log with the old state store, we go
-through the [`consul.raftHandle`](../../agent/consul/raft_handle.go) and
-[`consul.Server`](../../agent/consul/server/server.go) which applies a msgpack
+through the [`consul.raftHandle`](../../agent/sabo/raft_handle.go) and
+[`consul.Server`](../../agent/sabo/server/server.go) which applies a msgpack
 envelope and type byte prefix.
 
 #### Step 6
 
 Raft consensus happens! Once the log has been committed, it is applied to the
-[FSM](../../agent/consul/fsm/fsm.go) which calls the storage backend's `Apply`
+[FSM](../../agent/sabo/fsm/fsm.go) which calls the storage backend's `Apply`
 method to apply the protobuf-encoded operation to the [`inmem.Store`].
 
 [`inmem.Store`]: ../../internal/storage/inmem/store.go

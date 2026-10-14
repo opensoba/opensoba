@@ -13,8 +13,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
 	agentmiddleware "github.com/opensoba/opensoba/agent/grpc-middleware"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/tlsutil"
 )
 

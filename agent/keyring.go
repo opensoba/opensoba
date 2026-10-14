@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 )
 
@@ -26,7 +26,7 @@ const (
 )
 
 // setupKeyrings in config.SerfLANConfig and config.SerfWANConfig.
-func setupKeyrings(config *consul.Config, rtConfig *config.RuntimeConfig, logger hclog.Logger) error {
+func setupKeyrings(config *sabo.Config, rtConfig *config.RuntimeConfig, logger hclog.Logger) error {
 	// First set up the LAN and WAN keyrings.
 	if err := setupBaseKeyrings(config, rtConfig, logger); err != nil {
 		return err
@@ -54,7 +54,7 @@ func setupKeyrings(config *consul.Config, rtConfig *config.RuntimeConfig, logger
 }
 
 // setupBaseKeyrings configures the LAN and WAN keyrings.
-func setupBaseKeyrings(config *consul.Config, rtConfig *config.RuntimeConfig, logger hclog.Logger) error {
+func setupBaseKeyrings(config *sabo.Config, rtConfig *config.RuntimeConfig, logger hclog.Logger) error {
 	// If the keyring file is disabled then just poke the provided key
 	// into the in-memory keyring.
 	federationEnabled := config.SerfWANConfig != nil

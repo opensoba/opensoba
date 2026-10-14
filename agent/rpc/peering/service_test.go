@@ -28,10 +28,6 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul"
-	"github.com/opensoba/opensoba/agent/consul/rate"
-	"github.com/opensoba/opensoba/agent/consul/state"
-	"github.com/opensoba/opensoba/agent/consul/stream"
 	external "github.com/opensoba/opensoba/agent/grpc-external"
 	"github.com/opensoba/opensoba/agent/grpc-external/limiter"
 	grpc "github.com/opensoba/opensoba/agent/grpc-internal"
@@ -42,6 +38,10 @@ import (
 	"github.com/opensoba/opensoba/agent/router"
 	"github.com/opensoba/opensoba/agent/rpc/middleware"
 	"github.com/opensoba/opensoba/agent/rpc/peering"
+	"github.com/opensoba/opensoba/agent/sabo"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
+	"github.com/opensoba/opensoba/agent/sabo/state"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/lib"
@@ -81,7 +81,7 @@ func TestPeeringService_GenerateToken(t *testing.T) {
 	require.NoError(t, os.WriteFile(cafile, []byte(ca), 0600))
 
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(c *consul.Config) {
+	s := newTestServer(t, func(c *sabo.Config) {
 		c.SerfLANConfig.MemberlistConfig.AdvertiseAddr = "127.0.0.1"
 		c.TLSConfig.GRPC.CAFile = cafile
 		c.DataDir = dir
@@ -193,7 +193,7 @@ func TestPeeringService_GenerateTokenExternalAddress(t *testing.T) {
 	require.NoError(t, os.WriteFile(cafile, []byte(ca), 0600))
 
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(c *consul.Config) {
+	s := newTestServer(t, func(c *sabo.Config) {
 		c.SerfLANConfig.MemberlistConfig.AdvertiseAddr = "127.0.0.1"
 		c.TLSConfig.GRPC.CAFile = cafile
 		c.DataDir = dir
@@ -225,7 +225,7 @@ func TestPeeringService_GenerateTokenExternalAddress(t *testing.T) {
 
 func TestPeeringService_GenerateToken_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -415,14 +415,14 @@ func TestPeeringService_Establish_serverNameConflict(t *testing.T) {
 
 func TestPeeringService_Establish(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s1 := newTestServer(t, func(conf *consul.Config) {
+	s1 := newTestServer(t, func(conf *sabo.Config) {
 		conf.NodeName = "s1"
 		conf.Datacenter = "test-dc1"
 		conf.PrimaryDatacenter = "test-dc1"
 	})
 	client1 := pbpeering.NewPeeringServiceClient(s1.ClientConn(t))
 
-	s2 := newTestServer(t, func(conf *consul.Config) {
+	s2 := newTestServer(t, func(conf *sabo.Config) {
 		conf.NodeName = "s2"
 		conf.Datacenter = "dc2"
 		conf.PrimaryDatacenter = "dc2"
@@ -490,12 +490,12 @@ func TestPeeringService_Establish_ThroughMeshGateway(t *testing.T) {
 	// This test is timing-sensitive, must not be run in parallel.
 	// t.Parallel()
 
-	acceptor := newTestServer(t, func(conf *consul.Config) {
+	acceptor := newTestServer(t, func(conf *sabo.Config) {
 		conf.NodeName = "acceptor"
 	})
 	acceptorClient := pbpeering.NewPeeringServiceClient(acceptor.ClientConn(t))
 
-	dialer := newTestServer(t, func(conf *consul.Config) {
+	dialer := newTestServer(t, func(conf *sabo.Config) {
 		conf.NodeName = "dialer"
 		conf.Datacenter = "dc2"
 		conf.PrimaryDatacenter = "dc2"
@@ -678,7 +678,7 @@ func TestPeeringService_Establish_ACLEnforcement(t *testing.T) {
 	validTokenB64 := base64.StdEncoding.EncodeToString(validTokenJSON)
 
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -799,7 +799,7 @@ func TestPeeringService_Read(t *testing.T) {
 
 func TestPeeringService_Read_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -976,7 +976,7 @@ func TestPeeringService_Delete(t *testing.T) {
 
 func TestPeeringService_Delete_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -1150,7 +1150,7 @@ func TestPeeringService_List(t *testing.T) {
 
 func TestPeeringService_List_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -1299,7 +1299,7 @@ func TestPeeringService_TrustBundleRead(t *testing.T) {
 
 func TestPeeringService_TrustBundleRead_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -1534,7 +1534,7 @@ func TestPeeringService_validatePeer(t *testing.T) {
 		require.NotEmpty(t, resp)
 	})
 
-	s2 := newTestServer(t, func(conf *consul.Config) {
+	s2 := newTestServer(t, func(conf *sabo.Config) {
 		conf.Datacenter = "dc2"
 		conf.PrimaryDatacenter = "dc2"
 	})
@@ -1582,7 +1582,7 @@ func TestPeeringService_validatePeer(t *testing.T) {
 // Test RPC endpoint responses when peering is disabled. They should all return an error.
 func TestPeeringService_PeeringDisabled(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(c *consul.Config) { c.PeeringEnabled = false })
+	s := newTestServer(t, func(c *sabo.Config) { c.PeeringEnabled = false })
 	client := pbpeering.NewPeeringServiceClient(s.ClientConn(t))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -1642,7 +1642,7 @@ func TestPeeringService_PeeringDisabled(t *testing.T) {
 
 func TestPeeringService_TrustBundleListByService_ACLEnforcement(t *testing.T) {
 	// TODO(peering): see note on newTestServer, refactor to not use this
-	s := newTestServer(t, func(conf *consul.Config) {
+	s := newTestServer(t, func(conf *sabo.Config) {
 		conf.ACLsEnabled = true
 		conf.ACLResolverSettings.ACLDefaultPolicy = acl.PolicyDeny
 	})
@@ -1756,12 +1756,12 @@ func TestPeeringService_TrustBundleListByService_ACLEnforcement(t *testing.T) {
 }
 
 // newTestServer is copied from partition/service_test.go, with the addition of certs/cas.
-// TODO(peering): these are endpoint tests and should live in the agent/consul
+// TODO(peering): these are endpoint tests and should live in the agent/sabo
 // package. Instead, these can be written around a mock client (see testing.go)
 // and a mock backend (future)
-func newTestServer(t *testing.T, cb func(conf *consul.Config)) testingServer {
+func newTestServer(t *testing.T, cb func(conf *sabo.Config)) testingServer {
 	t.Helper()
-	conf := consul.DefaultConfig()
+	conf := sabo.DefaultConfig()
 	dir := testutil.TempDir(t, "consul")
 
 	ports := freeport.GetN(t, 4) // {rpc, serf_lan, serf_wan, grpc}
@@ -1819,7 +1819,7 @@ func newTestServer(t *testing.T, cb func(conf *consul.Config)) testingServer {
 	deps := newDefaultDeps(t, conf)
 	externalGRPCServer := external.NewServer(deps.Logger, nil, deps.TLSConfigurator, rate.NullRequestLimitsHandler(), keepalive.ServerParameters{})
 
-	server, err := consul.NewServer(conf, deps, externalGRPCServer, nil, deps.Logger)
+	server, err := sabo.NewServer(conf, deps, externalGRPCServer, nil, deps.Logger)
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, server.Shutdown())
@@ -1886,7 +1886,7 @@ func newServerDialer(serverAddr string) func(context.Context, string) (net.Conn,
 }
 
 type testingServer struct {
-	Server         *consul.Server
+	Server         *sabo.Server
 	PublicGRPCAddr string
 }
 
@@ -1901,8 +1901,8 @@ func newConfig(t *testing.T, dc, agentType string) resolver.Config {
 	}
 }
 
-// TODO(peering): remove duplication between this and agent/consul tests
-func newDefaultDeps(t *testing.T, c *consul.Config) consul.Deps {
+// TODO(peering): remove duplication between this and agent/sabo tests
+func newDefaultDeps(t *testing.T, c *sabo.Config) sabo.Deps {
 	t.Helper()
 
 	logger := hclog.NewInterceptLogger(&hclog.LoggerOptions{
@@ -1932,7 +1932,7 @@ func newDefaultDeps(t *testing.T, c *consul.Config) consul.Deps {
 	balancerBuilder.Register()
 	t.Cleanup(balancerBuilder.Deregister)
 
-	return consul.Deps{
+	return sabo.Deps{
 		EventPublisher:  stream.NewEventPublisher(10 * time.Second),
 		Logger:          logger,
 		TLSConfigurator: tls,

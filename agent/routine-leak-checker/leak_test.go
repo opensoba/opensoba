@@ -91,7 +91,7 @@ func TestAgentLeaks_Server(t *testing.T) {
 
 	/*
 		Eventually go routine leak checking should be moved into other packages such as the agent
-		and agent/consul packages. However there are too many leaks for the test to run properly.
+		and agent/sabo packages. However there are too many leaks for the test to run properly.
 
 		Many of the leaks are due to blocking queries from clients to servers being uncancellable.
 		Until we can move away from net/rpc and fix some of the other issues we don't want a

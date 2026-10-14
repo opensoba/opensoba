@@ -17,8 +17,8 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/metadata"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/logging"
@@ -187,7 +187,7 @@ func AgentMembersMapAddrVer(s *HTTPHandlers, req *http.Request) (map[string]stri
 	if err := s.parseEntMetaPartition(req, entMeta); err != nil {
 		return nil, err
 	}
-	filter := consul.LANMemberFilter{
+	filter := sabo.LANMemberFilter{
 		Partition: entMeta.PartitionOrDefault(),
 	}
 

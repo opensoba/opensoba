@@ -16,7 +16,7 @@ import (
 	"github.com/opensoba/opensoba/testrpc"
 
 	// activate testing auth method
-	_ "github.com/opensoba/opensoba/agent/consul/authmethod/testauth"
+	_ "github.com/opensoba/opensoba/agent/sabo/authmethod/testauth"
 )
 
 func TestBindingRuleDeleteCommand_noTabs(t *testing.T) {

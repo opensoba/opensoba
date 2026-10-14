@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/raft"
 
 	"github.com/opensoba/opensoba/agent/checks"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/version"
 )
 
@@ -18,7 +18,7 @@ import (
 // This needs to be merged first in the head.
 // TODO: return a LiteralSource (no decoding) instead of a FileSource
 func DefaultSource() Source {
-	cfg := consul.DefaultConfig()
+	cfg := sabo.DefaultConfig()
 	serfLAN := cfg.SerfLANConfig.MemberlistConfig
 	serfWAN := cfg.SerfWANConfig.MemberlistConfig
 
@@ -38,7 +38,7 @@ func DefaultSource() Source {
 		check_output_max_size = ` + strconv.Itoa(checks.DefaultBufSize) + `
 		check_update_interval = "5m"
 		client_addr = "127.0.0.1"
-		datacenter = "` + consul.DefaultDC + `"
+		datacenter = "` + sabo.DefaultDC + `"
 		default_query_time = "300s"
 		disable_coordinates = false
 		disable_host_node_id = true
@@ -50,7 +50,7 @@ func DefaultSource() Source {
 		log_level = "INFO"
 		max_query_time = "600s"
 		primary_gateways_interval = "30s"
-		protocol = ` + strconv.Itoa(consul.DefaultRPCProtocol) + `
+		protocol = ` + strconv.Itoa(sabo.DefaultRPCProtocol) + `
 		retry_interval = "30s"
 		retry_interval_wan = "30s"
 
@@ -68,7 +68,7 @@ func DefaultSource() Source {
 		}
 
 		// TODO (slackpad) - Until #3744 is done, we need to keep these
-		// in sync with agent/consul/config.go.
+		// in sync with agent/sabo/config.go.
 		autopilot = {
 			cleanup_dead_servers = true
 			last_contact_threshold = "200ms"
@@ -116,7 +116,7 @@ func DefaultSource() Source {
 		}
 		performance = {
 			leave_drain_time = "5s"
-			raft_multiplier = ` + strconv.Itoa(int(consul.DefaultRaftMultiplier)) + `
+			raft_multiplier = ` + strconv.Itoa(int(sabo.DefaultRaftMultiplier)) + `
 			rpc_hold_timeout = "7s"
 			grpc_keepalive_interval = "30s"
 			grpc_keepalive_timeout = "20s"
@@ -126,9 +126,9 @@ func DefaultSource() Source {
 			http = 8500
 			https = -1
 			grpc = -1
-			serf_lan = ` + strconv.Itoa(consul.DefaultLANSerfPort) + `
-			serf_wan = ` + strconv.Itoa(consul.DefaultWANSerfPort) + `
-			server = ` + strconv.Itoa(consul.DefaultRPCPort) + `
+			serf_lan = ` + strconv.Itoa(sabo.DefaultLANSerfPort) + `
+			serf_wan = ` + strconv.Itoa(sabo.DefaultWANSerfPort) + `
+			server = ` + strconv.Itoa(sabo.DefaultRPCPort) + `
 			proxy_min_port = 20000
 			proxy_max_port = 20255
 			sidecar_min_port = 21000
@@ -276,7 +276,7 @@ func defaultVersionSource() Source {
 // This should be merged in the tail since these values are not user configurable.
 // TODO: return a LiteralSource (no decoding) instead of a FileSource
 func DefaultConsulSource() Source {
-	cfg := consul.DefaultConfig()
+	cfg := sabo.DefaultConfig()
 	raft := cfg.RaftConfig
 	return FileSource{
 		Name:   "consul",

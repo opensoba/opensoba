@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/lib"
 )
@@ -305,7 +305,7 @@ func (m *Manager) generateNewLeaf(
 
 	reply, err := m.certSigner.SignCert(context.Background(), &args)
 	if err != nil {
-		if err.Error() == consul.ErrRateLimited.Error() {
+		if err.Error() == sabo.ErrRateLimited.Error() {
 			if firstTime {
 				// This was a first fetch - we have no good value in cache. In this case
 				// we just return the error to the caller rather than rely on surprising

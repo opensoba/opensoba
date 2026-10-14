@@ -14,10 +14,10 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/opensoba/opensoba/agent/cache"
-	"github.com/opensoba/opensoba/agent/consul"
-	consulrate "github.com/opensoba/opensoba/agent/consul/rate"
 	"github.com/opensoba/opensoba/agent/dns"
 	hcpconfig "github.com/opensoba/opensoba/agent/hcp/config"
+	"github.com/opensoba/opensoba/agent/sabo"
+	consulrate "github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/api"
@@ -85,7 +85,7 @@ type RuntimeConfig struct {
 
 	ACLTokens token.Config
 
-	ACLResolverSettings consul.ACLResolverSettings
+	ACLResolverSettings sabo.ACLResolverSettings
 
 	// ACLEnableKeyListPolicy is used to opt-in to the "list" policy added to
 	// KV ACLs in Consul 1.0.
@@ -957,7 +957,7 @@ type RuntimeConfig struct {
 	// hcl: protocol = int
 	RPCProtocol int
 
-	RPCConfig consul.RPCConfig
+	RPCConfig sabo.RPCConfig
 
 	// UseStreamingBackend enables streaming as a replacement for agent/cache
 	// in the client agent for endpoints which support streaming.
@@ -996,7 +996,7 @@ type RuntimeConfig struct {
 	// hcl: raft_trailing_logs = int
 	RaftTrailingLogs int
 
-	RaftLogStoreConfig consul.RaftLogStoreConfig
+	RaftLogStoreConfig sabo.RaftLogStoreConfig
 
 	// ReconnectTimeoutLAN specifies the amount of time to wait to reconnect with
 	// another agent before deciding it's permanently gone. This can be used to

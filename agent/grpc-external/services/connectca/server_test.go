@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 
-	"github.com/opensoba/opensoba/agent/consul/state"
-	"github.com/opensoba/opensoba/agent/consul/stream"
 	"github.com/opensoba/opensoba/agent/grpc-external/testutils"
+	"github.com/opensoba/opensoba/agent/sabo/state"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/proto-public/pbconnectca"
 )

@@ -28,9 +28,9 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/cache"
 	"github.com/opensoba/opensoba/agent/checks"
-	"github.com/opensoba/opensoba/agent/consul"
-	consulrate "github.com/opensoba/opensoba/agent/consul/rate"
 	hcpconfig "github.com/opensoba/opensoba/agent/hcp/config"
+	"github.com/opensoba/opensoba/agent/sabo"
+	consulrate "github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/lib"
@@ -5898,7 +5898,7 @@ func TestLoad_IntegrationWithFlags(t *testing.T) {
 		hcl:  []string{``},
 		expected: func(rt *RuntimeConfig) {
 			rt.DataDir = dataDir
-			rt.RaftLogStoreConfig.Backend = consul.LogStoreBackendBoltDB
+			rt.RaftLogStoreConfig.Backend = sabo.LogStoreBackendBoltDB
 			rt.RaftLogStoreConfig.WAL.SegmentSize = 64 * 1024 * 1024
 		},
 	})
@@ -5921,7 +5921,7 @@ func TestLoad_IntegrationWithFlags(t *testing.T) {
 		`},
 		expected: func(rt *RuntimeConfig) {
 			rt.DataDir = dataDir
-			rt.RaftLogStoreConfig.Backend = consul.LogStoreBackendBoltDB
+			rt.RaftLogStoreConfig.Backend = sabo.LogStoreBackendBoltDB
 			rt.RaftLogStoreConfig.WAL.SegmentSize = 64 * 1024 * 1024
 		},
 	})
@@ -6022,7 +6022,7 @@ func TestLoad_IntegrationWithFlags(t *testing.T) {
 			rt.DataDir = dataDir
 			// The logstore settings from first file should not be overridden by a
 			// later file with nothing to say about logstores!
-			rt.RaftLogStoreConfig.Backend = consul.LogStoreBackendWAL
+			rt.RaftLogStoreConfig.Backend = sabo.LogStoreBackendWAL
 			rt.EnableDebug = true
 		},
 	})
@@ -6182,7 +6182,7 @@ func TestLoad_FullConfig(t *testing.T) {
 
 		ACLsEnabled:       true,
 		PrimaryDatacenter: "ejtmd43d",
-		ACLResolverSettings: consul.ACLResolverSettings{
+		ACLResolverSettings: sabo.ACLResolverSettings{
 			ACLsEnabled:      true,
 			Datacenter:       "rzo029wg",
 			NodeName:         "otlLxGaI",
@@ -6489,7 +6489,7 @@ func TestLoad_FullConfig(t *testing.T) {
 		RetryJoinMaxAttemptsLAN: 913,
 		RetryJoinMaxAttemptsWAN: 23160,
 		RetryJoinWAN:            []string{"PFsR02Ye", "rJdQIhER", "EbFSc3nA", "kwXTh623"},
-		RPCConfig:               consul.RPCConfig{EnableStreaming: true},
+		RPCConfig:               sabo.RPCConfig{EnableStreaming: true},
 		SegmentLimit:            123,
 		SerfPortLAN:             8301,
 		SerfPortWAN:             8302,
@@ -6917,15 +6917,15 @@ func TestLoad_FullConfig(t *testing.T) {
 			},
 		},
 		XDSUpdateRateLimit: 9526.2,
-		RaftLogStoreConfig: consul.RaftLogStoreConfig{
-			Backend:         consul.LogStoreBackendWAL,
+		RaftLogStoreConfig: sabo.RaftLogStoreConfig{
+			Backend:         sabo.LogStoreBackendWAL,
 			DisableLogCache: true,
-			Verification: consul.RaftLogStoreVerificationConfig{
+			Verification: sabo.RaftLogStoreVerificationConfig{
 				Enabled:  true,
 				Interval: 12345 * time.Second,
 			},
-			BoltDB: consul.RaftBoltDBConfig{NoFreelistSync: true},
-			WAL:    consul.WALConfig{SegmentSize: 15 * 1024 * 1024},
+			BoltDB: sabo.RaftBoltDBConfig{NoFreelistSync: true},
+			WAL:    sabo.WALConfig{SegmentSize: 15 * 1024 * 1024},
 		},
 		AutoReloadConfigCoalesceInterval: 1 * time.Second,
 	}

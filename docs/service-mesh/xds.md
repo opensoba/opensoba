@@ -39,11 +39,11 @@ go test ./agent/xds -update -run TestAllResourcesFromSnapshot
 The new golden files then must be **manually** inspected to ensure that the Envoy configuration was generated as expected. Tests against golden files do not assert that the configuration works as intended, but rather that it _looks_ as intended.
 
 ### Integration tests
-#### New consul-container integration tests
+#### New sabo-container integration tests
 TODO
 
 ####  Legacy bash-driven integration tests
-Updating one of these integration tests may be appropriate if fixing a bug in functionality that is tested there, or making an improvement to functionality tested there. If the new test involves significant modifications to the bash helpers you should consider using adding a `consul-container` integration test instead.
+Updating one of these integration tests may be appropriate if fixing a bug in functionality that is tested there, or making an improvement to functionality tested there. If the new test involves significant modifications to the bash helpers you should consider using adding a `sabo-container` integration test instead.
 
 For more information refer to their [documentation](test/integration/connect/envoy/).
 

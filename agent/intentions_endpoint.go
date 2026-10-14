@@ -10,7 +10,7 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	cachetype "github.com/opensoba/opensoba/agent/cache-types"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 )
 
@@ -329,7 +329,7 @@ func (s *HTTPHandlers) IntentionGetExact(resp http.ResponseWriter, req *http.Req
 	var reply structs.IndexedIntentions
 	if err := s.agent.RPC(req.Context(), "Intention.Get", &args, &reply); err != nil {
 		// We have to check the string since the RPC sheds the error type
-		if strings.Contains(err.Error(), consul.ErrIntentionNotFound.Error()) {
+		if strings.Contains(err.Error(), sabo.ErrIntentionNotFound.Error()) {
 			return nil, HTTPError{StatusCode: http.StatusNotFound, Reason: err.Error()}
 		}
 
@@ -547,7 +547,7 @@ func (s *HTTPHandlers) IntentionSpecificGet(id string, resp http.ResponseWriter,
 	var reply structs.IndexedIntentions
 	if err := s.agent.RPC(req.Context(), "Intention.Get", &args, &reply); err != nil {
 		// We have to check the string since the RPC sheds the error type
-		if err.Error() == consul.ErrIntentionNotFound.Error() {
+		if err.Error() == sabo.ErrIntentionNotFound.Error() {
 			return nil, HTTPError{StatusCode: http.StatusNotFound, Reason: err.Error()}
 		}
 

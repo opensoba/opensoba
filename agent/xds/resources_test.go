@@ -15,7 +15,7 @@ import (
 	envoy_tls_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul/discoverychain"
+	"github.com/opensoba/opensoba/agent/sabo/discoverychain"
 	"github.com/opensoba/opensoba/agent/xds/testcommon"
 	"github.com/opensoba/opensoba/envoyextensions/xdscommon"
 

@@ -39,7 +39,7 @@ Also see the [FAQ](./faq.md).
 ## Other Docs
 
 1. [Integration Tests](../test/integration/connect/envoy/README.md)
-1. [Upgrade Tests](../test/integration/consul-container/test/upgrade/README.md)
+1. [Upgrade Tests](../test/integration/sabo-container/test/upgrade/README.md)
 
 ## Important Directories
 

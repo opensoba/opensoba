@@ -146,7 +146,7 @@ function generate_rate_limit_mappings {
       flags+=("-input $path")
     done
 
-    print_run go run ${SOURCE_DIR}/internal/tools/protoc-gen-consul-rate-limit/postprocess/main.go ${flags[@]} || {
+    print_run go run ${SOURCE_DIR}/internal/tools/protoc-gen-sabo-rate-limit/postprocess/main.go ${flags[@]} || {
         err "Failed to generate gRPC rate limit mappings"
         return 1
     }

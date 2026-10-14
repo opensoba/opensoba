@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 )
 
@@ -98,7 +98,7 @@ func (s *HTTPHandlers) ConnectCAConfigurationSet(req *http.Request) (interface{}
 
 	var reply interface{}
 	err := s.agent.RPC(req.Context(), "ConnectCA.ConfigurationSet", &args, &reply)
-	if err != nil && err.Error() == consul.ErrStateReadOnly.Error() {
+	if err != nil && err.Error() == sabo.ErrStateReadOnly.Error() {
 		return nil, HTTPError{
 			StatusCode: http.StatusBadRequest,
 			Reason: "Provider State is read-only. It must be omitted" +

@@ -35,8 +35,8 @@ and sent to any active subscriptions.
 [StreamingHealthServices cache-type]: https://github.com/opensoba/opensoba/blob/main/agent/cache-types/streaming_health_services.go
 [materialized view]: https://github.com/opensoba/opensoba/blob/main/agent/submatview/materializer.go
 [SubscribeEndpoint]: https://github.com/opensoba/opensoba/blob/main/agent/grpc-internal/services/subscribe/subscribe.go
-[EventPublisher]: https://github.com/opensoba/opensoba/blob/main/agent/consul/stream/event_publisher.go
-[state.Store commits]: https://github.com/opensoba/opensoba/blob/main/agent/consul/state/memdb.go
+[EventPublisher]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/stream/event_publisher.go
+[state.Store commits]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/state/memdb.go
 
 
 ## Event Publisher

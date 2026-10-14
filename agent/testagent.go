@@ -24,7 +24,7 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/config"
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/lib"
@@ -370,7 +370,7 @@ func firstAddr(s *apiServers, protocol string) (net.Addr, error) {
 }
 
 func (a *TestAgent) SegmentAddr(name string) string {
-	if server, ok := a.Agent.delegate.(*consul.Server); ok {
+	if server, ok := a.Agent.delegate.(*sabo.Server); ok {
 		return server.LANSegmentAddr(name)
 	}
 	return ""
@@ -397,7 +397,7 @@ func (a *TestAgent) DNSDisableCompression(b bool) {
 // FIXME: this should t.Fatal on error, not panic.
 // TODO: rename to newConsulConfig
 // TODO: remove TestAgent receiver, accept a.Agent.config as an arg
-func (a *TestAgent) consulConfig() *consul.Config {
+func (a *TestAgent) consulConfig() *sabo.Config {
 	c, err := newConsulConfig(a.Agent.config, a.Agent.logger)
 	if err != nil {
 		panic(err)

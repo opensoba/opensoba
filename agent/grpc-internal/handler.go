@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 )
 
 var (

@@ -11,7 +11,7 @@ import (
 	"github.com/armon/go-metrics/prometheus"
 	"github.com/hashicorp/go-hclog"
 
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/tlsutil"
 )
 
@@ -26,8 +26,8 @@ var metricsKeyAgentTLSCertExpiry = []string{"agent", "tls", "cert", "expiry"}
 
 // tlsCertExpirationMonitor returns a CertExpirationMonitor which will
 // monitor the expiration of the certificate used for agent TLS.
-func tlsCertExpirationMonitor(c *tlsutil.Configurator, logger hclog.Logger) consul.CertExpirationMonitor {
-	return consul.CertExpirationMonitor{
+func tlsCertExpirationMonitor(c *tlsutil.Configurator, logger hclog.Logger) sabo.CertExpirationMonitor {
+	return sabo.CertExpirationMonitor{
 		Key:    metricsKeyAgentTLSCertExpiry,
 		Logger: logger,
 		Query: func() (time.Duration, time.Duration, error) {

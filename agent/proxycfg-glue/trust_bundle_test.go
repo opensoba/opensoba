@@ -12,8 +12,8 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	cachetype "github.com/opensoba/opensoba/agent/cache-types"
 
-	"github.com/opensoba/opensoba/agent/consul/state"
 	"github.com/opensoba/opensoba/agent/proxycfg"
+	"github.com/opensoba/opensoba/agent/sabo/state"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/lib"
 	"github.com/opensoba/opensoba/proto/private/pbpeering"

@@ -26,9 +26,9 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	cachetype "github.com/opensoba/opensoba/agent/cache-types"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/debug"
 	"github.com/opensoba/opensoba/agent/leafcert"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	token_store "github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/api"
@@ -601,7 +601,7 @@ func (s *HTTPHandlers) AgentMembers(resp http.ResponseWriter, req *http.Request)
 	if wan {
 		members = s.agent.WANMembers()
 	} else {
-		filter := consul.LANMemberFilter{
+		filter := sabo.LANMemberFilter{
 			Partition: entMeta.PartitionOrDefault(),
 		}
 		if segment == api.AllSegments {

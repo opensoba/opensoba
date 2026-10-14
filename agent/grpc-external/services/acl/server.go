@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/authmethod"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/proto-public/pbacl"
 )

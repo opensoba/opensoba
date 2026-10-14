@@ -14,7 +14,7 @@ import (
 
 	iamauth "github.com/hashicorp/consul-awsauth"
 	"github.com/hashicorp/go-hclog"
-	"github.com/opensoba/opensoba/agent/consul/authmethod/awsauth"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod/awsauth"
 )
 
 type AWSLogin struct {

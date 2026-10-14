@@ -124,7 +124,7 @@ function proto_tools_install {
         "${mog_version}" \
         'github.com/hashicorp/mog'
 
-    install_protoc_gen_consul_rate_limit
+    install_protoc_gen_sabo_rate_limit
 
     return 0
 }
@@ -252,9 +252,9 @@ function install_versioned_tool {
     return 0
 }
 
-function install_protoc_gen_consul_rate_limit {
-    echo "installing tool protoc-gen-consul-rate-limit from local source"
-    pushd -- "${SOURCE_DIR}/internal/tools/protoc-gen-consul-rate-limit" > /dev/null
+function install_protoc_gen_sabo_rate_limit {
+    echo "installing tool protoc-gen-sabo-rate-limit from local source"
+    pushd -- "${SOURCE_DIR}/internal/tools/protoc-gen-sabo-rate-limit" > /dev/null
     go install
     popd > /dev/null
 }

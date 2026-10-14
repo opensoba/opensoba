@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/state"
-	"github.com/opensoba/opensoba/agent/consul/stream"
+	"github.com/opensoba/opensoba/agent/sabo/state"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/proto/private/pbsubscribe"
 )

@@ -14,7 +14,7 @@ import (
 
 	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 )
 
 // ServerRateLimiterMiddleware implements a ServerInHandle function to perform

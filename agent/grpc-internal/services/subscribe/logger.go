@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/go-uuid"
 
-	"github.com/opensoba/opensoba/agent/consul/stream"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/proto/private/pbsubscribe"
 )
 

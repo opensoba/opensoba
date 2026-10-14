@@ -11,8 +11,8 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/proxycfg"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 )
@@ -27,7 +27,7 @@ func fillAgentServiceEnterpriseMeta(_ *api.AgentService, _ *acl.EnterpriseMeta) 
 func fillHealthCheckEnterpriseMeta(_ *api.HealthCheck, _ *acl.EnterpriseMeta) {}
 
 // initEnterprise is a noop stub for the func defined agent_ent.go
-func (a *Agent) initEnterprise(consulCfg *consul.Config) error {
+func (a *Agent) initEnterprise(consulCfg *sabo.Config) error {
 	return nil
 }
 
@@ -37,7 +37,7 @@ func (a *Agent) reloadEnterprise(conf *config.RuntimeConfig) error {
 }
 
 // enterpriseConsulConfig is a noop stub for the func defined in agent_ent.go
-func enterpriseConsulConfig(_ *consul.Config, _ *config.RuntimeConfig) {
+func enterpriseConsulConfig(_ *sabo.Config, _ *config.RuntimeConfig) {
 }
 
 // validateFIPSConfig is a noop stub for the func defined in agent_ent.go

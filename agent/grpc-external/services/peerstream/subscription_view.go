@@ -11,7 +11,7 @@ import (
 
 	"github.com/opensoba/opensoba/acl/resolver"
 	"github.com/opensoba/opensoba/agent/cache"
-	"github.com/opensoba/opensoba/agent/consul/stream"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/submatview"
 	"github.com/opensoba/opensoba/proto/private/pbservice"

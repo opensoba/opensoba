@@ -20,8 +20,8 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul/discoverychain"
 	"github.com/opensoba/opensoba/agent/proxycfg"
+	"github.com/opensoba/opensoba/agent/sabo/discoverychain"
 	"github.com/opensoba/opensoba/agent/structs"
 	config "github.com/opensoba/opensoba/agent/xds/config"
 )

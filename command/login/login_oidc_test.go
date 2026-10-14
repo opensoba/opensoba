@@ -20,7 +20,7 @@ import (
 // based OIDC flow rather than the bearer token flow.
 //
 // A full browser round-trip is exercised by the server side tests
-// (agent/oidc_endpoint_test.go and agent/consul/acl_oidc_test.go). Here we only
+// (agent/oidc_endpoint_test.go and agent/sabo/acl_oidc_test.go). Here we only
 // assert the dispatch: when the auth method is missing the command fails before
 // opening a browser, which makes the test hermetic.
 func TestLoginCommand_oidc(t *testing.T) {

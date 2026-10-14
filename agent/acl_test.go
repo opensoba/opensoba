@@ -17,8 +17,8 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/acl/resolver"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/local"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/lib"
@@ -136,7 +136,7 @@ func (a *TestACLAgent) Leave() error {
 func (a *TestACLAgent) LANMembersInAgentPartition() []serf.Member {
 	return nil
 }
-func (a *TestACLAgent) LANMembers(f consul.LANMemberFilter) ([]serf.Member, error) {
+func (a *TestACLAgent) LANMembers(f sabo.LANMemberFilter) ([]serf.Member, error) {
 	return nil, fmt.Errorf("Unimplemented")
 }
 func (a *TestACLAgent) AgentLocalMember() serf.Member {
@@ -160,7 +160,7 @@ func (a *TestACLAgent) Shutdown() error {
 func (a *TestACLAgent) Stats() map[string]map[string]string {
 	return nil
 }
-func (a *TestACLAgent) ReloadConfig(_ consul.ReloadableConfig) error {
+func (a *TestACLAgent) ReloadConfig(_ sabo.ReloadableConfig) error {
 	return fmt.Errorf("Unimplemented")
 }
 

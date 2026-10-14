@@ -15,8 +15,8 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/configentry"
-	"github.com/opensoba/opensoba/agent/consul/state"
 	external "github.com/opensoba/opensoba/agent/grpc-external"
+	"github.com/opensoba/opensoba/agent/sabo/state"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/xds/accesslogs"
 	"github.com/opensoba/opensoba/proto-public/pbdataplane"

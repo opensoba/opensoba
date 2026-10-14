@@ -24,10 +24,10 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/cache"
-	"github.com/opensoba/opensoba/agent/consul/state"
-	"github.com/opensoba/opensoba/agent/consul/stream"
 	"github.com/opensoba/opensoba/agent/grpc-internal/services/subscribe"
 	"github.com/opensoba/opensoba/agent/rpcclient/health"
+	"github.com/opensoba/opensoba/agent/sabo/state"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/submatview"
 	"github.com/opensoba/opensoba/proto/private/pbsubscribe"

@@ -355,10 +355,10 @@ lint/%:
 .PHONY: lint-container-test-deps
 lint-container-test-deps:
 	@echo "--> Checking container tests for bad dependencies"
-	@cd test/integration/consul-container && ( \
+	@cd test/integration/sabo-container && ( \
 		found="$$(go list -m all | grep -c '^github.com/opensoba/opensoba ')" ; \
 		if [[ "$$found" != "0" ]]; then \
-			echo "test/integration/consul-container: This project should not depend on the root consul module" >&2 ; \
+			echo "test/integration/sabo-container: This project should not depend on the root consul module" >&2 ; \
 			exit 1 ; \
 		fi \
 	)
@@ -371,7 +371,7 @@ ui: ui-docker
 ui-regen:
 	cd $(CURDIR)/ui && make && cd ..
 	rm -rf $(CURDIR)/agent/uiserver/dist
-	mv $(CURDIR)/ui/packages/consul-ui/dist $(CURDIR)/agent/uiserver/
+	mv $(CURDIR)/ui/packages/sabo-ui/dist $(CURDIR)/agent/uiserver/
 
 tools:
 	@$(SHELL) $(CURDIR)/build-support/scripts/devtools.sh
@@ -392,7 +392,7 @@ codegen-tools:
 deep-copy: codegen-tools
 	@$(SHELL) $(CURDIR)/agent/structs/deep-copy.sh
 	@$(SHELL) $(CURDIR)/agent/proxycfg/deep-copy.sh
-	@$(SHELL) $(CURDIR)/agent/consul/state/deep-copy.sh
+	@$(SHELL) $(CURDIR)/agent/sabo/state/deep-copy.sh
 	@$(SHELL) $(CURDIR)/agent/config/deep-copy.sh
 
 version:
@@ -443,7 +443,7 @@ test-envoy-integ: $(ENVOY_INTEG_DEPS)
 .PHONY: test-compat-integ
 test-compat-integ: test-compat-integ-setup
 ifeq ("$(GOTESTSUM_PATH)","")
-	@cd ./test/integration/consul-container && \
+	@cd ./test/integration/sabo-container && \
 	go test \
 		-v \
 		-timeout=30m \
@@ -454,7 +454,7 @@ ifeq ("$(GOTESTSUM_PATH)","")
 		--latest-image $(CONSUL_COMPAT_TEST_IMAGE) \
 		--latest-version latest
 else
-	@cd ./test/integration/consul-container && \
+	@cd ./test/integration/sabo-container && \
 	gotestsum \
 		--format=short-verbose \
 		--debug \
@@ -476,11 +476,11 @@ test-compat-integ-setup: dev-docker
 	@docker tag consul-dev:latest $(CONSUL_COMPAT_TEST_IMAGE):local
 	@docker run --rm -t $(CONSUL_COMPAT_TEST_IMAGE):local consul version
 	@#  'consul-envoy:target-version' is needed by compatibility integ test
-	@docker build -t consul-envoy:target-version --build-arg CONSUL_IMAGE=$(CONSUL_COMPAT_TEST_IMAGE):local --build-arg ENVOY_VERSION=${ENVOY_VERSION} -f ./test/integration/consul-container/assets/Dockerfile-consul-envoy ./test/integration/consul-container/assets
+	@docker build -t consul-envoy:target-version --build-arg CONSUL_IMAGE=$(CONSUL_COMPAT_TEST_IMAGE):local --build-arg ENVOY_VERSION=${ENVOY_VERSION} -f ./test/integration/sabo-container/assets/Dockerfile-consul-envoy ./test/integration/sabo-container/assets
 
 .PHONY: test-metrics-integ
 test-metrics-integ: test-compat-integ-setup
-	@cd ./test/integration/consul-container && \
+	@cd ./test/integration/sabo-container && \
 		go test -v -timeout=7m ./test/metrics \
 		--target-image $(CONSUL_COMPAT_TEST_IMAGE) \
 		--target-version local \
@@ -490,7 +490,7 @@ test-metrics-integ: test-compat-integ-setup
 test-connect-ca-providers:
 	@echo "Running /agent/connect/ca tests in verbose mode"
 	@go test -v ./agent/connect/ca
-	@go test -v ./agent/consul -run Vault
+	@go test -v ./agent/sabo -run Vault
 	@go test -v ./agent -run Vault
 
 .PHONY: proto

@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/auth"
 	external "github.com/opensoba/opensoba/agent/grpc-external"
+	"github.com/opensoba/opensoba/agent/sabo/auth"
 	"github.com/opensoba/opensoba/proto-public/pbacl"
 )
 

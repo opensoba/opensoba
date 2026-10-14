@@ -517,7 +517,7 @@ func (s *TestServer) WaitForServiceIntentions(t testing.TB) {
 	const fakeConfigName = "Sa4ohw5raith4si0Ohwuqu3lowiethoh"
 	retry.Run(t, func(r *retry.R) {
 		// Try to delete a non-existent service-intentions config entry. The
-		// preflightCheck call in agent/consul/config_endpoint.go will fail if
+		// preflightCheck call in agent/sabo/config_endpoint.go will fail if
 		// we aren't ready yet, vs just doing no work instead.
 		url := s.url("/v1/config/service-intentions/" + fakeConfigName)
 		resp, err := s.privilegedDelete(url)

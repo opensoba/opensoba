@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/opensoba/opensoba/agent/consul/controller/queue"
+	"github.com/opensoba/opensoba/agent/sabo/controller/queue"
 	"github.com/opensoba/opensoba/internal/resource"
 	"github.com/opensoba/opensoba/internal/storage"
 	"github.com/opensoba/opensoba/proto-public/pbresource"

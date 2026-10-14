@@ -17,10 +17,10 @@ import (
 
 	acl "github.com/opensoba/opensoba/acl"
 	resolver "github.com/opensoba/opensoba/acl/resolver"
-	"github.com/opensoba/opensoba/agent/consul/autopilotevents"
-	"github.com/opensoba/opensoba/agent/consul/stream"
 	external "github.com/opensoba/opensoba/agent/grpc-external"
 	"github.com/opensoba/opensoba/agent/grpc-external/testutils"
+	"github.com/opensoba/opensoba/agent/sabo/autopilotevents"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/proto-public/pbserverdiscovery"
 	"github.com/opensoba/opensoba/proto/private/prototest"

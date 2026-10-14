@@ -4,14 +4,14 @@ The Certificate Authority Subsystem manages a CA trust chain for issuing certifi
 services and client agents (via auto-encrypt and auto-config).
 
 The code for the Certificate Authority is in the following packages:
-1. most of the core logic is in [agent/consul/leader_connect_ca.go]
+1. most of the core logic is in [agent/sabo/leader_connect_ca.go]
 2. the providers are in [agent/connect/ca]
-3. the RPC interface is in [agent/consul/connect_ca_endpoint.go]
+3. the RPC interface is in [agent/sabo/connect_ca_endpoint.go]
 
 
-[agent/consul/leader_connect_ca.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/leader_connect_ca.go
+[agent/sabo/leader_connect_ca.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/leader_connect_ca.go
 [agent/connect/ca]: https://github.com/opensoba/opensoba/blob/main/agent/connect/ca/
-[agent/consul/connect_ca_endpoint.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/connect_ca_endpoint.go
+[agent/sabo/connect_ca_endpoint.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/connect_ca_endpoint.go
 
 
 ## Architecture

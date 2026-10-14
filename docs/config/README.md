@@ -50,9 +50,9 @@ should remove one of those ways of setting default values.
 Auto-Config is enabled by the [auto_config] field in an Agent Configuration file. It is
 implemented in a couple packages.
 
-* the server RPC endpoint is in [agent/consul/auto_config_endpoint.go]
+* the server RPC endpoint is in [agent/sabo/auto_config_endpoint.go]
 * the client that receives and applies the config is implemented in [agent/auto-config]
 
 [auto_config]: https://www.consul.io/docs/agent/config/config-files#auto_config
-[agent/consul/auto_config_endpoint.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/auto_config_endpoint.go
+[agent/sabo/auto_config_endpoint.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/auto_config_endpoint.go
 [agent/auto-config]: https://github.com/opensoba/opensoba/tree/main/agent/auto-config

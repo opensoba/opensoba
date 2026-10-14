@@ -11,7 +11,7 @@ import (
 
 	"github.com/mitchellh/cli"
 
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/command/flags"
 	"github.com/opensoba/opensoba/version"
 )
@@ -82,9 +82,9 @@ func (c *cmd) Run(args []string) int {
 		BuildDate:    buildDate,
 		FIPS:         version.GetFIPSInfo(),
 		RPC: RPCVersionInfo{
-			Default: consul.DefaultRPCProtocol,
-			Min:     int(consul.ProtocolVersionMin),
-			Max:     consul.ProtocolVersionMax,
+			Default: sabo.DefaultRPCProtocol,
+			Min:     int(sabo.ProtocolVersionMin),
+			Max:     sabo.ProtocolVersionMax,
 		},
 	})
 	if err != nil {

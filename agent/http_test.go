@@ -31,7 +31,7 @@ import (
 	"golang.org/x/net/http2"
 
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	tokenStore "github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/api"
@@ -1819,7 +1819,7 @@ func TestWithRemoteAddrHandler_ValidAddr(t *testing.T) {
 
 	assertionHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextHandlerCalled = true
-		remoteAddr, ok := consul.RemoteAddrFromContext(r.Context())
+		remoteAddr, ok := sabo.RemoteAddrFromContext(r.Context())
 		if !ok || remoteAddr.String() != expected.String() {
 			t.Errorf("remote addr not present but expected %v", expected)
 		}
@@ -1838,7 +1838,7 @@ func TestWithRemoteAddrHandler_InvalidAddr(t *testing.T) {
 
 	assertionHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextHandlerCalled = true
-		remoteAddr, ok := consul.RemoteAddrFromContext(r.Context())
+		remoteAddr, ok := sabo.RemoteAddrFromContext(r.Context())
 		if ok || remoteAddr != nil {
 			t.Errorf("remote addr %v present but not expected", remoteAddr)
 		}

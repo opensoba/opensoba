@@ -17,9 +17,9 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
 	"github.com/opensoba/opensoba/agent/grpc-middleware/testutil"
 	"github.com/opensoba/opensoba/agent/grpc-middleware/testutil/testservice"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/proto/private/prototest"
 )
 

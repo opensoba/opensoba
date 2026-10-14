@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/go-memdb"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/watch"
 	"github.com/opensoba/opensoba/agent/proxycfg"
+	"github.com/opensoba/opensoba/agent/sabo/watch"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/structs/aclfilter"
 )
@@ -48,7 +48,7 @@ type serverHealthBlocking struct {
 	watchTimeout time.Duration
 }
 
-// Notify is mostly a copy of the function in `agent/consul/health_endpoint.go` with a few minor tweaks.
+// Notify is mostly a copy of the function in `agent/sabo/health_endpoint.go` with a few minor tweaks.
 // Most notably, some query features unnecessary for mesh have been stripped out.
 func (h *serverHealthBlocking) Notify(ctx context.Context, args *structs.ServiceSpecificRequest, correlationID string, ch chan<- proxycfg.UpdateEvent) error {
 	if args.Datacenter != h.deps.Datacenter {

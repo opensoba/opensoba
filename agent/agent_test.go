@@ -50,10 +50,10 @@ import (
 	"github.com/opensoba/opensoba/agent/checks"
 	"github.com/opensoba/opensoba/agent/config"
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/hcp"
 	"github.com/opensoba/opensoba/agent/hcp/scada"
 	"github.com/opensoba/opensoba/agent/leafcert"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/api"
@@ -318,7 +318,7 @@ func TestAgent_HTTPMaxHeaderBytes(t *testing.T) {
 			require.NoError(t, err)
 
 			bd := BaseDeps{
-				Deps: consul.Deps{
+				Deps: sabo.Deps{
 					Logger:          hclog.NewInterceptLogger(nil),
 					Tokens:          new(token.Store),
 					TLSConfigurator: tlsConf,
@@ -4959,7 +4959,7 @@ LOOP:
 	}
 }
 
-// This is a mirror of a similar test in agent/consul/server_test.go
+// This is a mirror of a similar test in agent/sabo/server_test.go
 //
 // TODO(rb): implement something similar to this as a full containerized test suite with proper
 // isolation so requests can't "cheat" and bypass the mesh gateways
@@ -5547,7 +5547,7 @@ func TestAgent_ListenHTTP_MultipleAddresses(t *testing.T) {
 	tlsConf, err := tlsutil.NewConfigurator(caConfig, hclog.New(nil))
 	require.NoError(t, err)
 	bd := BaseDeps{
-		Deps: consul.Deps{
+		Deps: sabo.Deps{
 			Logger:          hclog.NewInterceptLogger(nil),
 			Tokens:          new(token.Store),
 			TLSConfigurator: tlsConf,
@@ -6144,7 +6144,7 @@ func TestAgent_startListeners(t *testing.T) {
 
 	ports := freeport.GetN(t, 3)
 	bd := BaseDeps{
-		Deps: consul.Deps{
+		Deps: sabo.Deps{
 			Logger:       hclog.NewInterceptLogger(nil),
 			Tokens:       new(token.Store),
 			GRPCConnPool: &fakeGRPCConnPool{},
@@ -6281,7 +6281,7 @@ func TestAgent_startListeners_scada(t *testing.T) {
 	c := capability.NewAddr("testcap")
 	pvd.EXPECT().Listen(c.Capability()).Return(nil, nil).Once()
 	bd := BaseDeps{
-		Deps: consul.Deps{
+		Deps: sabo.Deps{
 			Logger:       hclog.NewInterceptLogger(nil),
 			Tokens:       new(token.Store),
 			GRPCConnPool: &fakeGRPCConnPool{},
@@ -6344,7 +6344,7 @@ cloud {
 
 func TestAgent_checkServerLastSeen(t *testing.T) {
 	bd := BaseDeps{
-		Deps: consul.Deps{
+		Deps: sabo.Deps{
 			Logger:       hclog.NewInterceptLogger(nil),
 			Tokens:       new(token.Store),
 			GRPCConnPool: &fakeGRPCConnPool{},
@@ -6363,7 +6363,7 @@ func TestAgent_checkServerLastSeen(t *testing.T) {
 
 	// Test that an ErrNotExist OS error is treated as ok.
 	t.Run("TestReadErrNotExist", func(t *testing.T) {
-		readFn := func(filename string) (*consul.ServerMetadata, error) {
+		readFn := func(filename string) (*sabo.ServerMetadata, error) {
 			return nil, os.ErrNotExist
 		}
 
@@ -6374,7 +6374,7 @@ func TestAgent_checkServerLastSeen(t *testing.T) {
 	// Test that an error reading server metadata is treated as an error.
 	t.Run("TestReadErr", func(t *testing.T) {
 		expected := errors.New("read error")
-		readFn := func(filename string) (*consul.ServerMetadata, error) {
+		readFn := func(filename string) (*sabo.ServerMetadata, error) {
 			return nil, expected
 		}
 
@@ -6386,8 +6386,8 @@ func TestAgent_checkServerLastSeen(t *testing.T) {
 	t.Run("TestIsLastSeenStaleErr", func(t *testing.T) {
 		agent.config.ServerRejoinAgeMax = time.Hour
 
-		readFn := func(filename string) (*consul.ServerMetadata, error) {
-			return &consul.ServerMetadata{
+		readFn := func(filename string) (*sabo.ServerMetadata, error) {
+			return &sabo.ServerMetadata{
 				LastSeenUnix: time.Now().Add(-24 * 7 * time.Hour).Unix(),
 			}, nil
 		}
@@ -6401,8 +6401,8 @@ func TestAgent_checkServerLastSeen(t *testing.T) {
 	t.Run("TestNoErr", func(t *testing.T) {
 		agent.config.ServerRejoinAgeMax = 24 * 7 * time.Hour
 
-		readFn := func(filename string) (*consul.ServerMetadata, error) {
-			return &consul.ServerMetadata{
+		readFn := func(filename string) (*sabo.ServerMetadata, error) {
+			return &sabo.ServerMetadata{
 				LastSeenUnix: time.Now().Add(-6 * time.Hour).Unix(),
 			}, nil
 		}

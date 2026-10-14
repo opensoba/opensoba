@@ -22,7 +22,7 @@ plugins:
     out: .
     opt:
       - paths=source_relative
-  - name: consul-rate-limit
+  - name: sabo-rate-limit
     out: .
     opt:
       - paths=source_relative

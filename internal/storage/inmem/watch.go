@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/stream"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/internal/storage"
 	"github.com/opensoba/opensoba/proto-public/pbresource"
 	"github.com/opensoba/opensoba/proto/private/pbsubscribe"

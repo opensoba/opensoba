@@ -267,7 +267,17 @@ func extractApplicationJSON(t *testing.T, attrName, content string) string {
 
 func extractUIConfig(t *testing.T, content string) string {
 	t.Helper()
-	return extractApplicationJSON(t, "data-consul-ui-config", content)
+	// The config script's data attribute is derived from the UI module prefix.
+	// Accept both the current "sabo-ui" prefix and the legacy "consul-ui" one so
+	// that this test keeps working with a prebuilt bundle until the UI is
+	// rebuilt from source.
+	for _, attr := range []string{"data-sabo-ui-config", "data-consul-ui-config"} {
+		if strings.Contains(content, attr) {
+			return extractApplicationJSON(t, attr, content)
+		}
+	}
+	t.Fatal("UI config script not found in content")
+	return ""
 }
 
 type cfgFunc func(cfg *config.RuntimeConfig)

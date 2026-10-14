@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul/fsm"
-	"github.com/opensoba/opensoba/agent/consul/state"
+	"github.com/opensoba/opensoba/agent/sabo/fsm"
+	"github.com/opensoba/opensoba/agent/sabo/state"
 	"github.com/opensoba/opensoba/agent/structs"
 )
 

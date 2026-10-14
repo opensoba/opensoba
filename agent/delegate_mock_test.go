@@ -12,7 +12,7 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/acl/resolver"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/lib"
 )
@@ -34,7 +34,7 @@ func (m *delegateMock) LANMembersInAgentPartition() []serf.Member {
 	return m.Called().Get(0).([]serf.Member)
 }
 
-func (m *delegateMock) LANMembers(f consul.LANMemberFilter) ([]serf.Member, error) {
+func (m *delegateMock) LANMembers(f sabo.LANMemberFilter) ([]serf.Member, error) {
 	ret := m.Called(f)
 	return ret.Get(0).([]serf.Member), ret.Error(1)
 }
@@ -73,6 +73,6 @@ func (m *delegateMock) Stats() map[string]map[string]string {
 	return m.Called().Get(0).(map[string]map[string]string)
 }
 
-func (m *delegateMock) ReloadConfig(config consul.ReloadableConfig) error {
+func (m *delegateMock) ReloadConfig(config sabo.ReloadableConfig) error {
 	return m.Called(config).Error(0)
 }

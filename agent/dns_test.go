@@ -22,8 +22,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
 	agentdns "github.com/opensoba/opensoba/agent/dns"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/lib"
@@ -1777,7 +1777,7 @@ func TestDNS_VirtualIPLookup(t *testing.T) {
 
 	testrpc.WaitForLeader(t, a.RPC, "dc1")
 
-	server, ok := a.delegate.(*consul.Server)
+	server, ok := a.delegate.(*sabo.Server)
 	require.True(t, ok)
 
 	// The proxy service will not receive a virtual IP if the server is not assigning virtual IPs yet.

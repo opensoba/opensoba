@@ -31,12 +31,12 @@ import (
 	"github.com/opensoba/opensoba/agent/cache"
 	"github.com/opensoba/opensoba/agent/checks"
 	"github.com/opensoba/opensoba/agent/connect/ca"
-	"github.com/opensoba/opensoba/agent/consul"
-	"github.com/opensoba/opensoba/agent/consul/authmethod/ssoauth"
-	consulrate "github.com/opensoba/opensoba/agent/consul/rate"
 	"github.com/opensoba/opensoba/agent/dns"
 	hcpconfig "github.com/opensoba/opensoba/agent/hcp/config"
 	"github.com/opensoba/opensoba/agent/rpc/middleware"
+	"github.com/opensoba/opensoba/agent/sabo"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod/ssoauth"
+	consulrate "github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/ipaddr"
@@ -673,8 +673,8 @@ func (b *builder) build() (rt RuntimeConfig, err error) {
 
 	// raft performance scaling
 	performanceRaftMultiplier := intVal(c.Performance.RaftMultiplier)
-	if performanceRaftMultiplier < 1 || uint(performanceRaftMultiplier) > consul.MaxRaftMultiplier {
-		return RuntimeConfig{}, fmt.Errorf("performance.raft_multiplier cannot be %d. Must be between 1 and %d", performanceRaftMultiplier, consul.MaxRaftMultiplier)
+	if performanceRaftMultiplier < 1 || uint(performanceRaftMultiplier) > sabo.MaxRaftMultiplier {
+		return RuntimeConfig{}, fmt.Errorf("performance.raft_multiplier cannot be %d. Must be between 1 and %d", performanceRaftMultiplier, sabo.MaxRaftMultiplier)
 	}
 	consulRaftElectionTimeout := b.durationVal("consul.raft.election_timeout", c.Consul.Raft.ElectionTimeout) * time.Duration(performanceRaftMultiplier)
 	consulRaftHeartbeatTimeout := b.durationVal("consul.raft.heartbeat_timeout", c.Consul.Raft.HeartbeatTimeout) * time.Duration(performanceRaftMultiplier)
@@ -858,7 +858,7 @@ func (b *builder) build() (rt RuntimeConfig, err error) {
 
 		// ACL
 		ACLsEnabled: aclsEnabled,
-		ACLResolverSettings: consul.ACLResolverSettings{
+		ACLResolverSettings: sabo.ACLResolverSettings{
 			ACLsEnabled:      aclsEnabled,
 			Datacenter:       datacenter,
 			NodeName:         b.nodeName(c.NodeName),
@@ -1060,7 +1060,7 @@ func (b *builder) build() (rt RuntimeConfig, err error) {
 		RPCMaxConnsPerClient:              intVal(c.Limits.RPCMaxConnsPerClient),
 		RPCProtocol:                       intVal(c.RPCProtocol),
 		RPCRateLimit:                      limitVal(c.Limits.RPCRate),
-		RPCConfig:                         consul.RPCConfig{EnableStreaming: boolValWithDefault(c.RPC.EnableStreaming, serverMode)},
+		RPCConfig:                         sabo.RPCConfig{EnableStreaming: boolValWithDefault(c.RPC.EnableStreaming, serverMode)},
 		RaftProtocol:                      intVal(c.RaftProtocol),
 		RaftSnapshotThreshold:             intVal(c.RaftSnapshotThreshold),
 		RaftSnapshotInterval:              b.durationVal("raft_snapshot_interval", c.RaftSnapshotInterval),
@@ -1282,7 +1282,7 @@ func (b *builder) validate(rt RuntimeConfig) error {
 		b.warn("Node name %q will not be discoverable "+
 			"via DNS due to invalid characters. Valid characters include "+
 			"all alpha-numerics and dashes.", rt.NodeName)
-	case consul.InvalidNodeName.MatchString(rt.NodeName):
+	case sabo.InvalidNodeName.MatchString(rt.NodeName):
 		// todo(kyhavlov): Add stronger validation here for node names.
 		b.warn("Found invalid characters in node name %q - whitespace and quotes "+
 			"(', \", `) cannot be used with auto-config.", rt.NodeName)
@@ -1401,10 +1401,10 @@ func (b *builder) validate(rt RuntimeConfig) error {
 		}
 
 		// Raft LogStore validation
-		if rt.RaftLogStoreConfig.Backend != consul.LogStoreBackendBoltDB &&
-			rt.RaftLogStoreConfig.Backend != consul.LogStoreBackendWAL {
+		if rt.RaftLogStoreConfig.Backend != sabo.LogStoreBackendBoltDB &&
+			rt.RaftLogStoreConfig.Backend != sabo.LogStoreBackendWAL {
 			return fmt.Errorf("raft_logstore.backend must be one of '%s' or '%s'",
-				consul.LogStoreBackendBoltDB, consul.LogStoreBackendWAL)
+				sabo.LogStoreBackendBoltDB, sabo.LogStoreBackendWAL)
 		}
 		if rt.RaftLogStoreConfig.WAL.SegmentSize < 1024*1024 {
 			return fmt.Errorf("raft_logstore.wal.segment_size_mb cannot be less than 1MB")
@@ -2764,10 +2764,10 @@ func (b *builder) parsePrefixFilter(telemetry *Telemetry) ([]string, []string) {
 	return telemetryAllowedPrefixes, telemetryBlockedPrefixes
 }
 
-func (b *builder) raftLogStoreConfigVal(raw *RaftLogStoreRaw) consul.RaftLogStoreConfig {
-	var cfg consul.RaftLogStoreConfig
+func (b *builder) raftLogStoreConfigVal(raw *RaftLogStoreRaw) sabo.RaftLogStoreConfig {
+	var cfg sabo.RaftLogStoreConfig
 	if raw != nil {
-		cfg.Backend = stringValWithDefault(raw.Backend, consul.LogStoreBackendBoltDB)
+		cfg.Backend = stringValWithDefault(raw.Backend, sabo.LogStoreBackendBoltDB)
 		cfg.DisableLogCache = boolVal(raw.DisableLogCache)
 
 		cfg.Verification.Enabled = boolVal(raw.Verification.Enabled)

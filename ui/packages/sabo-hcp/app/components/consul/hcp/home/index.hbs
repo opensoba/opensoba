@@ -1,0 +1,15 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+{{#if (env 'CONSUL_HCP_URL')}}
+  <div
+    class="sabo-hcp-home"
+    ...attributes
+  >
+    <a href={{env 'CONSUL_HCP_URL'}} data-native-href="true">
+      Back to HCP
+    </a>
+  </div>
+{{/if}}

@@ -91,7 +91,7 @@ func (s *Server) Sign(ctx context.Context, req *pbconnectca.SignRequest) (*pbcon
 	}, nil
 }
 
-// TODO(agentless): CAManager currently lives in the `agent/consul` package and
+// TODO(agentless): CAManager currently lives in the `agent/sabo` package and
 // returns ErrRateLimited which we can't reference directly here because it'd
 // create an import cycle. Checking the error message like this is fragile, but
 // because of net/rpc's limited error handling support it's what we already do

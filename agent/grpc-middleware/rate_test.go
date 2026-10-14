@@ -20,7 +20,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 
-	"github.com/opensoba/opensoba/agent/consul/rate"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 )
 
 func TestServerRateLimiterMiddleware_Integration(t *testing.T) {

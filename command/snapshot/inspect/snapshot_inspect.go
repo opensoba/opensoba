@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/raft"
 	"github.com/mitchellh/cli"
-	"github.com/opensoba/opensoba/agent/consul/fsm"
+	"github.com/opensoba/opensoba/agent/sabo/fsm"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/command/flags"
 	"github.com/opensoba/opensoba/snapshot"

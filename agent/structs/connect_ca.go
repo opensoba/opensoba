@@ -260,7 +260,7 @@ const (
 )
 
 // CARequest is used to modify connect CA data. This is used by the
-// FSM (agent/consul/fsm) to apply changes.
+// FSM (agent/sabo/fsm) to apply changes.
 type CARequest struct {
 	// Op is the type of operation being requested. This determines what
 	// other fields are required.
@@ -571,7 +571,7 @@ const (
 )
 
 // CALeafRequest is used to modify connect CA leaf data. This is used by the
-// FSM (agent/consul/fsm) to apply changes.
+// FSM (agent/sabo/fsm) to apply changes.
 type CALeafRequest struct {
 	// Op is the type of operation being requested. This determines what
 	// other fields are required.

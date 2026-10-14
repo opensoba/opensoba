@@ -14,7 +14,7 @@ import (
 
 	"github.com/armon/go-metrics"
 	"github.com/hashicorp/go-hclog"
-	"github.com/opensoba/opensoba/agent/consul/rate"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )

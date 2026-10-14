@@ -78,7 +78,7 @@ func (s *Server) registerResources() {
 }
 ```
 
-[`server.go`]: ../../agent/consul/server.go
+[`server.go`]: ../../agent/sabo/server.go
 
 That should be all you need to start using your new resource type. Test it out
 by starting an agent in dev mode:

@@ -1,0 +1,26 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+//go:build !consulent
+// +build !consulent
+
+package sabo
+
+import (
+	"fmt"
+	"strings"
+)
+
+func (b *PeeringBackend) enterpriseCheckPartitions(partition string) error {
+	if partition == "" || strings.EqualFold(partition, "default") {
+		return nil
+	}
+	return fmt.Errorf("Partitions are an OpenSoba Enterprise feature")
+}
+
+func (b *PeeringBackend) enterpriseCheckNamespaces(namespace string) error {
+	if namespace == "" || strings.EqualFold(namespace, "default") {
+		return nil
+	}
+	return fmt.Errorf("Namespaces are an OpenSoba Enterprise feature")
+}

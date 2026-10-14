@@ -8,7 +8,7 @@ and commit assistance.  However, most tasks must be executed from within a
 subproject, e.g. running or testing.
 
 **If you are looking to work on the OpenSoba UI you probably want to read
-the README that is in `./packages/consul-ui/README.md`.**
+the README that is in `./packages/sabo-ui/README.md`.**
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

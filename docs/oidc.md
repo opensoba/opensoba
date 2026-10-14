@@ -158,7 +158,7 @@ reach the UI. The CLI's loopback redirect never traverses the load balancer.
 Developers can exercise the flow without a real IdP using the in-tree fake
 provider. It is only intended for tests and local development. The end-to-end
 tests in `agent/oidc_endpoint_test.go` and
-`agent/consul/acl_oidc_test.go` show a complete example, including the
+`agent/sabo/acl_oidc_test.go` show a complete example, including the
 load-balanced case with multiple servers.
 
 ## Reference

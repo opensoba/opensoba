@@ -46,14 +46,14 @@ There are four specific cases covered with increasing complexity:
       - [ ] Add a test case to the table test `TestLoad_IntegrationWithFlags` in
         `agent/config/runtime_test.go`.
       - [ ] If the config needs to be defaulted for the test server used in unit tests,
-            also add it to `DefaultConfig()` in `agent/consul/config.go`.
+            also add it to `DefaultConfig()` in `agent/sabo/config.go`.
  - [ ] **If** your config should take effect on a reload/HUP.
       - [ ] Add necessary code to to trigger a safe (locked or atomic) update to
         any state the feature needs changing. This needs to be added to one or
         more of the following places:
          - `ReloadConfig` in `agent/agent.go` if it needs to affect the local
            client state or another client agent component.
-         - `ReloadConfig` in `agent/consul/client.go` if it needs to affect
+         - `ReloadConfig` in `agent/sabo/client.go` if it needs to affect
            state for client agent's RPC client.
       - [ ] Add a test to `agent/agent_test.go` similar to others with prefix
         `TestAgent_reloadConfig*`.
@@ -89,22 +89,22 @@ configs are only valid on server agents but since WAN Gossip is setup in
 `agent.go` they don't need to follow this checklist. The simplest (and mostly
 accurate) rule is:
 
-> If you need to access the config field from code in  `agent/consul` (e.g. RPC
+> If you need to access the config field from code in  `agent/sabo` (e.g. RPC
 > endpoints), then you need to follow this. If it's only in `agent` (e.g. HTTP
 > endpoints or agent startup) you don't.
 
 A final word of warning - **you should never need to pass config into the FSM
-(`agent/consul/fsm`) or state store (`agent/consul/state`)**. Doing so is **_very
+(`agent/sabo/fsm`) or state store (`agent/sabo/state`)**. Doing so is **_very
 dangerous_** and can violate consistency guarantees and corrupt databases. If
 you think you need this then please discuss the design with the OpenSoba team
 before writing code!
 
 OpenSoba's server components for historical reasons don't use the `RuntimeConfig`
-struct they have their own struct called `Config` in `agent/consul/config.go`.
+struct they have their own struct called `Config` in `agent/sabo/config.go`.
 
  - [ ] Do all of the steps in [Adding a Simple Config
    Field For Client Agents](#adding-a-simple-config-field-for-client-agents).
- - [ ] Add the new field to Config struct in `agent/consul/config.go`
+ - [ ] Add the new field to Config struct in `agent/sabo/config.go`
  - [ ] Add code to set the values from the `RuntimeConfig` in `newConsulConfig` method in `agent/agent.go`
  - [ ] **If needed**, add a test to `agent_test.go` if there is some non-trivial
    behavior in the code you added in the previous step. We tend not to test
@@ -112,7 +112,7 @@ struct they have their own struct called `Config` in `agent/consul/config.go`.
    higher-level tests of the actual functionality that matters but some examples
    can be found prefixed with `TestAgent_consulConfig*`
  - [ ] **If** your config should take effect on a reload/HUP
-      - [ ] Add necessary code to `ReloadConfig` in `agent/consul/server.go` this
+      - [ ] Add necessary code to `ReloadConfig` in `agent/sabo/server.go` this
         needs to be adequately synchronized with any readers of the state being
         updated.
        - [ ] Add a new test or a new assertion to `TestServer_ReloadConfig`

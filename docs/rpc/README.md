@@ -28,9 +28,9 @@ The diagram below shows all the possible routing flows:
 
 <sup>[source](./routing.mmd)</sup>
 
-The main entrypoint to connection routing is `handleConn` in [agent/consul/rpc.go].
+The main entrypoint to connection routing is `handleConn` in [agent/sabo/rpc.go].
 
-[agent/consul/rpc.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/rpc.go
+[agent/sabo/rpc.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/rpc.go
 
 ### Development
 

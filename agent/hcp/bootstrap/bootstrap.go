@@ -4,7 +4,7 @@
 // Package bootstrap handles bootstrapping an agent's config from HCP. It must be a
 // separate package from other HCP components because it has a dependency on
 // agent/config while other components need to be imported and run within the
-// server process in agent/consul and that would create a dependency cycle.
+// server process in agent/sabo and that would create a dependency cycle.
 package bootstrap
 
 import (

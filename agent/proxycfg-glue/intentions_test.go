@@ -13,8 +13,8 @@ import (
 
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/acl/resolver"
-	"github.com/opensoba/opensoba/agent/consul/state"
 	"github.com/opensoba/opensoba/agent/proxycfg"
+	"github.com/opensoba/opensoba/agent/sabo/state"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/sdk/testutil"
 )

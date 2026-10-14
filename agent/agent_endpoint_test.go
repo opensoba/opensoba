@@ -38,9 +38,9 @@ import (
 	"github.com/opensoba/opensoba/agent/config"
 	"github.com/opensoba/opensoba/agent/connect"
 	"github.com/opensoba/opensoba/agent/connect/ca"
-	"github.com/opensoba/opensoba/agent/consul"
 	"github.com/opensoba/opensoba/agent/debug"
 	"github.com/opensoba/opensoba/agent/local"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/token"
 	tokenStore "github.com/opensoba/opensoba/agent/token"
@@ -1763,10 +1763,10 @@ func TestAgent_Reload(t *testing.T) {
 
 type delegateConfigReloadShim struct {
 	delegate
-	newCfg consul.ReloadableConfig
+	newCfg sabo.ReloadableConfig
 }
 
-func (s *delegateConfigReloadShim) ReloadConfig(cfg consul.ReloadableConfig) error {
+func (s *delegateConfigReloadShim) ReloadConfig(cfg sabo.ReloadableConfig) error {
 	s.newCfg = cfg
 	return s.delegate.ReloadConfig(cfg)
 }

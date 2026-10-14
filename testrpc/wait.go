@@ -19,7 +19,7 @@ type rpcFn func(context.Context, string, interface{}, interface{}) error
 // does not wait for the Consul (node) service to be ready. Use `WaitForTestAgent`
 // to make sure the Consul service is ready.
 //
-// Most uses of this would be better served in the agent/consul package by
+// Most uses of this would be better served in the agent/sabo package by
 // using waitForLeaderEstablishment() instead.
 func WaitForLeader(t *testing.T, rpc rpcFn, dc string, options ...waitOption) {
 	t.Helper()

@@ -24,11 +24,11 @@ the cluster persistence subsystem.
 
 [hashicorp/raft] is at the core of cluster persistence. Raft requires an [FSM], a
 finite-state machine implementation, to persist state changes. The OpenSoba FSM is
-implemented in [agent/consul/fsm] as a set of commands.
+implemented in [agent/sabo/fsm] as a set of commands.
 
 [FSM]: https://pkg.go.dev/github.com/hashicorp/raft#FSM
 [hashicorp/raft]: https://github.com/hashicorp/raft
-[agent/consul/fsm]: https://github.com/opensoba/opensoba/tree/main/agent/consul/fsm
+[agent/sabo/fsm]: https://github.com/opensoba/opensoba/tree/main/agent/sabo/fsm
 
 Raft also requires a [LogStore] to persist logs to disk. OpenSoba uses [hashicorp/raft-boltdb]
 which implements [LogStore] using [boltdb]. In the near future we should be updating to
@@ -44,12 +44,12 @@ use [bbolt].
 ## State Store
 
 OpenSoba stores the full state of the cluster in memory using the state store. The state store is
-implemented in [agent/consul/state] and uses [hashicorp/go-memdb] to maintain indexes of
+implemented in [agent/sabo/state] and uses [hashicorp/go-memdb] to maintain indexes of
 data stored in a set of tables. The main entrypoint to the state store is [NewStateStore].
 
-[agent/consul/state]: https://github.com/opensoba/opensoba/tree/main/agent/consul/state
+[agent/sabo/state]: https://github.com/opensoba/opensoba/tree/main/agent/sabo/state
 [hashicorp/go-memdb]: https://github.com/hashicorp/go-memdb
-[NewStateStore]: https://github.com/opensoba/opensoba/blob/main/agent/consul/state/state_store.go
+[NewStateStore]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/state/state_store.go
 
 ### Tables, Schemas, and Indexes
 
@@ -57,7 +57,7 @@ The state store is organized as a set of tables, and each table has a set of ind
 `newDBSchema` in [schema.go] shows the full list of tables, and each schema function shows
 the full list of indexes.
 
-[schema.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/state/schema.go
+[schema.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/state/schema.go
 
 There are two styles for defining table indexes. The original style uses generic indexer
 implementations from [hashicorp/go-memdb] (ex: `StringFieldIndex`). These indexes use
@@ -71,7 +71,7 @@ value is a value derived from one or multiple fields, or when there are ce/enter
 differences between the indexes.
 
 [reflect]: https://golang.org/pkg/reflect/
-[indexer.go]: https://github.com/opensoba/opensoba/blob/main/agent/consul/state/indexer.go
+[indexer.go]: https://github.com/opensoba/opensoba/blob/main/agent/sabo/state/indexer.go
 
 
 ## Snapshot and Restore
@@ -85,7 +85,7 @@ layers. First there is the `Snapshot` and `Restore` methods on the raft [FSM] in
 that OpenSoba must implement. These methods are implemented as mostly passthrough to the
 state store. These methods may be called internally by raft to perform log compaction
 (snapshot) or to bootstrap a new follower (restore). OpenSoba implements snapshot and
-restore using the `Snapshot` and `Restore` types in [agent/consul/state].
+restore using the `Snapshot` and `Restore` types in [agent/sabo/state].
 
 Snapshot and restore also exist as actions that a user may perform. There are [CLI]
 commands, [HTTP API] endpoints, and [RPC] endpoints that allow a user to capture an

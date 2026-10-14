@@ -19,7 +19,7 @@ import (
 	"gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/authmethod/testauth"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod/testauth"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/internal/go-sso/oidcauth/oidcauthtest"
 	"github.com/opensoba/opensoba/sdk/testutil"

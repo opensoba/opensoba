@@ -10,10 +10,10 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-hclog"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 )
 
-func newDefaultDepsEnterprise(t *testing.T, logger hclog.Logger, c *consul.Config) consul.EnterpriseDeps {
+func newDefaultDepsEnterprise(t *testing.T, logger hclog.Logger, c *sabo.Config) sabo.EnterpriseDeps {
 	t.Helper()
-	return consul.EnterpriseDeps{}
+	return sabo.EnterpriseDeps{}
 }

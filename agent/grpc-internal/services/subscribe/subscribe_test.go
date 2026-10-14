@@ -22,10 +22,10 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	"github.com/opensoba/opensoba/acl"
-	"github.com/opensoba/opensoba/agent/consul/rate"
-	"github.com/opensoba/opensoba/agent/consul/state"
-	"github.com/opensoba/opensoba/agent/consul/stream"
 	grpc "github.com/opensoba/opensoba/agent/grpc-internal"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
+	"github.com/opensoba/opensoba/agent/sabo/state"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/proto/private/pbcommon"

@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	// activate testing auth method
-	_ "github.com/opensoba/opensoba/agent/consul/authmethod/testauth"
+	_ "github.com/opensoba/opensoba/agent/sabo/authmethod/testauth"
 )
 
 func TestBindingRuleReadCommand_noTabs(t *testing.T) {

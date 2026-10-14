@@ -9,7 +9,7 @@ import (
 	"github.com/armon/go-metrics"
 	"github.com/hashicorp/go-memdb"
 
-	"github.com/opensoba/opensoba/agent/consul/state"
+	"github.com/opensoba/opensoba/agent/sabo/state"
 	"github.com/opensoba/opensoba/lib"
 )
 

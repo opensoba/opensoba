@@ -14,7 +14,7 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/configentry"
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul/discoverychain"
+	"github.com/opensoba/opensoba/agent/sabo/discoverychain"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/proto/private/pbpeering"
 )

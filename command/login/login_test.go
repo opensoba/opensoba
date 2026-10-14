@@ -17,8 +17,8 @@ import (
 
 	"github.com/hashicorp/consul-awsauth/iamauthtest"
 	"github.com/opensoba/opensoba/agent"
-	"github.com/opensoba/opensoba/agent/consul/authmethod/kubeauth"
-	"github.com/opensoba/opensoba/agent/consul/authmethod/testauth"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod/kubeauth"
+	"github.com/opensoba/opensoba/agent/sabo/authmethod/testauth"
 	"github.com/opensoba/opensoba/api"
 	"github.com/opensoba/opensoba/command/acl"
 	"github.com/opensoba/opensoba/internal/go-sso/oidcauth/oidcauthtest"

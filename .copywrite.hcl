@@ -9,13 +9,13 @@ project {
   # files or folders should be ignored
   header_ignore = [
     # Forked and modified UI libs
-    "ui/packages/consul-ui/app/utils/dom/event-target/**",
-    "ui/packages/consul-ui/lib/rehype-prism/**",
-    "ui/packages/consul-ui/lib/block-slots/**",
+    "ui/packages/sabo-ui/app/utils/dom/event-target/**",
+    "ui/packages/sabo-ui/lib/rehype-prism/**",
+    "ui/packages/sabo-ui/lib/block-slots/**",
 
     # UI file that do not render properly with copyright headers
-    "ui/packages/consul-ui/app/components/brand-loader/enterprise.hbs",
-    "ui/packages/consul-ui/app/components/brand-loader/index.hbs",
+    "ui/packages/sabo-ui/app/components/brand-loader/enterprise.hbs",
+    "ui/packages/sabo-ui/app/components/brand-loader/index.hbs",
 
     # ignore specific test data files
     "agent/uiserver/testdata/**",

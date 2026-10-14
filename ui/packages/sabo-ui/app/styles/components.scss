@@ -1,0 +1,117 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+@import 'ember-power-select';
+
+@import 'sabo-ui/components/anchors';
+@import 'sabo-ui/components/auth-form';
+@import 'sabo-ui/components/auth-modal';
+@import 'sabo-ui/components/auth-profile';
+@import 'sabo-ui/components/breadcrumbs';
+@import 'sabo-ui/components/buttons';
+@import 'sabo-ui/components/card';
+@import 'sabo-ui/components/checkbox-group';
+@import 'sabo-ui/components/code-editor';
+@import 'sabo-ui/components/composite-row';
+@import 'sabo-ui/components/confirmation-dialog';
+@import 'sabo-ui/components/copy-button';
+@import 'sabo-ui/components/definition-table';
+@import 'sabo-ui/components/disclosure-menu';
+@import 'sabo-ui/components/display-toggle';
+@import 'sabo-ui/components/dom-recycling-table';
+@import 'sabo-ui/components/empty-state';
+@import 'sabo-ui/components/expanded-single-select';
+@import 'sabo-ui/components/form-elements';
+@import 'sabo-ui/components/icon-definition';
+@import 'sabo-ui/components/list-row';
+@import 'sabo-ui/components/inline-alert';
+@import 'sabo-ui/components/menu-panel';
+@import 'sabo-ui/components/more-popover-menu';
+@import 'sabo-ui/components/oidc-select';
+@import 'sabo-ui/components/radio-card';
+@import 'sabo-ui/components/panel';
+@import 'sabo-ui/components/paged-collection';
+@import 'sabo-ui/components/pill';
+@import 'sabo-ui/components/popover-menu';
+@import 'sabo-ui/components/popover-select';
+@import 'sabo-ui/components/progress';
+@import 'sabo-ui/components/radio-group';
+@import 'sabo-ui/components/sliding-toggle';
+@import 'sabo-ui/components/table';
+@import 'sabo-ui/components/tile';
+@import 'sabo-ui/components/toggle-button';
+@import 'sabo-ui/components/tabular-collection';
+@import 'sabo-ui/components/tabular-details';
+@import 'sabo-ui/components/tabular-dl';
+@import 'sabo-ui/components/tag-list';
+@import 'sabo-ui/components/tooltip-panel';
+
+/**/
+
+@import 'sabo-ui/components/route/title';
+@import 'sabo-ui/components/app-view';
+@import 'sabo-ui/components/brand-loader';
+@import 'sabo-ui/components/skip-links';
+@import 'sabo-ui/components/app';
+/* app chrome */
+@import 'sabo-ui/components/main-header-horizontal';
+@import 'sabo-ui/components/main-nav-horizontal';
+@import 'sabo-ui/components/main-nav-vertical';
+@import 'sabo-ui/components/hashicorp-consul';
+/**/
+@import 'sabo-ui/components/menu-panel';
+
+@import 'sabo-ui/components/horizontal-kv-list';
+@import 'sabo-ui/components/csv-list';
+@import 'sabo-ui/components/tag-list';
+@import 'sabo-ui/components/badge';
+@import 'sabo-ui/components/icon-definition';
+@import 'sabo-ui/components/inline-code';
+@import 'sabo-ui/components/overlay';
+@import 'sabo-ui/components/tooltip';
+@import 'sabo-ui/components/modal-dialog';
+@import 'sabo-ui/components/list-collection';
+@import 'sabo-ui/components/filter-bar';
+@import 'sabo-ui/components/freetext-filter';
+@import 'sabo-ui/components/informed-action';
+@import 'sabo-ui/components/tab-nav';
+@import 'sabo-ui/components/search-bar';
+@import 'sabo-ui/components/copyable-code';
+
+@import 'sabo-ui/components/consul/loader';
+@import 'sabo-ui/components/consul/tomography/graph';
+@import 'sabo-ui/components/consul/discovery-chain';
+@import 'sabo-ui/components/consul/bucket/list';
+@import 'sabo-ui/components/consul/upstream/list';
+@import 'sabo-ui/components/consul/upstream-instance/list';
+@import 'sabo-ui/components/consul/health-check/list';
+@import 'sabo-ui/components/consul/instance-checks';
+@import 'sabo-ui/components/consul/exposed-path/list';
+@import 'sabo-ui/components/consul/external-source';
+@import 'sabo-ui/components/consul/kind';
+@import 'sabo-ui/components/consul/source';
+@import 'sabo-ui/components/consul/intention';
+@import 'sabo-ui/components/consul/lock-session/list';
+@import 'sabo-ui/components/consul/lock-session/form';
+@import 'sabo-ui/components/consul/server/list';
+@import 'sabo-ui/components/consul/server/card';
+@import 'sabo-ui/components/consul/auth-method';
+
+@import 'sabo-ui/components/role-selector';
+@import 'sabo-ui/components/topology-metrics';
+@import 'sabo-ui/components/topology-metrics/card';
+@import 'sabo-ui/components/topology-metrics/source-type';
+@import 'sabo-ui/components/topology-metrics/popover';
+@import 'sabo-ui/components/topology-metrics/series';
+@import 'sabo-ui/components/topology-metrics/stats';
+@import 'sabo-ui/components/topology-metrics/status';
+@import 'sabo-ui/components/consul/intention/list/table';
+@import 'sabo-ui/components/consul/peer';
+@import 'sabo-ui/components/peerings/badge';
+@import 'sabo-ui/components/consul/node/peer-info';
+@import 'sabo-ui/components/consul/peer/info';
+@import 'sabo-ui/components/consul/peer/form';
+@import 'sabo-ui/components/consul/hcp/home';
+@import 'sabo-ui/components/consul/node/agentless-notice';

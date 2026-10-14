@@ -22,12 +22,6 @@ import (
 	autoconf "github.com/opensoba/opensoba/agent/auto-config"
 	"github.com/opensoba/opensoba/agent/cache"
 	"github.com/opensoba/opensoba/agent/config"
-	"github.com/opensoba/opensoba/agent/consul"
-	"github.com/opensoba/opensoba/agent/consul/fsm"
-	"github.com/opensoba/opensoba/agent/consul/rate"
-	"github.com/opensoba/opensoba/agent/consul/stream"
-	"github.com/opensoba/opensoba/agent/consul/usagemetrics"
-	"github.com/opensoba/opensoba/agent/consul/xdscapacity"
 	"github.com/opensoba/opensoba/agent/grpc-external/limiter"
 	grpcInt "github.com/opensoba/opensoba/agent/grpc-internal"
 	"github.com/opensoba/opensoba/agent/grpc-internal/balancer"
@@ -39,6 +33,12 @@ import (
 	"github.com/opensoba/opensoba/agent/pool"
 	"github.com/opensoba/opensoba/agent/router"
 	"github.com/opensoba/opensoba/agent/rpc/middleware"
+	"github.com/opensoba/opensoba/agent/sabo"
+	"github.com/opensoba/opensoba/agent/sabo/fsm"
+	"github.com/opensoba/opensoba/agent/sabo/rate"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
+	"github.com/opensoba/opensoba/agent/sabo/usagemetrics"
+	"github.com/opensoba/opensoba/agent/sabo/xdscapacity"
 	"github.com/opensoba/opensoba/agent/submatview"
 	"github.com/opensoba/opensoba/agent/token"
 	"github.com/opensoba/opensoba/agent/xds"
@@ -53,7 +53,7 @@ import (
 // has been moved out in front of Agent.New, and we can better see the setup
 // dependencies.
 type BaseDeps struct {
-	consul.Deps // TODO: un-embed
+	sabo.Deps // TODO: un-embed
 
 	RuntimeConfig   *config.RuntimeConfig
 	MetricsConfig   *lib.MetricsConfig
@@ -340,12 +340,12 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 	// Build slice of slices for all gauge definitions
 	var gauges = [][]prometheus.GaugeDefinition{
 		cache.Gauges,
-		consul.RPCGauges,
-		consul.SessionGauges,
+		sabo.RPCGauges,
+		sabo.SessionGauges,
 		grpcWare.StatsGauges,
 		xds.StatsGauges,
 		usagemetrics.Gauges,
-		consul.ReplicationGauges,
+		sabo.ReplicationGauges,
 		CertExpirationGauges,
 		Gauges,
 		raftGauges,
@@ -359,9 +359,9 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 	// TODO(ffmmm): conditionally add only leader specific metrics to gauges, counters, summaries, etc
 	if isServer {
 		gauges = append(gauges,
-			consul.AutopilotGauges,
-			consul.LeaderCertExpirationGauges,
-			consul.LeaderPeeringMetrics,
+			sabo.AutopilotGauges,
+			sabo.LeaderCertExpirationGauges,
+			sabo.LeaderPeeringMetrics,
 			xdscapacity.StatsGauges,
 		)
 	}
@@ -377,7 +377,7 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 		gauges = append(gauges, verifierGauges)
 	}
 
-	if isServer && cfg.RaftLogStoreConfig.Backend == consul.LogStoreBackendWAL {
+	if isServer && cfg.RaftLogStoreConfig.Backend == sabo.LogStoreBackendWAL {
 
 		walGauges := make([]prometheus.GaugeDefinition, 0)
 		for _, d := range wal.MetricDefinitions.Gauges {
@@ -423,10 +423,10 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 	var counters = [][]prometheus.CounterDefinition{
 		CatalogCounters,
 		cache.Counters,
-		consul.ACLCounters,
-		consul.CatalogCounters,
-		consul.ClientCounters,
-		consul.RPCCounters,
+		sabo.ACLCounters,
+		sabo.CatalogCounters,
+		sabo.ClientCounters,
+		sabo.RPCCounters,
 		grpcWare.StatsCounters,
 		local.StateCounters,
 		xds.StatsCounters,
@@ -448,7 +448,7 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 		}
 		counters = append(counters, verifierCounters)
 	}
-	if isServer && cfg.RaftLogStoreConfig.Backend == consul.LogStoreBackendWAL {
+	if isServer && cfg.RaftLogStoreConfig.Backend == sabo.LogStoreBackendWAL {
 		walCounters := make([]prometheus.CounterDefinition, 0)
 		for _, d := range wal.MetricDefinitions.Counters {
 			walCounters = append(walCounters, prometheus.CounterDefinition{
@@ -495,19 +495,19 @@ func getPrometheusDefs(cfg *config.RuntimeConfig, isServer bool) ([]prometheus.G
 
 	var summaries = [][]prometheus.SummaryDefinition{
 		HTTPSummaries,
-		consul.ACLSummaries,
-		consul.ACLEndpointSummaries,
-		consul.CatalogSummaries,
-		consul.FederationStateSummaries,
-		consul.IntentionSummaries,
-		consul.KVSummaries,
-		consul.LeaderSummaries,
-		consul.PreparedQuerySummaries,
-		consul.RPCSummaries,
-		consul.SegmentCESummaries,
-		consul.SessionSummaries,
-		consul.SessionEndpointSummaries,
-		consul.TxnSummaries,
+		sabo.ACLSummaries,
+		sabo.ACLEndpointSummaries,
+		sabo.CatalogSummaries,
+		sabo.FederationStateSummaries,
+		sabo.IntentionSummaries,
+		sabo.KVSummaries,
+		sabo.LeaderSummaries,
+		sabo.PreparedQuerySummaries,
+		sabo.RPCSummaries,
+		sabo.SegmentCESummaries,
+		sabo.SessionSummaries,
+		sabo.SessionEndpointSummaries,
+		sabo.TxnSummaries,
 		fsm.CommandsSummaries,
 		fsm.SnapshotSummaries,
 		raftSummaries,

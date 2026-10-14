@@ -17,12 +17,12 @@ clean:
 
 # Build a distribution of the UI
 dist: clean
-	cd packages/consul-ui && \
+	cd packages/sabo-ui && \
 		$(MAKE)
 
 # Install deps for the UI only
 deps: clean
-	cd packages/consul-ui && \
+	cd packages/sabo-ui && \
 		$(MAKE) deps
 
 # Build a distribution of the UI for Vercel previews.
@@ -36,6 +36,6 @@ deps: clean
 # Publish Directory: ui/dist
 dist-vercel: clean
 	mkdir -p dist/ui && \
-	cd packages/consul-ui && \
+	cd packages/sabo-ui && \
 		$(MAKE) build-staging && \
 		mv dist/* ../../dist/ui

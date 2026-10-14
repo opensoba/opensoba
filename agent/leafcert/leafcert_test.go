@@ -16,7 +16,7 @@ import (
 	"github.com/opensoba/opensoba/acl"
 	"github.com/opensoba/opensoba/agent/cache"
 	"github.com/opensoba/opensoba/agent/connect"
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/sdk/testutil"
 	"github.com/opensoba/opensoba/sdk/testutil/retry"
@@ -303,16 +303,13 @@ func TestManager_CSRRateLimiting(t *testing.T) {
 	signer.UpdateCA(t, nil)
 
 	signer.SetSignCallErrors(
-		// First call return rate limit error. This is important as it checks
-		// behavior when cache is empty and we have to return a nil Value but need to
-		// save state to do the right thing for retry.
-		consul.ErrRateLimited, // inc
+
+		sabo.ErrRateLimited,
 		// Then succeed on second call
 		nil,
-		// Then be rate limited again on several further calls
-		consul.ErrRateLimited, // inc
-		consul.ErrRateLimited, // inc
-	// Then fine after that
+
+		sabo.ErrRateLimited,
+		sabo.ErrRateLimited,
 	)
 
 	req := &ConnectCALeafRequest{
@@ -329,7 +326,7 @@ func TestManager_CSRRateLimiting(t *testing.T) {
 		t.Fatal("shouldn't block longer than one jitter window for success")
 	case result := <-getCh:
 		require.Error(t, result.Err)
-		require.Equal(t, consul.ErrRateLimited.Error(), result.Err.Error())
+		require.Equal(t, sabo.ErrRateLimited.Error(), result.Err.Error())
 	}
 
 	// Second call should return correct cert immediately.

@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/go-memdb"
 
-	"github.com/opensoba/opensoba/agent/consul/stream"
+	"github.com/opensoba/opensoba/agent/sabo/stream"
 	"github.com/opensoba/opensoba/internal/storage"
 	"github.com/opensoba/opensoba/proto-public/pbresource"
 )

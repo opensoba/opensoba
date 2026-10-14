@@ -6,7 +6,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/opensoba/opensoba/agent/consul"
+	"github.com/opensoba/opensoba/agent/sabo"
 	"github.com/opensoba/opensoba/types"
 )
 
@@ -80,7 +80,7 @@ type DeprecatedConfig struct {
 	StartJoinAddrsWAN []string `mapstructure:"start_join_wan"`
 
 	// DEPRECATED see RaftLogStore
-	RaftBoltDBConfig *consul.RaftBoltDBConfig `mapstructure:"raft_boltdb" json:"-"`
+	RaftBoltDBConfig *sabo.RaftBoltDBConfig `mapstructure:"raft_boltdb" json:"-"`
 }
 
 func applyDeprecatedConfig(d *decodeTarget) (Config, []string) {
