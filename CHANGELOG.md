@@ -1,4 +1,4 @@
-## 1.16.6 (Unreleased)
+## 1.16.6 (October 14, 2026)
 
 IMPROVEMENTS:
 
