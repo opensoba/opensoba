@@ -1,0 +1,3 @@
+```release-note:improvement
+ui: Rebuild the embedded web UI with sabo/OpenSoba naming and branding, and support building the UI with modern Node.js (>=14, validated on Node 22 LTS).
+```

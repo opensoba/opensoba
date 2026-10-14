@@ -1,4 +1,10 @@
-## 1.16.5 (Unreleased)
+## 1.16.6 (Unreleased)
+
+IMPROVEMENTS:
+
+* ui: Rebuild the embedded web UI to reflect the sabo/OpenSoba naming and branding, and allow building the UI with modern Node.js versions (validated on Node 22 LTS).
+
+## 1.16.5 (October 14, 2026)
 
 FEATURES:
 
