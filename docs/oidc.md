@@ -47,7 +47,7 @@ Config = {
 
   # Every redirect URI used by the UI and CLI must be listed here.
   AllowedRedirectURIs = [
-    "https://soba.example.com/oidc/callback",
+    "https://soba.example.com/ui/oidc/callback",
     "http://127.0.0.1:8250/oidc/callback",
   ]
 
@@ -78,9 +78,10 @@ Key parameters:
 The client (browser) determines the redirect URI, so both the UI and the CLI
 must be accounted for:
 
-- **UI**: `https://<ui-host>/oidc/callback`. The UI derives `<ui-host>` from the
-  URL the bundle is served from, so it is correct for whatever hostname you use
-  to reach the web UI.
+- **UI**: `https://<ui-host>/ui/oidc/callback`. The `/ui/` segment is the UI
+  content path (`ui_config.content_path`, default `/ui/`). The UI derives the
+  scheme and host from the URL the bundle is served from, so it is correct for
+  whatever hostname you use to reach the web UI.
 - **CLI**: `http://127.0.0.1:8250/oidc/callback`. The `soba login` command
   starts a temporary loopback listener on port 8250.
 
@@ -150,8 +151,8 @@ servers:
 - No sticky sessions are required.
 
 The only requirement is that the browser can reach the redirect URI
-(`https://<ui-host>/oidc/callback`), which is normally the same hostname used to
-reach the UI. The CLI's loopback redirect never traverses the load balancer.
+(`https://<ui-host>/ui/oidc/callback`), which is normally the same hostname used
+to reach the UI. The CLI's loopback redirect never traverses the load balancer.
 
 ## Using the built-in test provider
 
