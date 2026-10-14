@@ -51,7 +51,8 @@ func (c *cmd) init() {
 		"Name of the auth method to login to.")
 
 	c.flags.StringVar(&c.authMethodType, "type", "",
-		"Type of the auth method to login to. This field is optional and defaults to no type.")
+		"Type of the auth method to login to. This field is optional and defaults to no type. "+
+			"Set to \"oidc\" to use the browser-based OIDC authorization code flow.")
 
 	c.flags.StringVar(&c.bearerTokenFile, "bearer-token-file", "",
 		"Path to a file containing a secret bearer token to use with this auth method.")
@@ -181,4 +182,9 @@ Usage: soba login [options]
   requested auth method for a newly minted OpenSoba ACL token. The companion
   command 'consul logout' should be used to destroy any tokens created this way
   to avoid a resource leak.
+
+  For auth methods of type "oidc" the command opens a browser window to complete
+  the OpenID Connect authorization code flow. Provide the auth method name with
+  '-method' and the type with '-type=oidc'. The browser flow does not require
+  '-bearer-token-file'.
 `

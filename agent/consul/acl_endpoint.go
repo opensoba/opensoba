@@ -5,10 +5,13 @@ package consul
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/armon/go-metrics"
@@ -25,6 +28,7 @@ import (
 	"github.com/opensoba/opensoba/agent/consul/state"
 	"github.com/opensoba/opensoba/agent/structs"
 	"github.com/opensoba/opensoba/agent/structs/aclfilter"
+	"github.com/opensoba/opensoba/internal/go-sso/oidcauth"
 	"github.com/opensoba/opensoba/lib"
 )
 
@@ -1924,6 +1928,21 @@ func (a *ACL) AuthMethodSet(args *structs.ACLAuthMethodSetRequest, reply *struct
 		return fmt.Errorf("Invalid Auth Method: TokenLocality should be one of 'local' or 'global'")
 	}
 
+	// Preserve the OIDC client secret across updates. The HTTP API redacts the
+	// secret when reading an auth method, so a read/modify/write cycle (as
+	// performed by the CLI and UI) will omit it. Rather than wiping the stored
+	// secret, carry it forward when it is missing from an update.
+	if method.Type == oidcauth.TypeOIDC && existing != nil && existing.Type == oidcauth.TypeOIDC {
+		if oidcClientSecretFromConfig(method.Config) == "" {
+			if secret := oidcClientSecretFromConfig(existing.Config); secret != "" {
+				if method.Config == nil {
+					method.Config = make(map[string]interface{})
+				}
+				method.Config["OIDCClientSecret"] = secret
+			}
+		}
+	}
+
 	// Instantiate a validator but do not cache it yet. This will validate the
 	// configuration.
 	validator, err := authmethod.NewValidator(a.srv.logger, method)
@@ -2107,6 +2126,297 @@ func (a *ACL) Login(args *structs.ACLLoginRequest, reply *structs.ACLToken) erro
 		*reply = *token
 	}
 	return err
+}
+
+// oidcValidator is the subset of the ssoauth.Validator surface used to drive
+// the OIDC authorization code flow.
+type oidcValidator interface {
+	GetAuthCodeURL(ctx context.Context, redirectURI string, payload interface{}) (string, error)
+	ClaimsFromAuthCode(ctx context.Context, state, code string) (*authmethod.Identity, interface{}, error)
+}
+
+// oidcClientSecretFromConfig extracts the OIDC client secret from an auth
+// method config map, tolerating both string and byte-slice representations.
+func oidcClientSecretFromConfig(config map[string]interface{}) string {
+	if config == nil {
+		return ""
+	}
+	switch v := config["OIDCClientSecret"].(type) {
+	case string:
+		return v
+	case []byte:
+		return string(v)
+	default:
+		return ""
+	}
+}
+
+// serverOIDCStateStore is an oidcauth.StateStore backed by the replicated
+// state store. Storing OIDC flow state in Raft (applied through the leader)
+// means a login flow may start on one server and complete on another, which is
+// required when running behind a load balancer.
+type serverOIDCStateStore struct {
+	srv *Server
+}
+
+var _ oidcauth.StateStore = (*serverOIDCStateStore)(nil)
+
+func (s *serverOIDCStateStore) Put(state *oidcauth.OIDCState) error {
+	payload, err := json.Marshal(state.Payload)
+	if err != nil {
+		return fmt.Errorf("failed to encode OIDC state payload: %v", err)
+	}
+
+	req := structs.ACLOIDCStateSetRequest{
+		States: []*structs.ACLOIDCState{
+			{
+				StateID:     state.StateID,
+				Nonce:       state.Nonce,
+				RedirectURI: state.RedirectURI,
+				Payload:     payload,
+				ExpiresAt:   state.ExpiresAt,
+			},
+		},
+	}
+	if _, err := s.srv.raftApply(structs.ACLOIDCStateSetRequestType, &req); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *serverOIDCStateStore) Take(stateID string) (*oidcauth.OIDCState, error) {
+	existing, err := s.srv.fsm.State().OIDCStateGet(stateID)
+	if err != nil {
+		return nil, err
+	}
+	if existing == nil {
+		return nil, nil
+	}
+
+	// Delete the state before returning it so a state can only ever be
+	// consumed once, even under concurrent callbacks.
+	req := structs.ACLOIDCStateDeleteRequest{StateIDs: []string{stateID}}
+	if _, err := s.srv.raftApply(structs.ACLOIDCStateDeleteRequestType, &req); err != nil {
+		return nil, err
+	}
+
+	var payload interface{}
+	if len(existing.Payload) > 0 {
+		var p structs.ACLOIDCAuthURLPayload
+		if err := json.Unmarshal(existing.Payload, &p); err != nil {
+			return nil, fmt.Errorf("failed to decode OIDC state payload: %v", err)
+		}
+		payload = p
+	}
+
+	return &oidcauth.OIDCState{
+		StateID:     existing.StateID,
+		Nonce:       existing.Nonce,
+		RedirectURI: existing.RedirectURI,
+		Payload:     payload,
+		ExpiresAt:   existing.ExpiresAt,
+	}, nil
+}
+
+// OIDCAuthURL begins an OIDC authorization code flow and returns the URL the
+// caller should redirect the user to.
+func (a *ACL) OIDCAuthURL(args *structs.ACLOIDCAuthURLRequest, reply *structs.ACLOIDCAuthURLResponse) error {
+	if err := a.aclPreCheck(); err != nil {
+		return err
+	}
+
+	if !a.srv.LocalTokensEnabled() {
+		return errAuthMethodsRequireTokenReplication
+	}
+
+	if err := a.srv.validateEnterpriseRequest(&args.EnterpriseMeta, true); err != nil {
+		return err
+	}
+
+	if args.AuthMethod == "" {
+		return fmt.Errorf("Invalid OIDC Auth URL request: Missing auth method")
+	}
+	if args.RedirectURI == "" {
+		return fmt.Errorf("Invalid OIDC Auth URL request: Missing redirect URI")
+	}
+
+	if done, err := a.srv.ForwardRPC("ACL.OIDCAuthURL", args, reply); done {
+		return err
+	}
+
+	defer metrics.MeasureSince([]string{"acl", "oidc", "authurl"}, time.Now())
+
+	_, validator, err := a.srv.loadAuthMethod(args.AuthMethod, &args.EnterpriseMeta)
+	if err != nil {
+		return err
+	}
+
+	oidcVal, ok := validator.(oidcValidator)
+	if !ok {
+		return fmt.Errorf("auth method %q does not support OIDC login", args.AuthMethod)
+	}
+
+	payload := structs.ACLOIDCAuthURLPayload{
+		ClientNonce: args.ClientNonce,
+		Meta:        args.Meta,
+	}
+
+	ctx := oidcauth.WithStateStore(context.Background(), &serverOIDCStateStore{srv: a.srv})
+
+	authURL, err := oidcVal.GetAuthCodeURL(ctx, args.RedirectURI, payload)
+	if err != nil {
+		return err
+	}
+
+	reply.AuthURL = authURL
+	return nil
+}
+
+// OIDCCallback completes an OIDC authorization code flow and mints a token.
+func (a *ACL) OIDCCallback(args *structs.ACLOIDCCallbackRequest, reply *structs.ACLToken) error {
+	if err := a.aclPreCheck(); err != nil {
+		return err
+	}
+
+	if !a.srv.LocalTokensEnabled() {
+		return errAuthMethodsRequireTokenReplication
+	}
+
+	if err := a.srv.validateEnterpriseRequest(&args.EnterpriseMeta, true); err != nil {
+		return err
+	}
+
+	if args.AuthMethod == "" {
+		return fmt.Errorf("Invalid OIDC Callback request: Missing auth method")
+	}
+	if args.State == "" || args.Code == "" {
+		return fmt.Errorf("Invalid OIDC Callback request: Missing state or code")
+	}
+
+	if done, err := a.srv.ForwardRPC("ACL.OIDCCallback", args, reply); done {
+		return err
+	}
+
+	defer metrics.MeasureSince([]string{"acl", "oidc", "callback"}, time.Now())
+
+	authMethod, validator, err := a.srv.loadAuthMethod(args.AuthMethod, &args.EnterpriseMeta)
+	if err != nil {
+		return err
+	}
+
+	oidcVal, ok := validator.(oidcValidator)
+	if !ok {
+		return fmt.Errorf("auth method %q does not support OIDC login", args.AuthMethod)
+	}
+
+	ctx := oidcauth.WithStateStore(context.Background(), &serverOIDCStateStore{srv: a.srv})
+
+	verifiedIdentity, rawPayload, err := oidcVal.ClaimsFromAuthCode(ctx, args.State, args.Code)
+	if err != nil {
+		return err
+	}
+
+	// If the flow carried a client nonce, require it to match. This binds the
+	// callback to the client that started the flow (e.g. the CLI).
+	var payload structs.ACLOIDCAuthURLPayload
+	switch p := rawPayload.(type) {
+	case structs.ACLOIDCAuthURLPayload:
+		payload = p
+	case *structs.ACLOIDCAuthURLPayload:
+		payload = *p
+	}
+	if payload.ClientNonce != "" && payload.ClientNonce != args.ClientNonce {
+		return fmt.Errorf("client nonce does not match the one used to begin the OIDC flow")
+	}
+
+	description, err := auth.BuildTokenDescription("token created via login", payload.Meta)
+	if err != nil {
+		return err
+	}
+
+	token, err := a.srv.aclLogin().TokenForVerifiedIdentity(verifiedIdentity, authMethod, description)
+	if err != nil {
+		return err
+	}
+
+	*reply = *token
+	return nil
+}
+
+// OIDCAuthMethodList returns a reduced, pre-authentication view of the OIDC
+// auth methods so that a login screen can present the available providers.
+func (a *ACL) OIDCAuthMethodList(args *structs.ACLOIDCAuthMethodListRequest, reply *structs.ACLOIDCAuthMethodListResponse) error {
+	if err := a.aclPreCheck(); err != nil {
+		return err
+	}
+
+	if err := a.srv.validateEnterpriseRequest(&args.EnterpriseMeta, false); err != nil {
+		return err
+	}
+
+	if done, err := a.srv.ForwardRPC("ACL.OIDCAuthMethodList", args, reply); done {
+		return err
+	}
+
+	return a.srv.blockingQuery(&args.QueryOptions, &reply.QueryMeta,
+		func(ws memdb.WatchSet, state *state.Store) error {
+			index, methods, err := state.ACLAuthMethodList(ws, &args.EnterpriseMeta)
+			if err != nil {
+				return err
+			}
+
+			out := make([]*structs.ACLOIDCAuthMethod, 0, len(methods))
+			for _, method := range methods {
+				if method.Type != oidcauth.TypeOIDC {
+					continue
+				}
+				out = append(out, &structs.ACLOIDCAuthMethod{
+					Name:           method.Name,
+					DisplayName:    method.DisplayName,
+					Kind:           oidcProviderKind(method),
+					EnterpriseMeta: method.EnterpriseMeta,
+				})
+			}
+
+			reply.Index, reply.AuthMethods = index, out
+			return nil
+		})
+}
+
+// oidcProviderKind derives a cosmetic provider "Kind" from the discovery URL
+// of an OIDC auth method. It is only used to select an icon in the UI.
+func oidcProviderKind(method *structs.ACLAuthMethod) string {
+	var discovery string
+	if method.Config != nil {
+		switch v := method.Config["OIDCDiscoveryURL"].(type) {
+		case string:
+			discovery = v
+		case []byte:
+			discovery = string(v)
+		}
+	}
+
+	u, err := url.Parse(discovery)
+	if err != nil || u.Host == "" {
+		return "no-icon"
+	}
+	host := strings.ToLower(u.Hostname())
+
+	switch {
+	case host == "accounts.google.com" || strings.HasSuffix(host, ".google.com") ||
+		host == "googleapis.com" || strings.HasSuffix(host, ".googleapis.com"):
+		return "google"
+	case host == "okta.com" || strings.HasSuffix(host, ".okta.com") ||
+		strings.HasSuffix(host, ".oktapreview.com"):
+		return "okta"
+	case host == "auth0.com" || strings.HasSuffix(host, ".auth0.com"):
+		return "auth0"
+	case strings.HasSuffix(host, ".microsoftonline.com") || strings.HasSuffix(host, ".microsoft.com") ||
+		strings.Contains(host, "login.microsoftonline"):
+		return "microsoft"
+	default:
+		return "no-icon"
+	}
 }
 
 func (a *ACL) Logout(args *structs.ACLLogoutRequest, reply *bool) error {

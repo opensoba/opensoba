@@ -33,6 +33,7 @@ func newDBSchema() *memdb.DBSchema {
 		kvsTableSchema,
 		meshTopologyTableSchema,
 		nodesTableSchema,
+		oidcStatesTableSchema,
 		peeringTableSchema,
 		peeringTrustBundlesTableSchema,
 		peeringSecretsTableSchema,

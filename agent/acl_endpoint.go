@@ -932,8 +932,7 @@ func (s *HTTPHandlers) ACLAuthMethodRead(resp http.ResponseWriter, req *http.Req
 		return nil, HTTPError{StatusCode: http.StatusNotFound, Reason: msg.Error()}
 	}
 
-	fixupAuthMethodConfig(out.AuthMethod)
-	return out.AuthMethod, nil
+	return prepareAuthMethodForAPI(out.AuthMethod), nil
 }
 
 func (s *HTTPHandlers) ACLAuthMethodCreate(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
@@ -969,8 +968,7 @@ func (s *HTTPHandlers) ACLAuthMethodWrite(resp http.ResponseWriter, req *http.Re
 		return nil, err
 	}
 
-	fixupAuthMethodConfig(&out)
-	return &out, nil
+	return prepareAuthMethodForAPI(&out), nil
 }
 
 func (s *HTTPHandlers) ACLAuthMethodDelete(resp http.ResponseWriter, req *http.Request, methodName string) (interface{}, error) {
@@ -1021,6 +1019,56 @@ func (s *HTTPHandlers) ACLLogin(resp http.ResponseWriter, req *http.Request) (in
 	return &out, nil
 }
 
+func (s *HTTPHandlers) ACLOIDCAuthURL(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
+	if s.checkACLDisabled() {
+		return nil, aclDisabled
+	}
+
+	args := &structs.ACLOIDCAuthURLRequest{
+		Datacenter: s.agent.config.Datacenter,
+	}
+	s.parseDC(req, &args.Datacenter)
+	if err := s.parseEntMeta(req, &args.EnterpriseMeta); err != nil {
+		return nil, err
+	}
+
+	if err := lib.DecodeJSON(req.Body, args); err != nil {
+		return nil, HTTPError{StatusCode: http.StatusBadRequest, Reason: fmt.Sprintf("Failed to decode request body: %v", err)}
+	}
+
+	var out structs.ACLOIDCAuthURLResponse
+	if err := s.agent.RPC(req.Context(), "ACL.OIDCAuthURL", args, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
+}
+
+func (s *HTTPHandlers) ACLOIDCCallback(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
+	if s.checkACLDisabled() {
+		return nil, aclDisabled
+	}
+
+	args := &structs.ACLOIDCCallbackRequest{
+		Datacenter: s.agent.config.Datacenter,
+	}
+	s.parseDC(req, &args.Datacenter)
+	if err := s.parseEntMeta(req, &args.EnterpriseMeta); err != nil {
+		return nil, err
+	}
+
+	if err := lib.DecodeJSON(req.Body, args); err != nil {
+		return nil, HTTPError{StatusCode: http.StatusBadRequest, Reason: fmt.Sprintf("Failed to decode request body: %v", err)}
+	}
+
+	var out structs.ACLToken
+	if err := s.agent.RPC(req.Context(), "ACL.OIDCCallback", args, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
+}
+
 func (s *HTTPHandlers) ACLLogout(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
 	if s.checkACLDisabled() {
 		return nil, aclDisabled
@@ -1044,17 +1092,40 @@ func (s *HTTPHandlers) ACLLogout(resp http.ResponseWriter, req *http.Request) (i
 	return true, nil
 }
 
-// A hack to fix up the config types inside of the map[string]interface{}
-// so that they get formatted correctly during json.Marshal. Without this,
-// string values that get converted to []uint8 end up getting output back
-// to the user in base64-encoded form.
-func fixupAuthMethodConfig(method *structs.ACLAuthMethod) {
-	for k, v := range method.Config {
-		if raw, ok := v.([]uint8); ok {
-			strVal := structs.Uint8ToString(raw)
-			method.Config[k] = strVal
-		}
+// prepareAuthMethodForAPI returns a copy of an auth method suitable for
+// returning across the HTTP API boundary. It normalizes config values that
+// were decoded as []uint8 (so that json.Marshal renders them as strings) and
+// removes the OIDC client secret.
+//
+// A copy is always returned: the in-memory RPC codec used for local calls
+// hands the HTTP layer a pointer to the object held by the state store (and
+// shares its config map), so mutating it in place would corrupt replicated
+// state. The client secret is never returned to API clients; to avoid
+// clobbering the stored secret on a read/modify/write cycle the server carries
+// the existing secret forward when an update omits it.
+func prepareAuthMethodForAPI(method *structs.ACLAuthMethod) *structs.ACLAuthMethod {
+	if method == nil {
+		return nil
 	}
+
+	out := *method
+	if method.Config != nil {
+		isOIDC := method.Type == "oidc"
+		config := make(map[string]interface{}, len(method.Config))
+		for k, v := range method.Config {
+			if isOIDC && k == "OIDCClientSecret" {
+				continue
+			}
+			if raw, ok := v.([]uint8); ok {
+				config[k] = structs.Uint8ToString(raw)
+			} else {
+				config[k] = v
+			}
+		}
+		out.Config = config
+	}
+
+	return &out
 }
 
 func (s *HTTPHandlers) ACLAuthorize(resp http.ResponseWriter, req *http.Request) (interface{}, error) {

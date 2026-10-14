@@ -51,7 +51,7 @@ func (a *Authenticator) GetAuthCodeURL(ctx context.Context, redirectURI string, 
 		Scopes:       scopes,
 	}
 
-	stateID, nonce, err := a.createOIDCState(redirectURI, statePayload)
+	stateID, nonce, err := a.createOIDCState(ctx, redirectURI, statePayload)
 	if err != nil {
 		return "", fmt.Errorf("error generating OAuth state: %v", err)
 	}
@@ -87,7 +87,7 @@ func (a *Authenticator) ClaimsFromAuthCode(ctx context.Context, stateParam, code
 		}
 	}
 
-	state := a.verifyOIDCState(stateParam)
+	state := a.verifyOIDCState(ctx, stateParam)
 	if state == nil {
 		return nil, nil, &ProviderLoginFailedError{
 			Err: fmt.Errorf("Expired or missing OAuth state."),
@@ -99,7 +99,7 @@ func (a *Authenticator) ClaimsFromAuthCode(ctx context.Context, stateParam, code
 	var oauth2Config = oauth2.Config{
 		ClientID:     a.config.OIDCClientID,
 		ClientSecret: a.config.OIDCClientSecret,
-		RedirectURL:  state.redirectURI,
+		RedirectURL:  state.RedirectURI,
 		Endpoint:     a.provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID},
 	}
@@ -131,7 +131,7 @@ func (a *Authenticator) ClaimsFromAuthCode(ctx context.Context, stateParam, code
 		}
 	}
 
-	if allClaims["nonce"] != state.nonce { // TODO(sso): does this need a cast?
+	if allClaims["nonce"] != state.Nonce { // TODO(sso): does this need a cast?
 		return nil, nil, &TokenVerificationFailedError{
 			Err: errors.New("Invalid ID token nonce."),
 		}
@@ -172,7 +172,7 @@ func (a *Authenticator) ClaimsFromAuthCode(ctx context.Context, stateParam, code
 		a.logger.Debug("OIDC provider response", "extracted_claims", c)
 	}
 
-	return c, state.payload, nil
+	return c, state.Payload, nil
 }
 
 // ProviderLoginFailedError is an error type sometimes returned from
@@ -244,23 +244,46 @@ func (a *Authenticator) verifyOIDCToken(ctx context.Context, rawToken string) (m
 }
 
 // verifyOIDCState tests whether the provided state ID is valid and returns the
-// associated state object if so. A nil state is returned if the ID is not found
-// or expired. The state should only ever be retrieved once and is deleted as
-// part of this request.
-func (a *Authenticator) verifyOIDCState(stateID string) *oidcState {
+// associated state if so. A nil state is returned if the ID is not found or
+// expired. The state should only ever be retrieved once and is deleted as part
+// of this request.
+//
+// If the context carries a StateStore the state is consumed from there,
+// otherwise the in-process cache is used.
+func (a *Authenticator) verifyOIDCState(ctx context.Context, stateID string) *OIDCState {
+	if store := stateStoreFromContext(ctx); store != nil {
+		state, err := store.Take(stateID)
+		if err != nil {
+			if a.logger != nil {
+				a.logger.Warn("error consuming OIDC state", "error", err)
+			}
+			return nil
+		}
+		if state == nil {
+			return nil
+		}
+		if !state.ExpiresAt.IsZero() && time.Now().After(state.ExpiresAt) {
+			return nil
+		}
+		return state
+	}
+
 	defer a.oidcStates.Delete(stateID)
 
 	if stateRaw, ok := a.oidcStates.Get(stateID); ok {
-		return stateRaw.(*oidcState)
+		return stateRaw.(*OIDCState)
 	}
 
 	return nil
 }
 
-// createOIDCState make an expiring state object, associated with a random state ID
+// createOIDCState makes an expiring state object, associated with a random state ID
 // that is passed throughout the OAuth process. A nonce is also included in the
 // auth process, and for simplicity will be identical in length/format as the state ID.
-func (a *Authenticator) createOIDCState(redirectURI string, payload interface{}) (string, string, error) {
+//
+// If the context carries a StateStore the state is stored there, otherwise the
+// in-process cache is used.
+func (a *Authenticator) createOIDCState(ctx context.Context, redirectURI string, payload interface{}) (string, string, error) {
 	// Get enough bytes for 2 160-bit IDs (per rfc6749#section-10.10)
 	bytes, err := uuid.GenerateRandomBytes(2 * 20)
 	if err != nil {
@@ -270,19 +293,22 @@ func (a *Authenticator) createOIDCState(redirectURI string, payload interface{})
 	stateID := fmt.Sprintf("%x", bytes[:20])
 	nonce := fmt.Sprintf("%x", bytes[20:])
 
-	a.oidcStates.SetDefault(stateID, &oidcState{
-		nonce:       nonce,
-		redirectURI: redirectURI,
-		payload:     payload,
-	})
+	state := &OIDCState{
+		StateID:     stateID,
+		Nonce:       nonce,
+		RedirectURI: redirectURI,
+		Payload:     payload,
+		ExpiresAt:   time.Now().Add(oidcStateTimeout),
+	}
+
+	if store := stateStoreFromContext(ctx); store != nil {
+		if err := store.Put(state); err != nil {
+			return "", "", err
+		}
+		return stateID, nonce, nil
+	}
+
+	a.oidcStates.SetDefault(stateID, state)
 
 	return stateID, nonce, nil
-}
-
-// oidcState is created when an authURL is requested. The state
-// identifier is passed throughout the OAuth process.
-type oidcState struct {
-	nonce       string
-	redirectURI string
-	payload     interface{}
 }

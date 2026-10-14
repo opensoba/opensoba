@@ -6,6 +6,8 @@ package agent
 func init() {
 	registerEndpoint("/v1/acl/bootstrap", []string{"PUT"}, (*HTTPHandlers).ACLBootstrap)
 	registerEndpoint("/v1/acl/login", []string{"POST"}, (*HTTPHandlers).ACLLogin)
+	registerEndpoint("/v1/acl/oidc/auth-url", []string{"POST"}, (*HTTPHandlers).ACLOIDCAuthURL)
+	registerEndpoint("/v1/acl/oidc/callback", []string{"POST"}, (*HTTPHandlers).ACLOIDCCallback)
 	registerEndpoint("/v1/acl/logout", []string{"POST"}, (*HTTPHandlers).ACLLogout)
 	registerEndpoint("/v1/acl/replication", []string{"GET"}, (*HTTPHandlers).ACLReplicationStatus)
 	registerEndpoint("/v1/acl/policies", []string{"GET"}, (*HTTPHandlers).ACLPolicyList)
@@ -92,6 +94,7 @@ func init() {
 	registerEndpoint("/v1/health/connect/", []string{"GET"}, (*HTTPHandlers).HealthConnectServiceNodes)
 	registerEndpoint("/v1/health/ingress/", []string{"GET"}, (*HTTPHandlers).HealthIngressServiceNodes)
 	registerEndpoint("/v1/internal/ui/metrics-proxy/", []string{"GET"}, (*HTTPHandlers).UIMetricsProxy)
+	registerEndpoint("/v1/internal/ui/oidc-auth-methods", []string{"GET"}, (*HTTPHandlers).UIOIDCProviders)
 	registerEndpoint("/v1/internal/ui/nodes", []string{"GET"}, (*HTTPHandlers).UINodes)
 	registerEndpoint("/v1/internal/ui/node/", []string{"GET"}, (*HTTPHandlers).UINodeInfo)
 	registerEndpoint("/v1/internal/ui/services", []string{"GET"}, (*HTTPHandlers).UIServices)

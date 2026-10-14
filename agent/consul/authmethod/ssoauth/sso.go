@@ -5,6 +5,7 @@ package ssoauth
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/go-hclog"
@@ -76,6 +77,37 @@ func (v *Validator) ValidateLogin(ctx context.Context, loginToken string) (*auth
 	}
 
 	return v.identityFromClaims(c), nil
+}
+
+// GetAuthCodeURL begins the OIDC authorization code flow and returns the URL
+// the user should be sent to in order to authenticate with the OIDC provider.
+// The payload is retained server-side and returned from ClaimsFromAuthCode.
+//
+// Only valid for auth methods of type "oidc".
+func (v *Validator) GetAuthCodeURL(ctx context.Context, redirectURI string, payload interface{}) (string, error) {
+	if v.methodType != oidcauth.TypeOIDC {
+		return "", fmt.Errorf("auth method is not an OIDC auth method")
+	}
+
+	return v.oa.GetAuthCodeURL(ctx, redirectURI, payload)
+}
+
+// ClaimsFromAuthCode completes the OIDC authorization code flow and returns the
+// resulting Identity along with the payload that was provided to
+// GetAuthCodeURL.
+//
+// Only valid for auth methods of type "oidc".
+func (v *Validator) ClaimsFromAuthCode(ctx context.Context, state, code string) (*authmethod.Identity, interface{}, error) {
+	if v.methodType != oidcauth.TypeOIDC {
+		return nil, nil, fmt.Errorf("auth method is not an OIDC auth method")
+	}
+
+	c, payload, err := v.oa.ClaimsFromAuthCode(ctx, state, code)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return v.identityFromClaims(c), payload, nil
 }
 
 func (v *Validator) identityFromClaims(c *oidcauth.Claims) *authmethod.Identity {

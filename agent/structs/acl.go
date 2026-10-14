@@ -1904,3 +1904,109 @@ func (i *ACLServerIdentity) IsLocal() bool {
 func (i *ACLServerIdentity) EnterpriseMetadata() *acl.EnterpriseMeta {
 	return acl.DefaultEnterpriseMeta()
 }
+
+// ACLOIDCState represents the state of an OIDC authorization code flow that is
+// in progress. It is stored in the replicated state so that the flow can start
+// on one server and complete on another (e.g. behind a load balancer).
+type ACLOIDCState struct {
+	// StateID is the ID of the OIDC auth flow state.
+	StateID string
+
+	// Nonce is the OIDC nonce associated with the auth flow.
+	Nonce string
+
+	// RedirectURI is the redirect URI associated with the auth flow.
+	RedirectURI string
+
+	// Payload holds the JSON encoding of the OIDC state payload (e.g.
+	// ACLOIDCAuthURLPayload).
+	Payload []byte
+
+	// ExpiresAt is the time at which the state is no longer valid.
+	ExpiresAt time.Time
+
+	RaftIndex
+}
+
+// ACLOIDCAuthURLPayload is the data carried with an OIDC auth flow. It is
+// opaque to the OIDC provider but is made available again when the flow
+// completes.
+type ACLOIDCAuthURLPayload struct {
+	ClientNonce string
+	Meta        map[string]string
+}
+
+// ACLOIDCAuthURLRequest is used to begin an OIDC authorization code flow.
+type ACLOIDCAuthURLRequest struct {
+	AuthMethod  string
+	RedirectURI string
+	ClientNonce string
+	Meta        map[string]string `json:",omitempty"`
+	Datacenter  string
+	acl.EnterpriseMeta
+	WriteRequest
+}
+
+func (r *ACLOIDCAuthURLRequest) RequestDatacenter() string {
+	return r.Datacenter
+}
+
+// ACLOIDCAuthURLResponse is the response to an ACLOIDCAuthURLRequest.
+type ACLOIDCAuthURLResponse struct {
+	AuthURL string
+}
+
+// ACLOIDCCallbackRequest is used to complete an OIDC authorization code flow.
+type ACLOIDCCallbackRequest struct {
+	AuthMethod  string
+	State       string
+	Code        string
+	ClientNonce string
+	Datacenter  string
+	acl.EnterpriseMeta
+	WriteRequest
+}
+
+func (r *ACLOIDCCallbackRequest) RequestDatacenter() string {
+	return r.Datacenter
+}
+
+// ACLOIDCStateSetRequest is used at the Raft layer to upsert OIDC state
+// records.
+type ACLOIDCStateSetRequest struct {
+	States []*ACLOIDCState
+}
+
+// ACLOIDCStateDeleteRequest is used at the Raft layer to delete OIDC state
+// records.
+type ACLOIDCStateDeleteRequest struct {
+	StateIDs []string
+}
+
+// ACLOIDCAuthMethod is a reduced, pre-authentication view of an OIDC auth
+// method, suitable for presentation on a login screen.
+type ACLOIDCAuthMethod struct {
+	Name        string
+	DisplayName string `json:",omitempty"`
+	Kind        string `json:",omitempty"`
+	acl.EnterpriseMeta
+}
+
+// ACLOIDCAuthMethodListRequest is used to list OIDC auth methods before a user
+// has authenticated.
+type ACLOIDCAuthMethodListRequest struct {
+	Datacenter string
+	acl.EnterpriseMeta
+	QueryOptions
+}
+
+func (r *ACLOIDCAuthMethodListRequest) RequestDatacenter() string {
+	return r.Datacenter
+}
+
+// ACLOIDCAuthMethodListResponse is the response to an
+// ACLOIDCAuthMethodListRequest.
+type ACLOIDCAuthMethodListResponse struct {
+	AuthMethods []*ACLOIDCAuthMethod
+	QueryMeta
+}

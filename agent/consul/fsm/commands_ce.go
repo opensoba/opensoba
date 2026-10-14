@@ -137,6 +137,8 @@ func init() {
 	registerCommand(structs.ACLBindingRuleDeleteRequestType, (*FSM).applyACLBindingRuleDeleteOperation)
 	registerCommand(structs.ACLAuthMethodSetRequestType, (*FSM).applyACLAuthMethodSetOperation)
 	registerCommand(structs.ACLAuthMethodDeleteRequestType, (*FSM).applyACLAuthMethodDeleteOperation)
+	registerCommand(structs.ACLOIDCStateSetRequestType, (*FSM).applyACLOIDCStateSetOperation)
+	registerCommand(structs.ACLOIDCStateDeleteRequestType, (*FSM).applyACLOIDCStateDeleteOperation)
 	registerCommand(structs.FederationStateRequestType, (*FSM).applyFederationStateOperation)
 	registerCommand(structs.SystemMetadataRequestType, (*FSM).applySystemMetadataOperation)
 	registerCommand(structs.PeeringWriteType, (*FSM).applyPeeringWrite)
@@ -656,6 +658,28 @@ func (c *FSM) applyACLAuthMethodDeleteOperation(buf []byte, index uint64) interf
 		[]metrics.Label{{Name: "op", Value: "delete"}})
 
 	return c.state.ACLAuthMethodBatchDelete(index, req.AuthMethodNames, &req.EnterpriseMeta)
+}
+
+func (c *FSM) applyACLOIDCStateSetOperation(buf []byte, index uint64) interface{} {
+	var req structs.ACLOIDCStateSetRequest
+	if err := structs.Decode(buf, &req); err != nil {
+		panic(fmt.Errorf("failed to decode request: %v", err))
+	}
+	defer metrics.MeasureSinceWithLabels([]string{"fsm", "acl", "oidc_state"}, time.Now(),
+		[]metrics.Label{{Name: "op", Value: "upsert"}})
+
+	return c.state.OIDCStateBatchSet(index, req.States)
+}
+
+func (c *FSM) applyACLOIDCStateDeleteOperation(buf []byte, index uint64) interface{} {
+	var req structs.ACLOIDCStateDeleteRequest
+	if err := structs.Decode(buf, &req); err != nil {
+		panic(fmt.Errorf("failed to decode request: %v", err))
+	}
+	defer metrics.MeasureSinceWithLabels([]string{"fsm", "acl", "oidc_state"}, time.Now(),
+		[]metrics.Label{{Name: "op", Value: "delete"}})
+
+	return c.state.OIDCStateBatchDelete(index, req.StateIDs)
 }
 
 func (c *FSM) applyFederationStateOperation(buf []byte, index uint64) interface{} {

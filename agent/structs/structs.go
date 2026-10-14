@@ -89,6 +89,8 @@ const (
 	RaftLogVerifierCheckpoint                   = 41 // Only used for log verifier, no-op on FSM.
 	ResourceOperationType                       = 42
 	UpdateVirtualIPRequestType                  = 43
+	ACLOIDCStateSetRequestType                  = 44
+	ACLOIDCStateDeleteRequestType               = 45
 )
 
 const (
@@ -158,6 +160,8 @@ var requestTypeStrings = map[MessageType]string{
 	RaftLogVerifierCheckpoint:       "RaftLogVerifierCheckpoint",
 	ResourceOperationType:           "Resource",
 	UpdateVirtualIPRequestType:      "UpdateManualVirtualIPRequestType",
+	ACLOIDCStateSetRequestType:      "ACLOIDCStateSet",
+	ACLOIDCStateDeleteRequestType:   "ACLOIDCStateDelete",
 }
 
 const (

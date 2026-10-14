@@ -18,6 +18,7 @@ const (
 	tableACLRoles        = "acl-roles"
 	tableACLBindingRules = "acl-binding-rules"
 	tableACLAuthMethods  = "acl-auth-methods"
+	tableACLOIDCStates   = "acl-oidc-states"
 
 	indexAccessor      = "accessor"
 	indexPolicies      = "policies"
@@ -28,6 +29,7 @@ const (
 	indexName          = "name"
 	indexExpiresGlobal = "expires-global"
 	indexExpiresLocal  = "expires-local"
+	indexExpiresAt     = "expires-at"
 )
 
 func tokensTableSchema() *memdb.TableSchema {

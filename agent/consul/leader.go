@@ -152,6 +152,12 @@ func (s *Server) leaderLoop(stopCh chan struct{}) {
 		s.logger.Warn("failed to broadcast new leader event", "error", err)
 	}
 
+	// Periodically sweep expired OIDC authorization code flow state. This is
+	// created once here so that leadership re-establishment (which jumps back
+	// to RECONCILE) does not leak tickers.
+	oidcStateReapTicker := time.NewTicker(oidcStateReapInterval)
+	defer oidcStateReapTicker.Stop()
+
 	// Reconcile channel is only used once initial reconcile
 	// has succeeded
 	var reconcileCh chan serf.Member
@@ -229,6 +235,8 @@ WAIT:
 			s.reconcileMember(member)
 		case index := <-s.tombstoneGC.ExpireCh():
 			go s.reapTombstones(index)
+		case <-oidcStateReapTicker.C:
+			go s.reapOIDCStates()
 		case errCh := <-s.reassertLeaderCh:
 			// we can get into this state when the initial
 			// establishLeadership has failed as well as the follow
@@ -1315,6 +1323,43 @@ func (s *Server) reapTombstones(index uint64) {
 	if err != nil {
 		s.logger.Error("failed to reap tombstones up to index",
 			"index", index,
+			"error", err,
+		)
+	}
+}
+
+// oidcStateReapInterval is how often the leader sweeps expired OIDC
+// authorization code flow state out of the replicated state store.
+const oidcStateReapInterval = 1 * time.Minute
+
+// oidcStateReapBatchSize bounds how many expired OIDC state records the leader
+// deletes per Raft apply.
+const oidcStateReapBatchSize = 1000
+
+// reapOIDCStates is invoked periodically by the current leader to garbage
+// collect expired OIDC authorization code flow state. This must be replicated
+// through Raft to ensure consistency across servers.
+func (s *Server) reapOIDCStates() {
+	defer metrics.MeasureSince([]string{"leader", "reapOIDCStates"}, time.Now())
+
+	expired, err := s.fsm.State().OIDCStateListExpired(time.Now(), oidcStateReapBatchSize)
+	if err != nil {
+		s.logger.Error("failed to list expired OIDC states", "error", err)
+		return
+	}
+	if len(expired) == 0 {
+		return
+	}
+
+	stateIDs := make([]string, 0, len(expired))
+	for _, state := range expired {
+		stateIDs = append(stateIDs, state.StateID)
+	}
+
+	req := structs.ACLOIDCStateDeleteRequest{StateIDs: stateIDs}
+	if _, err := s.raftApply(structs.ACLOIDCStateDeleteRequestType, &req); err != nil {
+		s.logger.Error("failed to reap OIDC states",
+			"count", len(stateIDs),
 			"error", err,
 		)
 	}

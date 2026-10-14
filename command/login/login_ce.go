@@ -13,5 +13,8 @@ func (c *cmd) initEnterpriseFlags() {
 }
 
 func (c *cmd) login() int {
+	if c.authMethodType == "oidc" {
+		return c.oidcLogin()
+	}
 	return c.bearerTokenLogin()
 }

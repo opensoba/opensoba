@@ -45,6 +45,11 @@ OpenSoba provides several key features:
   indexed objects, like configuration parameters and application metadata,
   within OpenSoba.
 
+* **SSO Login (OIDC)** — Users can log in to the web UI and the `soba` CLI
+  through an OpenID Connect provider (for example Keycloak, Okta, Auth0, or
+  Google) using the `oidc` auth method type. See
+  [docs/oidc.md](./docs/oidc.md).
+
 OpenSoba runs on Linux, macOS, FreeBSD, Solaris, and Windows and includes an
 optional browser based UI.
 

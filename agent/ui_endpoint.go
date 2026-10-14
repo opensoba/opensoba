@@ -306,6 +306,37 @@ func (s *HTTPHandlers) UICatalogOverview(resp http.ResponseWriter, req *http.Req
 	return out, nil
 }
 
+// UIOIDCProviders is used by the login screen to list the available OIDC auth
+// methods before the user has authenticated.
+func (s *HTTPHandlers) UIOIDCProviders(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
+	if s.checkACLDisabled() {
+		return nil, aclDisabled
+	}
+
+	args := structs.ACLOIDCAuthMethodListRequest{
+		Datacenter: s.agent.config.Datacenter,
+	}
+	if done := s.parse(resp, req, &args.Datacenter, &args.QueryOptions); done {
+		return nil, nil
+	}
+	if err := s.parseEntMeta(req, &args.EnterpriseMeta); err != nil {
+		return nil, err
+	}
+
+	var out structs.ACLOIDCAuthMethodListResponse
+	defer setMeta(resp, &out.QueryMeta)
+	if err := s.agent.RPC(req.Context(), "ACL.OIDCAuthMethodList", &args, &out); err != nil {
+		return nil, err
+	}
+
+	// make sure we return an array and not nil
+	if out.AuthMethods == nil {
+		out.AuthMethods = make([]*structs.ACLOIDCAuthMethod, 0)
+	}
+
+	return out.AuthMethods, nil
+}
+
 // UIServices is used to list the services in a given datacenter. We return a
 // ServiceSummary which provides overview information for the service
 func (s *HTTPHandlers) UIServices(resp http.ResponseWriter, req *http.Request) (interface{}, error) {
