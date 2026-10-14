@@ -1,0 +1,1 @@
+((e,i=("undefined"!=typeof document?document.currentScript.dataset:module.exports))=>{i.services=JSON.stringify(e)})({"route:application":{class:"sabo-ui/routing/application-debug"},"service:intl":{class:"sabo-ui/services/i18n-debug"}})
