@@ -34,7 +34,7 @@ html[data-state]:not(.ember-loading) body > .brand-loader {
 }
 /**/
 
-/* hide the Consul::Loader/spinning loader when idle/hide content when loading */
+/* hide the Sabo::Loader/spinning loader when idle/hide content when loading */
 html.ember-loading .view-loader,
 html[data-state='idle'] .view-loader {
   display: none;

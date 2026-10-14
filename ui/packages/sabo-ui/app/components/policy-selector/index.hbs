@@ -136,7 +136,7 @@
                 Rules <a href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#rule-specification" rel="help noopener noreferrer" target="_blank">(HCL Format)</a>
               </:label>
               <:content>
-                <Consul::ServiceIdentity::Template
+                <Sabo::ServiceIdentity::Template
                   @nspace={{nspace}}
                   @partition={{partition}}
                   @name={{item.Name}}
@@ -152,7 +152,7 @@
                 Rules <a href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#rule-specification" rel="help noopener noreferrer" target="_blank">(HCL Format)</a>
               </:label>
               <:content>
-                <Consul::NodeIdentity::Template
+                <Sabo::NodeIdentity::Template
                   @name={{item.Name}}
                   @partition={{partition}}
                 />

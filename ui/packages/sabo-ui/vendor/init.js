@@ -44,4 +44,4 @@
   } catch (e) {
     throw new Error(`Unable to parse ${appName} settings: ${e.message}`);
   }
-})(document, 'consul-ui');
+})(document, 'sabo-ui');

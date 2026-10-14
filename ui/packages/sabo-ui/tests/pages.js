@@ -24,9 +24,9 @@ import createCreatable from 'sabo-ui/tests/lib/page-object/createCreatable';
 import createCancelable from 'sabo-ui/tests/lib/page-object/createCancelable';
 
 // components
-import intentionPermissionForm from 'sabo-ui/components/consul/intention/permission/form/pageobject';
-import intentionPermissionList from 'sabo-ui/components/consul/intention/permission/list/pageobject';
-import pageFactory from 'sabo-ui/components/hashicorp-consul/pageobject';
+import intentionPermissionForm from 'sabo-ui/components/sabo/intention/permission/form/pageobject';
+import intentionPermissionList from 'sabo-ui/components/sabo/intention/permission/list/pageobject';
+import pageFactory from 'sabo-ui/components/app-shell/pageobject';
 
 import radiogroup from 'sabo-ui/components/radio-group/pageobject';
 import tabgroup from 'sabo-ui/components/tab-nav/pageobject';
@@ -43,16 +43,16 @@ import popoverSelectFactory from 'sabo-ui/components/popover-select/pageobject';
 import morePopoverMenuFactory from 'sabo-ui/components/more-popover-menu/pageobject';
 
 import tokenListFactory from 'sabo-ui/components/token-list/pageobject';
-import consulHealthCheckListFactory from 'sabo-ui/components/consul/health-check/list/pageobject';
-import consulUpstreamInstanceListFactory from 'sabo-ui/components/consul/upstream-instance/list/pageobject';
-import consulTokenListFactory from 'sabo-ui/components/consul/token/list/pageobject';
-import consulRoleListFactory from 'sabo-ui/components/consul/role/list/pageobject';
-import consulPolicyListFactory from 'sabo-ui/components/consul/policy/list/pageobject';
-import consulAuthMethodListFactory from 'sabo-ui/components/consul/auth-method/list/pageobject';
-import consulIntentionListFactory from 'sabo-ui/components/consul/intention/list/pageobject';
-import consulNspaceListFactory from 'sabo-ui/components/consul/nspace/list/pageobject';
-import consulPeerListFactory from 'sabo-ui/components/consul/peer/list/test-support';
-import consulKvListFactory from 'sabo-ui/components/consul/kv/list/pageobject';
+import consulHealthCheckListFactory from 'sabo-ui/components/sabo/health-check/list/pageobject';
+import consulUpstreamInstanceListFactory from 'sabo-ui/components/sabo/upstream-instance/list/pageobject';
+import consulTokenListFactory from 'sabo-ui/components/sabo/token/list/pageobject';
+import consulRoleListFactory from 'sabo-ui/components/sabo/role/list/pageobject';
+import consulPolicyListFactory from 'sabo-ui/components/sabo/policy/list/pageobject';
+import consulAuthMethodListFactory from 'sabo-ui/components/sabo/auth-method/list/pageobject';
+import consulIntentionListFactory from 'sabo-ui/components/sabo/intention/list/pageobject';
+import consulNspaceListFactory from 'sabo-ui/components/sabo/nspace/list/pageobject';
+import consulPeerListFactory from 'sabo-ui/components/sabo/peer/list/test-support';
+import consulKvListFactory from 'sabo-ui/components/sabo/kv/list/pageobject';
 
 // pages
 import index from 'sabo-ui/tests/pages/index';

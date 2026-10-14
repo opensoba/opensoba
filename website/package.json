@@ -2,7 +2,7 @@
   "name": "opensoba-docs",
   "description": "OpenSoba documentation website",
   "version": "0.0.1",
-  "author": "HashiCorp",
+  "author": "OpenSoba",
   "devDependencies": {
     "@hashicorp/platform-cli": "^2.6.0",
     "@hashicorp/platform-content-conformance": "^0.0.10",

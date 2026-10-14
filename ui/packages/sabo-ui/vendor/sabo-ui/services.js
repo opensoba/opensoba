@@ -6,16 +6,16 @@
 (services =>
   services({
     'route:basic': {
-      class: 'consul-ui/routing/route',
+      class: 'sabo-ui/routing/route',
     },
     'service:intl': {
-      class: 'consul-ui/services/i18n',
+      class: 'sabo-ui/services/i18n',
     },
     'service:state': {
-      class: 'consul-ui/services/state-with-charts',
+      class: 'sabo-ui/services/state-with-charts',
     },
     'auth-provider:oidc-with-url': {
-      class: 'consul-ui/services/auth-providers/oauth2-code-with-url-provider',
+      class: 'sabo-ui/services/auth-providers/oauth2-code-with-url-provider',
     },
     'component:consul/partition/selector': {
       class: '@glimmer/component',

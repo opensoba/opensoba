@@ -69,7 +69,7 @@ as |route|>
 as |item tomography|}}
       <AppView>
           <BlockSlot @name="notification" as |status type|>
-            <Consul::LockSession::Notifications
+            <Sabo::LockSession::Notifications
               @type={{type}}
               @status={{status}}
             />
@@ -84,7 +84,7 @@ as |item tomography|}}
                 <route.Title @title={{item.Node}} />
               </h1>
               <label for="toolbar-toggle"></label>
-              <Consul::Peer::Info @item={{item}} />
+              <Sabo::Peer::Info @item={{item}} />
           </BlockSlot>
           <BlockSlot @name="nav">
             <TabNav @items={{

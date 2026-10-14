@@ -59,7 +59,7 @@
 @import 'sabo-ui/components/main-header-horizontal';
 @import 'sabo-ui/components/main-nav-horizontal';
 @import 'sabo-ui/components/main-nav-vertical';
-@import 'sabo-ui/components/hashicorp-consul';
+@import 'sabo-ui/components/app-shell';
 /**/
 @import 'sabo-ui/components/menu-panel';
 
@@ -80,24 +80,24 @@
 @import 'sabo-ui/components/search-bar';
 @import 'sabo-ui/components/copyable-code';
 
-@import 'sabo-ui/components/consul/loader';
-@import 'sabo-ui/components/consul/tomography/graph';
-@import 'sabo-ui/components/consul/discovery-chain';
-@import 'sabo-ui/components/consul/bucket/list';
-@import 'sabo-ui/components/consul/upstream/list';
-@import 'sabo-ui/components/consul/upstream-instance/list';
-@import 'sabo-ui/components/consul/health-check/list';
-@import 'sabo-ui/components/consul/instance-checks';
-@import 'sabo-ui/components/consul/exposed-path/list';
-@import 'sabo-ui/components/consul/external-source';
-@import 'sabo-ui/components/consul/kind';
-@import 'sabo-ui/components/consul/source';
-@import 'sabo-ui/components/consul/intention';
-@import 'sabo-ui/components/consul/lock-session/list';
-@import 'sabo-ui/components/consul/lock-session/form';
-@import 'sabo-ui/components/consul/server/list';
-@import 'sabo-ui/components/consul/server/card';
-@import 'sabo-ui/components/consul/auth-method';
+@import 'sabo-ui/components/sabo/loader';
+@import 'sabo-ui/components/sabo/tomography/graph';
+@import 'sabo-ui/components/sabo/discovery-chain';
+@import 'sabo-ui/components/sabo/bucket/list';
+@import 'sabo-ui/components/sabo/upstream/list';
+@import 'sabo-ui/components/sabo/upstream-instance/list';
+@import 'sabo-ui/components/sabo/health-check/list';
+@import 'sabo-ui/components/sabo/instance-checks';
+@import 'sabo-ui/components/sabo/exposed-path/list';
+@import 'sabo-ui/components/sabo/external-source';
+@import 'sabo-ui/components/sabo/kind';
+@import 'sabo-ui/components/sabo/source';
+@import 'sabo-ui/components/sabo/intention';
+@import 'sabo-ui/components/sabo/lock-session/list';
+@import 'sabo-ui/components/sabo/lock-session/form';
+@import 'sabo-ui/components/sabo/server/list';
+@import 'sabo-ui/components/sabo/server/card';
+@import 'sabo-ui/components/sabo/auth-method';
 
 @import 'sabo-ui/components/role-selector';
 @import 'sabo-ui/components/topology-metrics';
@@ -107,11 +107,11 @@
 @import 'sabo-ui/components/topology-metrics/series';
 @import 'sabo-ui/components/topology-metrics/stats';
 @import 'sabo-ui/components/topology-metrics/status';
-@import 'sabo-ui/components/consul/intention/list/table';
-@import 'sabo-ui/components/consul/peer';
+@import 'sabo-ui/components/sabo/intention/list/table';
+@import 'sabo-ui/components/sabo/peer';
 @import 'sabo-ui/components/peerings/badge';
-@import 'sabo-ui/components/consul/node/peer-info';
-@import 'sabo-ui/components/consul/peer/info';
-@import 'sabo-ui/components/consul/peer/form';
-@import 'sabo-ui/components/consul/hcp/home';
-@import 'sabo-ui/components/consul/node/agentless-notice';
+@import 'sabo-ui/components/sabo/node/peer-info';
+@import 'sabo-ui/components/sabo/peer/info';
+@import 'sabo-ui/components/sabo/peer/form';
+@import 'sabo-ui/components/sabo/hcp/home';
+@import 'sabo-ui/components/sabo/node/agentless-notice';

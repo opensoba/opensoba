@@ -5,7 +5,7 @@
 
 (services => services({
   'component:consul/hcp/home': {
-    class: 'consul-ui/components/consul/hcp/home',
+    class: 'sabo-ui/components/sabo/hcp/home',
   },
 }))(
   (json, data = (typeof document !== 'undefined' ? document.currentScript.dataset : module.exports)) => {

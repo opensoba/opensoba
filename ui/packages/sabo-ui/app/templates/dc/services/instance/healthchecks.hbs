@@ -40,7 +40,7 @@
 
         {{#if (gt items.length 0)}}
           <input type='checkbox' id='toolbar-toggle' />
-          <Consul::HealthCheck::SearchBar
+          <Sabo::HealthCheck::SearchBar
             @search={{search}}
             @onsearch={{action (mut search) value='target.value'}}
             @sort={{sort}}
@@ -68,7 +68,7 @@
           as |collection|
         >
           <collection.Collection>
-            <Consul::HealthCheck::List @items={{collection.items}} />
+            <Sabo::HealthCheck::List @items={{collection.items}} />
           </collection.Collection>
           <collection.Empty>
             <EmptyState>

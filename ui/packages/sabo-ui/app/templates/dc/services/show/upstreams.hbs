@@ -55,7 +55,7 @@ as |route|>
   as |sort filters partition nspace dc items|}}
   {{#if (gt items.length 0)}}
       <input type="checkbox" id="toolbar-toggle" />
-      <Consul::Upstream::SearchBar
+      <Sabo::Upstream::SearchBar
         @search={{search}}
         @onsearch={{action (mut search) value="target.value"}}
 
@@ -76,13 +76,13 @@ as |route|>
           @items={{items}}
         as |collection|>
           <collection.Collection>
-            <Consul::Upstream::List
+            <Sabo::Upstream::List
               @items={{collection.items}}
               @dc={{dc}}
               @nspace={{nspace}}
               @partition={{partition}}
             >
-            </Consul::Upstream::List>
+            </Sabo::Upstream::List>
           </collection.Collection>
           <collection.Empty>
             <EmptyState>

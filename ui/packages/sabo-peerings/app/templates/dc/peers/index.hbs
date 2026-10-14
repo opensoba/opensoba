@@ -53,7 +53,7 @@
           <BlockSlot @name="toolbar">
 
             {{#if (gt items.length 0)}}
-              <Consul::Peer::SearchBar
+              <Sabo::Peer::SearchBar
                 @search={{search}}
                 @onsearch={{action (mut search) value="target.value"}}
                 @sort={{sort}}
@@ -78,7 +78,7 @@
               <BlockSlot @name="body">
 
                 {{#if modal.opened}}
-                  <Consul::Peer::Form @params={{route.params}} as |form|>
+                  <Sabo::Peer::Form @params={{route.params}} as |form|>
                     <form.Form
                       @onchange={{loader.invalidate}}
                       @onsubmit={{fn this.redirectToPeerShow modal.close}}
@@ -87,7 +87,7 @@
                       {{did-insert (set this "form" form)}}
                       <form.Fieldsets />
                     </form.Form>
-                  </Consul::Peer::Form>
+                  </Sabo::Peer::Form>
                 {{/if}}
 
               </BlockSlot>
@@ -120,7 +120,7 @@
             >
 
               <BlockSlot @name="removed" as |after|>
-                <Consul::Peer::Notifications
+                <Sabo::Peer::Notifications
                   {{notification after=(action after)}}
                   @type="remove"
                 />
@@ -140,7 +140,7 @@
                   </BlockSlot>
                   <BlockSlot @name="body">
                     {{#if this.item}}
-                      <Consul::Peer::Form::Generate
+                      <Sabo::Peer::Form::Generate
                         @item={{this.item}}
                         @onchange={{loader.invalidate}}
                         @regenerate={{true}}
@@ -148,7 +148,7 @@
                       >
                         {{did-insert (set this "regenerateForm" form)}}
                         <form.Fieldsets />
-                      </Consul::Peer::Form::Generate>
+                      </Sabo::Peer::Form::Generate>
                     {{/if}}
                   </BlockSlot>
                   <BlockSlot @name="actions">
@@ -168,7 +168,7 @@
                 >
                   <collection.Collection>
 
-                    <Consul::Peer::List
+                    <Sabo::Peer::List
                       @items={{collection.items}}
                       @onedit={{queue (set this "item") this.regenerate.open}}
                       @ondelete={{writer.delete}}

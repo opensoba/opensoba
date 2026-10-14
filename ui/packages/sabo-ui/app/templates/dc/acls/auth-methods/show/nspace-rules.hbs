@@ -14,7 +14,7 @@ as |item|}}
     <p>
       A set of rules that can control which namespace tokens created via this auth method will be created within. Unlike binding rules, the first matching namespace rule wins.
     </p>
-    <Consul::AuthMethod::NspaceList @items={{item.NamespaceRules}} />
+    <Sabo::AuthMethod::NspaceList @items={{item.NamespaceRules}} />
   {{else}}
     <EmptyState>
       <BlockSlot @name="header">

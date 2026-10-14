@@ -42,7 +42,7 @@ as |route|>
       <div class="tab-section">
           {{#if (gt items.length 0) }}
             <input type="checkbox" id="toolbar-toggle" />
-            <Consul::HealthCheck::SearchBar
+            <Sabo::HealthCheck::SearchBar
 
               @search={{search}}
               @onsearch={{action (mut search) value="target.value"}}
@@ -68,7 +68,7 @@ as |route|>
             @items={{items}}
           as |collection|>
             <collection.Collection>
-              <Consul::HealthCheck::List
+              <Sabo::HealthCheck::List
                 @items={{collection.items}}
               />
             </collection.Collection>

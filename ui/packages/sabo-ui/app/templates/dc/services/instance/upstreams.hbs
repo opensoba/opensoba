@@ -36,7 +36,7 @@ as |route|>
   as |sort filters partition nspace dc proxy meta items|}}
       {{#if (gt items.length 0)}}
         <input type="checkbox" id="toolbar-toggle" />
-        <Consul::UpstreamInstance::SearchBar
+        <Sabo::UpstreamInstance::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
           @searchproperties={{searchProperties}}
@@ -71,7 +71,7 @@ as |route|>
         @items={{items}}
       as |collection|>
         <collection.Collection>
-          <Consul::UpstreamInstance::List
+          <Sabo::UpstreamInstance::List
             @items={{collection.items}}
             @dc={{dc}}
             @nspace={{nspace}}

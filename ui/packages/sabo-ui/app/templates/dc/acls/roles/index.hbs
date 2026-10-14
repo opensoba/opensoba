@@ -19,7 +19,7 @@ as |route|>
 
     <BlockSlot @name="error">
     {{#if (eq loader.error.status '401')}}
-      <Consul::Acl::Disabled />
+      <Sabo::Acl::Disabled />
     {{else}}
       <AppError
         @error={{loader.error}}
@@ -70,7 +70,7 @@ as |route|>
       </BlockSlot>
       <BlockSlot @name="toolbar">
       {{#if (gt items.length 0) }}
-        <Consul::Role::SearchBar
+        <Sabo::Role::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
 
@@ -89,7 +89,7 @@ as |route|>
           @items={{items}}
         as |collection|>
           <collection.Collection>
-            <Consul::Role::List
+            <Sabo::Role::List
               @items={{collection.items}}
               @ondelete={{route-action 'delete'}}
             />

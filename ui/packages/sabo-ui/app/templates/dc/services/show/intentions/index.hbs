@@ -57,7 +57,7 @@ as |route|>
         </Portal>
   {{/if}}
   {{#if (gt items.length 0) }}
-        <Consul::Intention::SearchBar
+        <Sabo::Intention::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
 
@@ -87,7 +87,7 @@ as |route|>
               @items={{items}}
             as |collection|>
               <collection.Collection>
-                <Consul::Intention::List
+                <Sabo::Intention::List
                   @items={{collection.items}}
                   @check={{search}}
                   @delete={{writer.delete}}
@@ -95,7 +95,7 @@ as |route|>
                   <list.CustomResourceNotice />
                   <list.CheckNotice />
                   <list.Table @routeName="dc.services.show.intentions.edit" />
-                </Consul::Intention::List>
+                </Sabo::Intention::List>
               </collection.Collection>
               <collection.Empty>
                 <EmptyState

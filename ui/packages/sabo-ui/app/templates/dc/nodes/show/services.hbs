@@ -39,7 +39,7 @@ as |route|>
   <div class="tab-section">
     {{#if (gt items.length 0) }}
       <input type="checkbox" id="toolbar-toggle" />
-      <Consul::ServiceInstance::SearchBar
+      <Sabo::ServiceInstance::SearchBar
         @sources={{get (collection items) 'ExternalSources'}}
         @search={{search}}
         @onsearch={{action (mut search) value="target.value"}}
@@ -58,7 +58,7 @@ as |route|>
         @items={{items}}
       as |collection|>
         <collection.Collection>
-          <Consul::ServiceInstance::List
+          <Sabo::ServiceInstance::List
             @node={{route.model.item}}
             @routeName="dc.services.show"
             @items={{collection.items}}

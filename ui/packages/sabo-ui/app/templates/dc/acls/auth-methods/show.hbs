@@ -19,7 +19,7 @@ as |route|>
 
     <BlockSlot @name="error">
       {{#if (eq loader.error.status '401')}}
-        <Consul::Acl::Disabled />
+        <Sabo::Acl::Disabled />
       {{else}}
         <AppError
           @error={{loader.error}}
@@ -42,7 +42,7 @@ as |item|}}
         <h1>
           <route.Title @title={{item.Name}} />
         </h1>
-        <Consul::AuthMethod::Type @item={{item}} />
+        <Sabo::AuthMethod::Type @item={{item}} />
       </BlockSlot>
       <BlockSlot @name="nav">
         <TabNav @items={{

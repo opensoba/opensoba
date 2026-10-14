@@ -19,15 +19,15 @@ as |style label|}}
       >
         <:header>
           <h3>
-            {{t "components.consul.topology-metrics.popover.deny.header"}}
+            {{t "components.sabo.topology-metrics.popover.deny.header"}}
           </h3>
         </:header>
         <:body>
           <p>
             {{#if @item.Intention.HasExact}}
-              {{t "components.consul.topology-metrics.popover.deny.body.isExact"}}
+              {{t "components.sabo.topology-metrics.popover.deny.body.isExact"}}
             {{else}}
-              {{t "components.consul.topology-metrics.popover.deny.body.notExact"}}
+              {{t "components.sabo.topology-metrics.popover.deny.body.notExact"}}
             {{/if}}
           </p>
         </:body>
@@ -39,9 +39,9 @@ as |style label|}}
               type="button"
             >
               {{#if @item.Intention.HasExact}}
-                {{t "components.consul.topology-metrics.popover.deny.action.isExact"}}
+                {{t "components.sabo.topology-metrics.popover.deny.action.isExact"}}
               {{else}}
-                {{t "components.consul.topology-metrics.popover.deny.action.notExact"}}
+                {{t "components.sabo.topology-metrics.popover.deny.action.notExact"}}
               {{/if}}
             </button>
           </Actions.Action>
@@ -63,18 +63,18 @@ as |style label|}}
       >
         <:header>
           <h3>
-            {{t "components.consul.topology-metrics.popover.not-defined.header"}}
+            {{t "components.sabo.topology-metrics.popover.not-defined.header"}}
           </h3>
         </:header>
         <:body>
           <p>
-            {{t "components.consul.topology-metrics.popover.not-defined.body" downstream=@item.Name upstream=@service.Name }}
+            {{t "components.sabo.topology-metrics.popover.not-defined.body" downstream=@item.Name upstream=@service.Name }}
           </p>
         </:body>
         <:actions as |Actions|>
           <Actions.Action class="action">
             <a href="{{env 'CONSUL_DOCS_URL'}}/connect/registration/service-registration#upstreams" rel="noopener noreferrer" target="_blank">
-              {{t "components.consul.topology-metrics.popover.not-defined.action"}}
+              {{t "components.sabo.topology-metrics.popover.not-defined.action"}}
             </a>
           </Actions.Action>
           <Actions.Action>
@@ -95,18 +95,18 @@ as |style label|}}
       >
         <:header>
           <h3>
-            {{t "components.consul.topology-metrics.popover.l7.header"}}
+            {{t "components.sabo.topology-metrics.popover.l7.header"}}
           </h3>
         </:header>
         <:body>
           <p>
-            {{t "components.consul.topology-metrics.popover.l7.body"}}
+            {{t "components.sabo.topology-metrics.popover.l7.body"}}
           </p>
         </:body>
         <:actions as |Actions|>
           <Actions.Action class="action">
             <a href={{href-to 'dc.services.show.intentions.edit' (concat @item.Intention.ID)}}>
-              {{t "components.consul.topology-metrics.popover.l7.action"}}
+              {{t "components.sabo.topology-metrics.popover.l7.action"}}
             </a>
           </Actions.Action>
           <Actions.Action>

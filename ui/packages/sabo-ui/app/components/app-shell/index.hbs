@@ -1,0 +1,199 @@
+{{!
+  Copyright (c) HashiCorp, Inc.
+  SPDX-License-Identifier: MPL-2.0
+}}
+
+<App class='app-shell' ...attributes>
+
+  <:notifications as |app|>
+    {{#each flashMessages.queue as |flash|}}
+      <app.Notification @delay={{sub flash.timeout flash.extendedTimeout}} @sticky={{flash.sticky}}>
+        {{#if flash.dom}}
+          {{{flash.dom}}}
+        {{else}}
+          {{#let (lowercase flash.type) (lowercase flash.action) as |status type|}}
+            <Hds::Toast
+              @color={{if (eq status 'error') 'critical' status}}
+              data-notification
+              as |T|>
+              <T.Title>{{capitalize status}}!</T.Title>
+              <T.Description>
+                {{#if (eq type 'logout')}}
+                  {{#if (eq status 'success')}}
+                    You are now logged out.
+                  {{else}}
+                    There was an error logging out.
+                  {{/if}}
+                {{else if (eq type 'authorize')}}
+                  {{#if (eq status 'success')}}
+                    You are now logged in.
+                  {{else}}
+                    There was an error, please check your SecretID/Token
+                  {{/if}}
+                {{else}}
+                  {{#if (or (eq type 'use') (eq flash.model 'token'))}}
+                    <Sabo::Token::Notifications
+                      @type={{type}}
+                      @status={{status}}
+                      @item={{flash.item}}
+                      @error={{flash.error}}
+                    />
+                  {{else if (eq flash.model 'intention')}}
+                    <Sabo::Intention::Notifications
+                      @type={{type}}
+                      @status={{status}}
+                      @item={{flash.item}}
+                      @error={{flash.error}}
+                    />
+                  {{else if (eq flash.model 'role')}}
+                    <Sabo::Role::Notifications
+                      @type={{type}}
+                      @status={{status}}
+                      @item={{flash.item}}
+                      @error={{flash.error}}
+                    />
+                  {{else if (eq flash.model 'policy')}}
+                    <Sabo::Policy::Notifications
+                      @type={{type}}
+                      @status={{status}}
+                      @item={{flash.item}}
+                      @error={{flash.error}}
+                    />
+                  {{/if}}
+                {{/if}}
+              </T.Description>
+            </Hds::Toast>
+
+          {{/let}}
+        {{/if}}
+      </app.Notification>
+    {{/each}}
+
+  </:notifications>
+
+  <:home-nav>
+    <a class='w-8 h-8' href={{href-to 'index' params=(hash peer=undefined)}}>
+      <FlightIcon @size='24' @name='consul-color' @stretched={{true}} />
+    </a>
+  </:home-nav>
+
+  <:main-nav>
+    <Sabo::Hcp::Home />
+    <ul>
+      <Sabo::Datacenter::Selector
+        @dc={{@dc}}
+        @partition={{@partition}}
+        @nspace={{@nspace}}
+        @dcs={{@dcs}}
+      />
+      <Sabo::Partition::Selector
+        @dc={{@dc}}
+        @partition={{@partition}}
+        @nspace={{@nspace}}
+        @partitions={{this.partitions}}
+        @onchange={{action (mut this.partitions) value='data'}}
+      />
+      <Sabo::Nspace::Selector
+        @dc={{@dc}}
+        @partition={{@partition}}
+        @nspace={{@nspace}}
+        @nspaces={{this.nspaces}}
+        @onchange={{action (mut this.nspaces) value='data'}}
+      />
+      {{#if (can 'access overview')}}
+        <li
+          data-test-main-nav-overview
+          class={{class-map (array 'is-active' (is-href 'dc.show' @dc.Name))}}
+        >
+          <Action @href={{href-to 'dc.show' @dc.Name params=(hash peer=undefined)}}>
+            Overview
+          </Action>
+        </li>
+      {{/if}}
+      {{#if (can 'read services')}}
+        <li data-test-main-nav-services class={{if (is-href 'dc.services' @dc.Name) 'is-active'}}>
+          <a href={{href-to 'dc.services' @dc.Name params=(hash peer=undefined)}}>Services</a>
+        </li>
+      {{/if}}
+      {{#if (can 'read nodes')}}
+        <li data-test-main-nav-nodes class={{if (is-href 'dc.nodes' @dc.Name) 'is-active'}}>
+          <a href={{href-to 'dc.nodes' @dc.Name params=(hash peer=undefined)}}>Nodes</a>
+        </li>
+      {{/if}}
+      {{#if (can 'read kv')}}
+        <li data-test-main-nav-kvs class={{if (is-href 'dc.kv' @dc.Name) 'is-active'}}>
+          <a href={{href-to 'dc.kv' @dc.Name params=(hash peer=undefined)}}>Key/Value</a>
+        </li>
+      {{/if}}
+      {{#if (can 'read intentions')}}
+        <li
+          data-test-main-nav-intentions
+          class={{if (is-href 'dc.intentions' @dc.Name) 'is-active'}}
+        >
+          <a href={{href-to 'dc.intentions' @dc.Name params=(hash peer=undefined)}}>Intentions</a>
+        </li>
+      {{/if}}
+      <Sabo::Acl::Selector @dc={{@dc}} @partition={{@partition}} @nspace={{@nspace}} />
+      <Sabo::Peer::Selector @dc={{@dc}} @partition={{@partition}} @nspace={{@nspace}} />
+    </ul>
+  </:main-nav>
+
+  <:complementary-nav>
+    <ul>
+      <Debug::Navigation />
+      <li data-test-main-nav-help>
+        <DisclosureMenu as |disclosure|>
+          <disclosure.Action {{on 'click' disclosure.toggle}}>
+            Help
+          </disclosure.Action>
+          <disclosure.Menu as |panel|>
+            <panel.Menu as |menu|>
+              <menu.Separator>
+                Sabo v{{this.saboVersion}}
+              </menu.Separator>
+              <menu.Item class='docs-link'>
+                <menu.Action @href={{env 'CONSUL_DOCS_URL'}} @external={{true}}>
+                  Documentation
+                </menu.Action>
+              </menu.Item>
+              <menu.Separator />
+              <menu.Item class='feedback-link'>
+                <menu.Action @href={{env 'CONSUL_REPO_ISSUES_URL'}} @external={{true}}>
+                  Provide Feedback
+                </menu.Action>
+              </menu.Item>
+            </panel.Menu>
+          </disclosure.Menu>
+        </DisclosureMenu>
+      </li>
+      <li data-test-main-nav-settings class={{if (is-href 'settings') 'is-active'}}>
+        <a href={{href-to 'settings' params=(hash nspace=undefined partition=undefined)}}>
+          Settings
+        </a>
+      </li>
+      <Sabo::Token::Selector
+        @dc={{@dc}}
+        @partition={{@partition}}
+        @nspace={{@nspace}}
+        @onchange={{@onchange}}
+        as |selector|
+      >
+        <Ref @target={{this}} @name='tokenSelector' @value={{selector}} />
+      </Sabo::Token::Selector>
+    </ul>
+  </:complementary-nav>
+
+  <:main>
+    {{yield
+      (hash login=(if this.tokenSelector this.tokenSelector (hash open=undefined close=undefined)))
+    }}
+  </:main>
+
+  <:content-info>
+    <p>
+      Sabo v{{this.saboVersion}}
+    </p>
+    {{{concat '<!-- ' (env 'CONSUL_GIT_SHA') '-->'}}}
+  </:content-info>
+
+</App>

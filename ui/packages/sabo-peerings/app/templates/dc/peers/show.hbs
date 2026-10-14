@@ -41,7 +41,7 @@
             </h1>
           </BlockSlot>
           <BlockSlot @name="content">
-            <Consul::Peer::BentoBox @peering={{item}} />
+            <Sabo::Peer::BentoBox @peering={{item}} />
             <Peerings::Provider @peer={{item}} as |peering|>
               <TabNav @items={{peering.data.tabs}} />
 

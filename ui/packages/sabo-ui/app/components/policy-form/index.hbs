@@ -16,7 +16,7 @@
     </header>
   {{#if allowIdentity}}
     <p>
-      Identities are default policies with configurable names. They save you some time and effort you're using Consul for Connect features.
+      Identities are default policies with configurable names. They save you some time and effort you're using Sabo for Connect features.
     </p>
     {{! this should use radio-group }}
     <div role="radiogroup" class={{if item.error.Type ' has-error'}}>
@@ -52,7 +52,7 @@
           <:label>
             Rules <a href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#rule-specification" rel="help noopener noreferrer" target="_blank">(HCL Format)</a>
           </:label>
-          <:content><Consul::ServiceIdentity::Template
+          <:content><Sabo::ServiceIdentity::Template
               @nspace={{nspace}}
               @partition={{partition}}
               @name={{item.Name}}
@@ -68,7 +68,7 @@
           <:label>
             Rules <a href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#rule-specification" rel="help noopener noreferrer" target="_blank">(HCL Format)</a>
           </:label>
-          <:content><Consul::NodeIdentity::Template
+          <:content><Sabo::NodeIdentity::Template
               @name={{item.Name}}
               @partition={{partition}}
             /></:content>

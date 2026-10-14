@@ -59,7 +59,7 @@
 
         {{#if (gt items.length 0)}}
           {{#let (collection items) as |items|}}
-            <Consul::Service::SearchBar
+            <Sabo::Service::SearchBar
               @sources={{get items "ExternalSources"}}
               @partitions={{get items "Partitions"}}
               @partition={{partition}}
@@ -80,7 +80,7 @@
           as |collection|
         >
           <collection.Collection>
-            <Consul::Service::List
+            <Sabo::Service::List
               @items={{collection.items}}
               @partition={{partition}}
               @isPeerDetail={{true}}

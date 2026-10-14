@@ -6,7 +6,7 @@
 <Route @name={{routeName}} as |route|>
 
   {{! Add the a11y route announcer }}
-  <route.Announcer @title='Consul' />
+  <route.Announcer @title='Sabo' />
   {{! Tell CSS what we have enabled }}
   {{#if (can 'use acls')}}
     {{document-attrs class="has-acls"}}
@@ -98,7 +98,7 @@
                 as |dc|
               >
                 {{#if dc.data}}
-                  <HashicorpConsul
+                  <AppShell
                     id='wrapper'
                     @dcs={{dcs}}
                     @dc={{dc.data}}
@@ -106,27 +106,27 @@
                     @nspace={{nspace}}
                     @user={{hash token=token}}
                     @onchange={{action 'reauthorize'}}
-                    as |consul|
+                    as |sabo|
                   >
 
                     {{#if error}}
                       {{! If we got an error from anything, show an error page }}
-                      <AppError @error={{error}} @login={{consul.login.open}} />
+                      <AppError @error={{error}} @login={{sabo.login.open}} />
                     {{else}}
                       {{! Otherwise show the rest of the app}}
                       <Outlet
                         @name='application'
-                        @model={{hash app=consul user=(hash token=token) dc=dc.data dcs=dcs}}
+                        @model={{hash app=sabo user=(hash token=token) dc=dc.data dcs=dcs}}
                         as |o|
                       >
                         {{outlet}}
                       </Outlet>
 
                       {{! loading component for when we need it}}
-                      <Consul::Loader class='view-loader' />
+                      <Sabo::Loader class='view-loader' />
                     {{/if}}
 
-                  </HashicorpConsul>
+                  </AppShell>
                 {{/if}}
               </DataSource>
             {{/if}}

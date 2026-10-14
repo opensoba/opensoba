@@ -46,7 +46,7 @@
                 <A.Title>
                   {{#if this.value.Name}}
                     {{#if (eq this.error.status '403')}}
-                      Consul login failed
+                      Sabo login failed
                     {{else if (eq this.error.status '401')}}
                       Could not log in to provider
                     {{else if (eq this.error.status '499')}}
@@ -67,7 +67,7 @@
                 <A.Description>
                   {{#if this.value.Name}}
                     {{#if (eq this.error.status '403')}}
-                      We received a token from your OIDC provider but could not log in to Consul
+                      We received a token from your OIDC provider but could not log in to Sabo
                       with it.
                     {{else if (eq this.error.status '401')}}
                       The OIDC provider has rejected this access token. Please have an

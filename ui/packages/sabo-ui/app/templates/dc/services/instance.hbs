@@ -122,12 +122,12 @@
             <h1>
               <route.Title @title={{item.Service.ID}} />
             </h1>
-            <Consul::ExternalSource @item={{item}} @withInfo={{true}} />
-            <Consul::Kind @item={{item}} @withInfo={{true}} />
+            <Sabo::ExternalSource @item={{item}} @withInfo={{true}} />
+            <Sabo::Kind @item={{item}} @withInfo={{true}} />
             {{! TODO: Looks like we can get this straight from item.Proxy.Mode }}
             {{! the less we need `proxy` and `meta` the better }}
             {{#if (eq meta.ServiceProxy.Mode 'transparent')}}
-              <Consul::TransparentProxy />
+              <Sabo::TransparentProxy />
             {{/if}}
           </BlockSlot>
           <BlockSlot @name='nav'>

@@ -73,7 +73,7 @@ as |sort filters items partition nspace|}}
     <BlockSlot @name="toolbar">
 {{#if (gt items.length 0) }}
   {{#let (collection items) as |items|}}
-        <Consul::Service::SearchBar
+        <Sabo::Service::SearchBar
           @sources={{get items 'ExternalSources'}}
           @partitions={{get items 'Partitions'}}
           @partition={{partition}}
@@ -98,11 +98,11 @@ as |sort filters items partition nspace|}}
         @items={{items}}
       as |collection|>
         <collection.Collection>
-          <Consul::Service::List
+          <Sabo::Service::List
             @items={{collection.items}}
             @partition={{partition}}
           >
-          </Consul::Service::List>
+          </Sabo::Service::List>
         </collection.Collection>
         <collection.Empty>
             <EmptyState

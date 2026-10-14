@@ -109,7 +109,7 @@ as |sort filters parent items|}}
       </BlockSlot>
       <BlockSlot @name="toolbar">
     {{#if (gt items.length 0) }}
-        <Consul::Kv::SearchBar
+        <Sabo::Kv::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
 
@@ -159,7 +159,7 @@ as |sort filters parent items|}}
               @items={{items}}
             as |collection|>
               <collection.Collection>
-                <Consul::Kv::List
+                <Sabo::Kv::List
                   @items={{collection.items}}
                   @parent={{parent}}
                   @delete={{writer.delete}}

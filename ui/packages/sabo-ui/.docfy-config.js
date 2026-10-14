@@ -96,7 +96,7 @@ module.exports = {
       urlPrefix: 'docs/components',
     },
     {
-      root: path.resolve(__dirname, 'app/components/consul'),
+      root: path.resolve(__dirname, 'app/components/sabo'),
       pattern: '**/README.mdx',
       urlSchema: 'auto',
       urlPrefix: 'docs/consul',

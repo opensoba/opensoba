@@ -69,7 +69,7 @@ as |route|>
       <BlockSlot @name="toolbar">
 
   {{#if (gt items.length 0) }}
-        <Consul::Intention::SearchBar
+        <Sabo::Intention::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
 
@@ -101,13 +101,13 @@ as |route|>
               @items={{items}}
             as |collection|>
               <collection.Collection>
-                <Consul::Intention::List
+                <Sabo::Intention::List
                   @items={{collection.items}}
                   @delete={{writer.delete}}
                 as |list|>
                     <list.CustomResourceNotice />
                     <list.Table />
-                </Consul::Intention::List>
+                </Sabo::Intention::List>
               </collection.Collection>
               <collection.Empty>
                 <EmptyState

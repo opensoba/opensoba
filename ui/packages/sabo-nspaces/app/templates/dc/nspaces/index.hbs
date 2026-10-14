@@ -63,7 +63,7 @@ as |route|>
       </BlockSlot>
       <BlockSlot @name="toolbar">
       {{#if (gt items.length 0)}}
-        <Consul::Nspace::SearchBar
+        <Sabo::Nspace::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
 
@@ -87,7 +87,7 @@ as |route|>
           @ondelete={{refresh-route}}
         as |writer|>
           <BlockSlot @name="removed" as |after|>
-            <Consul::Nspace::Notifications 
+            <Sabo::Nspace::Notifications 
               {{notification
                 after=(action after)
               }}
@@ -103,7 +103,7 @@ as |route|>
           @items={{items}}
         as |collection|>
           <collection.Collection>
-            <Consul::Nspace::List
+            <Sabo::Nspace::List
               @items={{collection.items}}
               @ondelete={{writer.delete}}
             />

@@ -26,8 +26,8 @@ export const match = (path) => {
 runInDebug(() => {
   window.DataSourceRoutes = () => {
     // debug time only way to access the application and be able to lookup
-    // services, don't use ConsulUi global elsewhere!
-    const container = window.ConsulUi.__container__.lookup('service:container');
+    // services, don't use SaboUi global elsewhere!
+    const container = window.SaboUi.__container__.lookup('service:container');
     const win = window.open('', '_blank');
     win.document.write(`
 <body>

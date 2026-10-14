@@ -6,10 +6,10 @@
 (services =>
   services({
     'route:application': {
-      class: 'consul-ui/routing/application-debug',
+      class: 'sabo-ui/routing/application-debug',
     },
     'service:intl': {
-      class: 'consul-ui/services/i18n-debug',
+      class: 'sabo-ui/services/i18n-debug',
     },
   }))(
   (

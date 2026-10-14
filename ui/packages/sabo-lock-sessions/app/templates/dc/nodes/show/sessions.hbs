@@ -39,7 +39,7 @@ as |route|>
       as |writer|>
 
         <BlockSlot @name="removed" as |after|>
-          <Consul::LockSession::Notifications
+          <Sabo::LockSession::Notifications
             {{notification
               after=(action after)
             }}
@@ -48,7 +48,7 @@ as |route|>
         </BlockSlot>
 
         <BlockSlot @name="error" as |after error|>
-          <Consul::LockSession::Notifications
+          <Sabo::LockSession::Notifications
             {{notification
               after=(action after)
             }}
@@ -65,7 +65,7 @@ as |route|>
           as |collection|>
 
             <collection.Collection>
-              <Consul::LockSession::List
+              <Sabo::LockSession::List
                 @items={{collection.items}}
                 @ondelete={{writer.delete}}
               />

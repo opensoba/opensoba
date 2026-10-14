@@ -19,7 +19,7 @@ as |route|>
 
     <BlockSlot @name="error">
       {{#if (eq loader.error.status '401')}}
-        <Consul::Acl::Disabled />
+        <Sabo::Acl::Disabled />
       {{else}}
         <AppError
           @error={{loader.error}}

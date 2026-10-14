@@ -19,7 +19,7 @@ as |route|>
 
     <BlockSlot @name="error">
     {{#if (eq loader.error.status '401')}}
-      <Consul::Acl::Disabled />
+      <Sabo::Acl::Disabled />
     {{else}}
       <AppError
         @error={{loader.error}}
@@ -70,7 +70,7 @@ as |route|>
       </BlockSlot>
       <BlockSlot @name="toolbar">
       {{#if (gt items.length 0)}}
-        <Consul::AuthMethod::SearchBar
+        <Sabo::AuthMethod::SearchBar
           @search={{search}}
           @onsearch={{action (mut search) value="target.value"}}
           @sort={{sort}}
@@ -87,7 +87,7 @@ as |route|>
           @items={{items}}
         as |collection|>
           <collection.Collection>
-            <Consul::AuthMethod::List @items={{collection.items}} />
+            <Sabo::AuthMethod::List @items={{collection.items}} />
           </collection.Collection>
           <collection.Empty>
             <EmptyState

@@ -158,7 +158,7 @@ export default class ApplicationSerializer extends Serializer {
     const meta = this.normalizeMeta(store, modelClass, normalizedPayload, id, requestType);
     // get distinct consul versions from list and add it as meta
     if (modelClass.modelName === 'node' && requestType === 'query') {
-      meta.versions = this.getDistinctConsulVersions(normalizedPayload);
+      meta.versions = this.getDistinctSaboVersions(normalizedPayload);
     }
     if (requestType !== 'query') {
       normalizedPayload.meta = meta;
@@ -220,10 +220,10 @@ export default class ApplicationSerializer extends Serializer {
     return payload;
   }
 
-  // getDistinctConsulVersions will be called only for nodes and query request type
+  // getDistinctSaboVersions will be called only for nodes and query request type
   // the list of versions is to be added as meta to resp, without changing original response structure
   // hence this function is added in application.js
-  getDistinctConsulVersions(payload) {
+  getDistinctSaboVersions(payload) {
     // create a Set and add version with only major.minor : ex-1.24.6 as 1.24
     let versionSet = new Set();
     payload.forEach(function (item) {

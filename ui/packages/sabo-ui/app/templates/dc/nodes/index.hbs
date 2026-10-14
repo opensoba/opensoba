@@ -61,7 +61,7 @@
               </BlockSlot>
               <BlockSlot @name='toolbar'>
                 {{#if (gt filtered.length 0)}}
-                  <Consul::Node::SearchBar
+                  <Sabo::Node::SearchBar
                     @search={{search}}
                     @onsearch={{action (mut search) value='target.value'}}
                     @sort={{sort}}
@@ -71,7 +71,7 @@
                 {{/if}}
               </BlockSlot>
               <BlockSlot @name='content'>
-                <Consul::Node::AgentlessNotice @items={{items}} @filteredItems={{filtered}} @postfix={{concat route.params.partition route.params.dc}} />
+                <Sabo::Node::AgentlessNotice @items={{items}} @filteredItems={{filtered}} @postfix={{concat route.params.partition route.params.dc}} />
                 <DataCollection
                   @type='node'
                   @sort={{sort.value}}
@@ -81,7 +81,7 @@
                   as |collection|
                 >
                   <collection.Collection>
-                    <Consul::Node::List @items={{collection.items}} @leader={{leader}} />
+                    <Sabo::Node::List @items={{collection.items}} @leader={{leader}} />
                   </collection.Collection>
                   <collection.Empty>
                     <EmptyState @login={{route.model.app.login.open}}>
