@@ -20,9 +20,11 @@
           </Action>
         </Portal>
         <Action
+          class='sabo-side-nav__action-trigger'
+          aria-label='Log in'
           {{on "click" (optional this.modal.open)}}
         >
-          Log in
+          <FlightIcon @name='user-circle' @size='24' />
         </Action>
         <ModalDialog
           @name="login-toggle"
@@ -127,9 +129,11 @@
         </Portal>
         <DisclosureMenu as |disclosure|>
           <disclosure.Action
+            class='sabo-side-nav__action-trigger'
+            aria-label='Account'
             {{on 'click' disclosure.toggle}}
           >
-            Logout
+            <FlightIcon @name='user-circle' @size='24' />
           </disclosure.Action>
           <disclosure.Menu as |panel|>
       {{#if authDialog.token.AccessorID}}

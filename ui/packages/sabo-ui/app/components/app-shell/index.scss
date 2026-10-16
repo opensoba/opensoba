@@ -5,23 +5,20 @@
 
 %app-shell {
   nav .dcs {
-    @extend %main-nav-vertical-hoisted;
-    left: 100px;
-
-    .dcs-message {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--token-color-foreground-disabled);
-      max-width: fit-content;
-      background-color: var(--token-color-hashicorp-brand);
-      color: var(--token-color-palette-neutral-300);
-    }
+    left: auto;
+  }
+  nav .dcs .dcs-message {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--token-color-foreground-disabled);
+    max-width: fit-content;
+    background-color: var(--token-color-hashicorp-brand);
+    color: var(--token-color-palette-neutral-300);
   }
   nav .dcs li.is-primary span,
   nav .dcs li.is-local span {
     @extend %menu-panel-badge;
   }
   nav .dcs .dc-name {
-    color: var(--token-color-foreground-faint);
     padding: 3.25px 0px;
     font-weight: var(--token-typography-font-weight-semibold);
   }
@@ -71,4 +68,366 @@
 }
 .app-shell {
   @extend %app-shell;
+}
+
+/**
+ * OpenSoba: Consul 2.0.x style application chrome.
+ *
+ * The upstream 2.0.x UI renders a single, full height side navigation (the
+ * whole product chrome: brand mark, context selectors, main navigation,
+ * account/help menu and the version footer) and gives everything to the right
+ * of it to content. There is no horizontal top bar any more.
+ *
+ * We recreate that shape with the markup we already have: the `[role='banner']`
+ * header becomes the fixed side navigation container, a header row at its top
+ * holds the brand mark plus the help/account icon dropdowns (the `home-nav`
+ * yield), its first `<nav>` is the (scrollable) main navigation and the
+ * `[role='contentinfo']` footer is pinned to the bottom.
+ */
+.app.app-shell {
+  --sabo-sidenav-width: var(--chrome-width, 280px);
+  --sabo-sidenav-bg: #0b3d38;
+  --sabo-sidenav-border: rgba(255, 255, 255, 0.16);
+  --sabo-sidenav-fg: #d6e6e2;
+  --sabo-sidenav-fg-strong: #ffffff;
+  --sabo-sidenav-fg-faint: #9dbfb8;
+  --sabo-sidenav-hover: #12564e;
+  --sabo-sidenav-active: #0e8074;
+
+  /* 1. The banner is the side navigation, fixed to the left and full height. */
+  [role='banner'] {
+    display: flex;
+    flex-direction: column;
+    /* `%main-header-horizontal` (which this element extends) centres its
+       children for the old horizontal top bar. In the side navigation the
+       children have to fill the full width instead. */
+    align-items: stretch;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 20;
+    width: var(--sabo-sidenav-width);
+    height: 100vh;
+    padding: 0;
+    background-color: var(--sabo-sidenav-bg);
+    border-right: 1px solid var(--sabo-sidenav-border);
+  }
+  /* The teal bar that used to sit behind the top chrome is gone. */
+  [role='banner']::before {
+    display: none;
+  }
+
+  /* The brand mark and the action icons sit in a header row at the top. */
+  [role='banner'] > .sabo-side-nav__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex: none;
+    height: 60px;
+    padding: 0 12px 0 20px;
+    border-bottom: 1px solid var(--sabo-sidenav-border);
+  }
+  .sabo-side-nav__home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+  }
+  .sabo-side-nav__logo {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The two icon actions (help and account), Consul 2.x style. */
+  .sabo-side-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sabo-side-nav__actions > li {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+  .sabo-side-nav__action-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--sabo-sidenav-border);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--sabo-sidenav-fg);
+    cursor: pointer;
+  }
+  .sabo-side-nav__action-trigger:hover,
+  .sabo-side-nav__action-trigger:focus {
+    background-color: var(--sabo-sidenav-hover);
+    color: var(--sabo-sidenav-fg-strong);
+  }
+  .sabo-side-nav__action-trigger svg {
+    fill: currentColor;
+  }
+  /* The action dropdowns open below their trigger, aligned to its right edge.
+     These menus live outside the <nav> elements, so unlike the navigation
+     menus they have to bring their own panel styling.
+
+     Their items are `%internal-button`s (via `%menu-panel-button`), which
+     paint themselves with `--token-color-surface-primary` (white) and the
+     `--token-color-foreground-*` colours. On this teal panel that produced
+     light grey text on white cards, plus dark grey muted text on teal. Rather
+     than patching each descendant, the colour tokens are overridden for the
+     whole panel so every element (menu items, the version separator, the
+     account summary) ends up bright on teal. */
+  .sabo-side-nav__actions [aria-haspopup='menu'] ~ * {
+    position: absolute;
+    z-index: 400;
+    top: calc(100% + 6px) !important;
+    bottom: auto;
+    left: auto;
+    right: 0;
+    min-width: 220px;
+    background-color: var(--token-color-hashicorp-brand);
+    color: var(--sabo-sidenav-fg-strong);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --token-color-surface-primary: transparent;
+    --token-color-surface-strong: var(--sabo-sidenav-hover);
+    --token-color-foreground-strong: var(--sabo-sidenav-fg-strong);
+    --token-color-foreground-primary: var(--sabo-sidenav-fg-strong);
+    --token-color-foreground-faint: var(--sabo-sidenav-fg-strong);
+  }
+  .sabo-side-nav__actions [aria-haspopup='menu'] ~ * ul[role='menu'] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sabo-side-nav__actions [aria-haspopup='menu'] ~ * ul[role='menu'] > li > [role='menuitem'] {
+    display: block;
+    padding: 8px 16px;
+    color: var(--sabo-sidenav-fg-strong);
+  }
+  .sabo-side-nav__actions [aria-haspopup='menu'] ~ * ul[role='menu'] > li > [role='menuitem']:hover,
+  .sabo-side-nav__actions [aria-haspopup='menu'] ~ * ul[role='menu'] > li > [role='menuitem']:focus {
+    background-color: var(--sabo-sidenav-hover);
+    color: var(--sabo-sidenav-fg-strong);
+  }
+
+  /* The side navigation is always visible, so the off-canvas toggle is not used. */
+  [role='banner'] > label {
+    display: none;
+  }
+
+  /* The panel holds the main navigation, which scrolls when it doesn't fit.
+     `data-test-*` attributes are stripped from production builds by
+     ember-test-selectors, so the wrapper is matched structurally: it is the
+     only direct `div` child of the banner besides the header row. */
+  [role='banner'] > div:not(.sabo-side-nav__header) {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    position: static;
+    width: 100%;
+    padding: 0;
+  }
+
+  /* Nothing is yielded into the complementary navigation anymore. It used to
+     be the first flex sibling of the main navigation, and as an empty item it
+     claimed the whole width of the side navigation (and shrank it to 0px). */
+  [role='banner'] nav:last-of-type {
+    display: none;
+  }
+
+  [role='banner'] nav:first-of-type {
+    position: static;
+    order: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    /* leave room for the version footer pinned to the bottom */
+    padding: 10px 0 36px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* the sidebar is permanently on screen, so skip the viewport tracking */
+    visibility: visible !important;
+    background-color: transparent;
+  }
+
+  [role='banner'] nav:last-of-type {
+    position: static;
+    order: 2;
+    flex: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 2. Navigation items, following the Helios "side nav" item look. */
+  [role='banner'] nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  [role='banner'] nav > ul > li {
+    position: relative;
+    display: block;
+    margin: 2px 10px;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+  [role='banner'] nav > ul > li > a,
+  [role='banner'] nav > ul > li > span,
+  [role='banner'] nav > ul > li > button,
+  [role='banner'] nav > ul > li > label,
+  [role='banner'] nav > ul > li > .disclosure-menu > a,
+  [role='banner'] nav > ul > li > .disclosure-menu > button,
+  [role='banner'] nav > ul > li > .disclosure-menu > label {
+    display: block;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--sabo-sidenav-fg);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  [role='banner'] nav > ul > li > a:hover,
+  [role='banner'] nav > ul > li > span:hover,
+  [role='banner'] nav > ul > li > button:hover,
+  [role='banner'] nav > ul > li > label:hover,
+  [role='banner'] nav > ul > li > a:focus,
+  [role='banner'] nav > ul > li > button:focus,
+  [role='banner'] nav > ul > li > .disclosure-menu > a:hover,
+  [role='banner'] nav > ul > li > .disclosure-menu > button:hover,
+  [role='banner'] nav > ul > li > .disclosure-menu > label:hover {
+    background-color: var(--sabo-sidenav-hover);
+    color: var(--sabo-sidenav-fg-strong);
+  }
+  [role='banner'] nav > ul > li.is-active > a,
+  [role='banner'] nav > ul > li.is-active > span,
+  [role='banner'] nav > ul > li.is-active > button,
+  [role='banner'] nav > ul > li.is-active > label,
+  [role='banner'] nav > ul > li.is-active > .disclosure-menu > a,
+  [role='banner'] nav > ul > li.is-active > .disclosure-menu > button,
+  [role='banner'] nav > ul > li.is-active > .disclosure-menu > label {
+    background-color: var(--sabo-sidenav-active);
+    color: var(--sabo-sidenav-fg-strong);
+  }
+  /* Section headers ("Access Controls", "Organization"). Upstream gives them
+     the same padding as the navigation items (`%main-nav-vertical` does
+     `padding: 7px 25px` for both), but here the labels sit flush at the nav's
+     left edge (x=10) while the items' labels are inset to x=22, so the items
+     read as the content of the section. The hairline above the label makes the
+     grouping explicit, which also keeps the unlabelled first group (Overview,
+     Services, ...) from looking like it is missing its header. */
+  [role='banner'] nav > ul > li[role='separator'] {
+    margin-top: 14px;
+    padding: 10px 0 6px 0;
+    border-top: 1px solid var(--sabo-sidenav-border);
+    color: var(--sabo-sidenav-fg-faint);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* 3. The context selectors (datacenter / namespace) read as boxed controls. */
+  [role='banner'] nav .dcs,
+  [role='banner'] nav li.nspaces,
+  [role='banner'] nav li.partitions {
+    margin: 0 10px 6px 10px;
+    padding: 0;
+  }
+  [role='banner'] nav .dcs .dc-name {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid var(--sabo-sidenav-border);
+    border-radius: 6px;
+    color: var(--sabo-sidenav-fg-strong);
+    font-weight: 600;
+  }
+  [role='banner'] nav .dcs [aria-expanded],
+  [role='banner'] nav li.nspaces [aria-expanded],
+  [role='banner'] nav li.partitions [aria-expanded] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--sabo-sidenav-border);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--sabo-sidenav-fg-strong);
+    font-weight: 600;
+    text-align: left;
+  }
+  [role='banner'] nav .dcs [aria-expanded]:hover,
+  [role='banner'] nav li.nspaces [aria-expanded]:hover,
+  [role='banner'] nav li.partitions [aria-expanded]:hover {
+    background-color: var(--sabo-sidenav-hover);
+  }
+  [role='banner'] nav .dcs [aria-label]::before,
+  [role='banner'] nav li.nspaces [aria-label]::before,
+  [role='banner'] nav li.partitions [aria-label]::before {
+    color: var(--sabo-sidenav-fg-faint);
+  }
+
+  /* 4. Content takes everything to the right of the side navigation. */
+  main {
+    margin-top: 0;
+    margin-left: var(--sabo-sidenav-width);
+    min-height: 100vh;
+  }
+  .notifications {
+    left: calc(var(--sabo-sidenav-width) + 1.5rem);
+  }
+  /* The version footer lives at the bottom of the side navigation. */
+  [role='contentinfo'] {
+    box-sizing: border-box;
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    width: var(--sabo-sidenav-width);
+    padding: 0 20px 10px 20px;
+    color: var(--sabo-sidenav-fg-faint);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  [role='contentinfo'] p {
+    margin: 0;
+  }
+
+  /* Narrow viewports: keep the single side navigation, just a little slimmer. */
+  @media #{$--lt-sidebar-open} {
+    --sabo-sidenav-width: 220px;
+    --chrome-width: 220px;
+
+    main {
+      margin-left: var(--sabo-sidenav-width);
+    }
+  }
 }

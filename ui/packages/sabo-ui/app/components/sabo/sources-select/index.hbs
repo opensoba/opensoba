@@ -20,6 +20,8 @@
           >
             {{#if flightIcon}}
               <FlightIcon @name={{flightIcon}} class='mr-2.5' />
+            {{else}}
+              <Sabo::ExternalSource::Logo @source={{source}} class='mr-2.5' />
             {{/if}}
             {{t (concat 'common.brand.' source)}}
           </Option>

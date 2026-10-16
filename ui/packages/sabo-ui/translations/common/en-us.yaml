@@ -5,8 +5,11 @@ brand:
   consul: OpenSoba
   consul-api-gateway: OpenSoba API Gateway
   terraform: Terraform
+  opentofu: OpenTofu
   nomad: Nomad
+  openwonton: OpenWonton
   vault: Vault
+  openbao: OpenBao
   aws: AWS
   lambda: AWS Lambda
   aws-iam: AWS IAM

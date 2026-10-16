@@ -31,9 +31,13 @@ func uiTemplateDataFromConfig(cfg *config.RuntimeConfig) (map[string]interface{}
 		uiCfg["metrics_provider_options"] = json.RawMessage(cfg.UIConfig.MetricsProviderOptionsJSON)
 	}
 
+	// OpenSoba ships OIDC/SSO login support in the community build, so expose
+	// the SSO login option to the UI whenever ACLs are in use. Upstream Consul
+	// only surfaced this from enterprise via the UIDataTransform hook.
 	d := map[string]interface{}{
 		"ContentPath":       cfg.UIConfig.ContentPath,
 		"ACLsEnabled":       cfg.ACLsEnabled,
+		"SSOEnabled":        cfg.ACLsEnabled,
 		"HCPEnabled":        cfg.UIConfig.HCPEnabled,
 		"UIConfig":          uiCfg,
 		"LocalDatacenter":   cfg.Datacenter,

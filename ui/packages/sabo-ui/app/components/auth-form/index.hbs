@@ -50,7 +50,7 @@
                     {{else if (eq this.error.status '401')}}
                       Could not log in to provider
                     {{else if (eq this.error.status '499')}}
-                      SSO log in window closed
+                      SSO log in cancelled
                     {{else}}
                       Error
                     {{/if}}
@@ -73,7 +73,7 @@
                       The OIDC provider has rejected this access token. Please have an
                       administrator check your auth method configuration.
                     {{else if (eq this.error.status '499')}}
-                      The OIDC provider window was closed. Please try again.
+                      The SSO login was cancelled. Please try again.
                     {{else}}
                       {{this.error.detail}}
                     {{/if}}
@@ -81,7 +81,7 @@
                     {{#if (eq this.error.status '403')}}
                       The token entered does not exist. Please enter a valid token to log in.
                     {{else if (eq this.error.status '404')}}
-                      No SSO providers are configured for that Partition.
+                      No SSO providers are configured.
                     {{else}}
                       {{this.error.detail}}
                     {{/if}}

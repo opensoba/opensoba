@@ -17,9 +17,12 @@ export function serviceExternalSource(params, hash) {
     [
       'consul-api-gateway',
       'vault',
+      'openbao',
       'kubernetes',
       'terraform',
+      'opentofu',
       'nomad',
+      'openwonton',
       'consul',
       'aws',
       'lambda',

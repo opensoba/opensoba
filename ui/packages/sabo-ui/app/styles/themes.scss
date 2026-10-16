@@ -5,6 +5,79 @@
 
 @import './base/color/ui/index';
 
+/**
+ * OpenSoba brand theme
+ *
+ * The Helios Design System ships a blue "action" colour and a pink/purple
+ * "brand" colour. We override the handful of semantic colour tokens that drive
+ * the visible chrome so the UI reads as OpenSoba (teal + orange) instead of
+ * HashiCorp Consul. This must be imported after the design system tokens so
+ * that these declarations win the cascade.
+ */
+:root {
+  /* Primary action colour (buttons, links, focus rings) - OpenSoba teal */
+  --token-color-foreground-action: #0e8074;
+  --token-color-foreground-action-hover: #0b6b60;
+  --token-color-foreground-action-active: #08564e;
+  --token-color-border-action: #b9e3dd;
+  --token-color-surface-action: #eafaf7;
+  --token-color-focus-action-internal: #0b6b60;
+  --token-color-focus-action-external: #6fcfc1;
+
+  /* These HDS tokens hard-code the blue action colour rather than referencing
+     --token-color-foreground-action, so they need overriding too. */
+  --token-focus-ring-action-box-shadow: inset 0 0 0 1px #0b6b60, 0 0 0 3px #6fcfc1;
+  --token-form-control-checked-surface-color-default: #0e8074;
+  --token-form-control-checked-surface-color-hover: #0b6b60;
+  --token-form-control-checked-border-color-default: #0b6b60;
+  --token-form-control-checked-border-color-hover: #08564e;
+
+  /* Secondary accent - OpenSoba orange */
+  --token-color-foreground-highlight: #d9700c;
+  --token-color-foreground-highlight-on-surface: #c2640a;
+  --token-color-foreground-highlight-high-contrast: #7a3d05;
+  --token-color-border-highlight: #ffe0bf;
+  --token-color-surface-highlight: #fff5eb;
+
+  /* Brand marks that still appear in the chrome */
+  --token-color-hashicorp-brand: #0e8074;
+  --token-color-consul-brand: #0e8074;
+  --token-color-consul-foreground: #0b6b60;
+  --token-color-consul-surface: #eafaf7;
+  --token-color-consul-border: #b9e3dd;
+  --token-color-consul-gradient-primary-start: #6fcfc1;
+  --token-color-consul-gradient-primary-stop: #0e8074;
+  --token-color-consul-gradient-faint-start: #f3fbfa;
+  --token-color-consul-gradient-faint-stop: #eafaf7;
+}
+
+/**
+ * The HDS "primary" button hard-codes the blue palette tokens instead of
+ * referencing `--token-color-foreground-action`, so remap them to the OpenSoba
+ * teal. This is scoped to the button so the (shared) palette tokens keep their
+ * original values everywhere else. The button text is
+ * `--token-color-foreground-high-contrast` (white), which stays legible on
+ * teal.
+ */
+.hds-button--color-primary {
+  --token-color-palette-blue-200: #0e8074; /* default background */
+  --token-color-palette-blue-300: #0b6b60; /* hover background, default border */
+  --token-color-palette-blue-400: #08564e; /* active background, hover border */
+}
+
+/**
+ * The left navigation paints its background with the near-black
+ * `--token-color-foreground-strong` token and its active/hover states with the
+ * neutral palette. Re-map those tokens *scoped to the navigation only* so the
+ * sidebar reads as OpenSoba teal (instead of black) without affecting the rest
+ * of the UI.
+ */
+%main-nav-vertical {
+  --token-color-foreground-strong: #0b3d38; /* sidebar background */
+  --token-color-palette-neutral-500: #0e8074; /* active item background */
+  --token-color-palette-neutral-600: #0a5f56; /* hovered menu item background */
+}
+
 %main-nav-horizontal .dangerous button:hover,
 %main-nav-horizontal .dangerous button:focus {
   color: var(--token-color-surface-primary) !important;

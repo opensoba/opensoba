@@ -41,6 +41,7 @@ func TestUIServerIndex(t *testing.T) {
 			wantContains: []string{"<!-- CONSUL_VERSION:"},
 			wantUICfgJSON: `{
 				"ACLsEnabled": false,
+				"SSOEnabled": false,
 				"HCPEnabled": false,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
@@ -77,6 +78,7 @@ func TestUIServerIndex(t *testing.T) {
 			},
 			wantUICfgJSON: `{
 				"ACLsEnabled": false,
+				"SSOEnabled": false,
 				"HCPEnabled": false,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
@@ -101,6 +103,7 @@ func TestUIServerIndex(t *testing.T) {
 			wantContains: []string{"<!-- CONSUL_VERSION:"},
 			wantUICfgJSON: `{
 				"ACLsEnabled": true,
+				"SSOEnabled": true,
 				"HCPEnabled": false,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
@@ -122,6 +125,7 @@ func TestUIServerIndex(t *testing.T) {
 			wantContains: []string{"<!-- CONSUL_VERSION:"},
 			wantUICfgJSON: `{
 				"ACLsEnabled": false,
+				"SSOEnabled": false,
 				"HCPEnabled": true,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
@@ -145,6 +149,7 @@ func TestUIServerIndex(t *testing.T) {
 			wantContains: []string{"<!-- CONSUL_VERSION:"},
 			wantUICfgJSON: `{
 				"ACLsEnabled": false,
+				"SSOEnabled": false,
 				"HCPEnabled": false,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
@@ -176,8 +181,8 @@ func TestUIServerIndex(t *testing.T) {
 			},
 			wantUICfgJSON: `{
 				"ACLsEnabled": false,
-				"HCPEnabled": false,
 				"SSOEnabled": true,
+				"HCPEnabled": false,
 				"LocalDatacenter": "dc1",
 				"PrimaryDatacenter": "dc1",
 				"ContentPath": "/ui/",
@@ -465,6 +470,7 @@ func TestHandler_ServeHTTP_TransformIsEvaluatedOnEachRequest(t *testing.T) {
 		require.Equal(t, http.StatusOK, rec.Code)
 		expected := `{
 		"ACLsEnabled": false,
+		"SSOEnabled": false,
 		"HCPEnabled": false,
 		"LocalDatacenter": "dc1",
 		"PrimaryDatacenter": "dc1",
@@ -491,6 +497,7 @@ func TestHandler_ServeHTTP_TransformIsEvaluatedOnEachRequest(t *testing.T) {
 		require.Equal(t, http.StatusOK, rec.Code)
 		expected := `{
 			"ACLsEnabled": false,
+			"SSOEnabled": false,
 			"HCPEnabled": false,
 			"LocalDatacenter": "dc1",
 			"PrimaryDatacenter": "dc1",

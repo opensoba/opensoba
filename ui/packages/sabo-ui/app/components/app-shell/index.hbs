@@ -72,9 +72,69 @@
   </:notifications>
 
   <:home-nav>
-    <a class='w-8 h-8' href={{href-to 'index' params=(hash peer=undefined)}}>
-      <FlightIcon @size='24' @name='consul-color' @stretched={{true}} />
-    </a>
+    {{!
+      Consul 2.x chrome: the brand mark plus two icon actions (help and
+      account) in a header row at the top of the side navigation.
+    }}
+    <div class='sabo-side-nav__header'>
+      <a
+        class='sabo-side-nav__home'
+        href={{href-to 'index' params=(hash peer=undefined)}}
+        aria-label='OpenSoba'
+      >
+        <Sabo::Logo class='sabo-side-nav__logo' />
+      </a>
+      <ul class='sabo-side-nav__actions'>
+        <li class='sabo-side-nav__action' data-test-main-nav-help>
+          <DisclosureMenu as |disclosure|>
+            <disclosure.Action
+              class='sabo-side-nav__action-trigger'
+              aria-label='Help and support'
+              {{on 'click' disclosure.toggle}}
+            >
+              <FlightIcon @name='help' @size='24' />
+            </disclosure.Action>
+            <disclosure.Menu as |panel|>
+              <panel.Menu as |menu|>
+                <menu.Separator>
+                  Sabo v{{this.saboVersion}}
+                </menu.Separator>
+                <menu.Item class='docs-link'>
+                  <menu.Action @href={{env 'CONSUL_DOCS_URL'}} @external={{true}}>
+                    Documentation
+                  </menu.Action>
+                </menu.Item>
+                <menu.Item class='feedback-link'>
+                  <menu.Action @href={{env 'CONSUL_REPO_ISSUES_URL'}} @external={{true}}>
+                    Provide Feedback
+                  </menu.Action>
+                </menu.Item>
+                <menu.Item
+                  data-test-main-nav-settings
+                  class={{if (is-href 'settings') 'is-active'}}
+                >
+                  <menu.Action
+                    @href={{href-to 'settings' params=(hash nspace=undefined partition=undefined)}}
+                    {{on 'click' disclosure.close}}
+                  >
+                    Settings
+                  </menu.Action>
+                </menu.Item>
+              </panel.Menu>
+            </disclosure.Menu>
+          </DisclosureMenu>
+        </li>
+        <Sabo::Token::Selector
+          @dc={{@dc}}
+          @partition={{@partition}}
+          @nspace={{@nspace}}
+          @onchange={{@onchange}}
+          as |selector|
+        >
+          <Ref @target={{this}} @name='tokenSelector' @value={{selector}} />
+        </Sabo::Token::Selector>
+      </ul>
+    </div>
   </:home-nav>
 
   <:main-nav>
@@ -85,13 +145,6 @@
         @partition={{@partition}}
         @nspace={{@nspace}}
         @dcs={{@dcs}}
-      />
-      <Sabo::Partition::Selector
-        @dc={{@dc}}
-        @partition={{@partition}}
-        @nspace={{@nspace}}
-        @partitions={{this.partitions}}
-        @onchange={{action (mut this.partitions) value='data'}}
       />
       <Sabo::Nspace::Selector
         @dc={{@dc}}
@@ -137,51 +190,6 @@
       <Sabo::Peer::Selector @dc={{@dc}} @partition={{@partition}} @nspace={{@nspace}} />
     </ul>
   </:main-nav>
-
-  <:complementary-nav>
-    <ul>
-      <Debug::Navigation />
-      <li data-test-main-nav-help>
-        <DisclosureMenu as |disclosure|>
-          <disclosure.Action {{on 'click' disclosure.toggle}}>
-            Help
-          </disclosure.Action>
-          <disclosure.Menu as |panel|>
-            <panel.Menu as |menu|>
-              <menu.Separator>
-                Sabo v{{this.saboVersion}}
-              </menu.Separator>
-              <menu.Item class='docs-link'>
-                <menu.Action @href={{env 'CONSUL_DOCS_URL'}} @external={{true}}>
-                  Documentation
-                </menu.Action>
-              </menu.Item>
-              <menu.Separator />
-              <menu.Item class='feedback-link'>
-                <menu.Action @href={{env 'CONSUL_REPO_ISSUES_URL'}} @external={{true}}>
-                  Provide Feedback
-                </menu.Action>
-              </menu.Item>
-            </panel.Menu>
-          </disclosure.Menu>
-        </DisclosureMenu>
-      </li>
-      <li data-test-main-nav-settings class={{if (is-href 'settings') 'is-active'}}>
-        <a href={{href-to 'settings' params=(hash nspace=undefined partition=undefined)}}>
-          Settings
-        </a>
-      </li>
-      <Sabo::Token::Selector
-        @dc={{@dc}}
-        @partition={{@partition}}
-        @nspace={{@nspace}}
-        @onchange={{@onchange}}
-        as |selector|
-      >
-        <Ref @target={{this}} @name='tokenSelector' @value={{selector}} />
-      </Sabo::Token::Selector>
-    </ul>
-  </:complementary-nav>
 
   <:main>
     {{yield

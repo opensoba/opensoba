@@ -14,6 +14,7 @@ const OAUTH_PROVIDER_NAME = 'oidc-with-url';
 export default class OidcProviderService extends RepositoryService {
   @service('torii') manager;
   @service('settings') settings;
+  @service('env') env;
 
   init() {
     super.init(...arguments);
@@ -57,12 +58,34 @@ export default class OidcProviderService extends RepositoryService {
     // decided that doing this here is ok and avoids doing this in a more
     // complicated manner.
     const token = (await this.settings.findBySlug('token')) || {};
-    return super.findBySlug({
+    const res = await super.findBySlug({
       ns: params.ns || token.Namespace || 'default',
       partition: params.partition || token.Partition || 'default',
       dc: params.dc,
       id: params.id,
     });
+
+    // Remember which auth method started this login. The browser is about to
+    // be redirected to the identity provider (see findCodeByURL below) and
+    // when it comes back to /oidc/callback we need to know which method to
+    // exchange the authorization code with.
+    try {
+      window.localStorage.setItem(
+        'sabo:oidc:pending',
+        JSON.stringify({
+          authMethod: params.id,
+          dc: params.dc,
+          ns: params.ns || token.Namespace || 'default',
+          partition: params.partition || token.Partition || 'default',
+          apiPrefix: this.env.var('CONSUL_API_PREFIX') || '',
+          redirectUri: `${this.env.var('CONSUL_BASE_UI_URL')}/oidc/callback`,
+        })
+      );
+    } catch (e) {
+      // ignore storage failures (for example in private browsing modes)
+    }
+
+    return res;
   }
 
   @dataSource('/:partition/:ns/:dc/oidc/authorize/:id/:code/:state')
@@ -85,20 +108,16 @@ export default class OidcProviderService extends RepositoryService {
   }
 
   findCodeByURL(src) {
-    // TODO: Maybe move this to the provider itself
+    // Instead of opening a popup window (which browsers block because the
+    // request that produced this URL is asynchronous and therefore no longer
+    // counts as a user gesture) we navigate the whole window to the identity
+    // provider. The provider then redirects back to
+    // `${CONSUL_BASE_UI_URL}/oidc/callback`, which completes the login and
+    // returns the user to the UI. See public/oidc/callback.
     set(this.provider, 'baseUrl', src);
-    return this.manager.open(OAUTH_PROVIDER_NAME, {}).catch((e) => {
-      let err;
-      switch (true) {
-        case e.message.startsWith('remote was closed'):
-          err = new Error('Remote was closed');
-          err.statusCode = 499;
-          break;
-        default:
-          err = new Error(e.message);
-          err.statusCode = 500;
-      }
-      this.store.adapterFor(this.getModelName()).error(err);
-    });
+    window.location.assign(src);
+    // The page is navigating away. Return a promise that never settles so the
+    // caller does not try to continue a flow that no longer exists.
+    return new Promise(() => {});
   }
 }

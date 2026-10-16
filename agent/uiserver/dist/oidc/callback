@@ -3,17 +3,166 @@
   <head>
     <meta charset="UTF-8">
     <title>OpenSoba</title>
-    <script>
-      var CURRENT_REQUEST_KEY = '__torii_request';
-      var pendingRequestKey = window.localStorage.getItem(CURRENT_REQUEST_KEY);
-
-      if (pendingRequestKey) {
-        window.localStorage.removeItem(CURRENT_REQUEST_KEY);
-        var url = window.location.toString();
-        window.localStorage.setItem(pendingRequestKey, url);
+    <style>
+      body {
+        margin: 0;
+        padding: 3rem 1.5rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #1f2124;
       }
+      .callback {
+        max-width: 32rem;
+        margin: 4rem auto;
+        text-align: center;
+      }
+      .callback h1 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .callback p {
+        color: #656a76;
+      }
+      .callback a {
+        color: #0e8074;
+      }
+    </style>
+    <script>
+      (function () {
+        // The UI is served from `${base}/oidc/callback`, so strip that suffix to
+        // get back to the root of the app.
+        var UI_BASE = window.location.pathname.replace(/\/oidc\/callback\/?$/, '');
 
-      window.close();
+        function param(name) {
+          var parts = window.location.search.substring(1).split('&');
+          for (var i = 0; i < parts.length; i++) {
+            if (!parts[i]) {
+              continue;
+            }
+            var idx = parts[i].indexOf('=');
+            var key = idx === -1 ? parts[i] : parts[i].substring(0, idx);
+            if (decodeURIComponent(key) === name) {
+              var value = idx === -1 ? '' : parts[i].substring(idx + 1);
+              // Note: do *not* translate '+' to a space here, the OIDC state
+              // may legitimately contain a '+'.
+              return decodeURIComponent(value);
+            }
+          }
+          return null;
+        }
+
+        function fail(message) {
+          var render = function () {
+            var container = document.createElement('div');
+            container.className = 'callback';
+            var title = document.createElement('h1');
+            title.appendChild(document.createTextNode('Log in failed'));
+            var text = document.createElement('p');
+            text.appendChild(document.createTextNode(message));
+            var link = document.createElement('p');
+            var anchor = document.createElement('a');
+            anchor.href = UI_BASE + '/';
+            anchor.appendChild(document.createTextNode('Return to OpenSoba'));
+            link.appendChild(anchor);
+            container.appendChild(title);
+            container.appendChild(text);
+            container.appendChild(link);
+            // This script runs from <head>, so the body may not exist yet.
+            (document.body || document.documentElement).appendChild(container);
+          };
+          if (document.body) {
+            render();
+          } else {
+            document.addEventListener('DOMContentLoaded', render);
+          }
+        }
+
+        var error = param('error');
+        var errorDescription = param('error_description');
+        var code = param('code');
+        var state = param('state');
+
+        // Legacy popup flow: torii reads the redirect URL from localStorage
+        // and then the popup closes itself. Kept so an open popup (for example
+        // from a previously cached page) still works.
+        var isPopup = !!(window.opener && !window.opener.closed);
+        var CURRENT_REQUEST_KEY = '__torii_request';
+        var pendingRequestKey = window.localStorage.getItem(CURRENT_REQUEST_KEY);
+        if (isPopup && pendingRequestKey) {
+          window.localStorage.removeItem(CURRENT_REQUEST_KEY);
+          window.localStorage.setItem(pendingRequestKey, window.location.toString());
+          window.close();
+          return;
+        }
+
+        var pending = {};
+        try {
+          pending = JSON.parse(window.localStorage.getItem('sabo:oidc:pending') || '{}') || {};
+        } catch (e) {
+          pending = {};
+        }
+        // Mirror the API client: the configured prefix is prepended to the
+        // `/v1/...` path used by the request adapters.
+        var apiPrefix = pending.apiPrefix || '';
+
+        if (error) {
+          fail(errorDescription || 'The identity provider returned an error: ' + error);
+          return;
+        }
+        if (!code || !state) {
+          fail('The login response did not include an authorization code.');
+          return;
+        }
+        if (!pending.authMethod) {
+          fail('No login was in progress. Please start the login again.');
+          return;
+        }
+
+        fetch(apiPrefix + '/v1/acl/oidc/callback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            AuthMethod: pending.authMethod,
+            Code: code,
+            State: state,
+          }),
+        })
+          .then(function (response) {
+            return response.text().then(function (text) {
+              var body;
+              try {
+                body = JSON.parse(text);
+              } catch (e) {
+                body = null;
+              }
+              if (!response.ok) {
+                var message =
+                  (body && body.Errors && body.Errors.join(', ')) ||
+                  (body && body.error) ||
+                  // Errors from the agent are plain text (e.g. "Permission
+                  // denied"), not JSON, so fall back to the raw body.
+                  (text && text.trim()) ||
+                  'HTTP ' + response.status;
+                throw new Error(message);
+              }
+              return body;
+            });
+          })
+          .then(function (token) {
+            try {
+              window.localStorage.setItem('consul:token', JSON.stringify(token));
+              window.localStorage.removeItem('sabo:oidc:pending');
+            } catch (e) {
+              // fall through, the UI will simply not be logged in
+            }
+            window.location.replace(UI_BASE + '/');
+          })
+          .catch(function (err) {
+            fail((err && err.message) || 'An unexpected error occurred.');
+          });
+      })();
     </script>
   </head>
+  <body></body>
 </html>
