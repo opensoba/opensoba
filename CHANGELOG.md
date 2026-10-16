@@ -1,3 +1,22 @@
+## 1.16.7 (October 16, 2026)
+
+FEATURES:
+
+* agent: Add the `server_service_name` configuration option, which sets the name (and ID) under which servers register themselves in the catalog. This allows a rebranded build to register as e.g. `sabo` instead of `consul`; the default is still `consul`. Everything that looks up the server service (DNS name servers, mesh gateways, intentions, the state store) follows the configured name.
+* ui: Expose the OIDC single sign-on login option in the community build whenever ACLs are enabled, so the UI can log in through an OIDC provider such as Keycloak.
+
+IMPROVEMENTS:
+
+* ui: Brand the web UI as OpenSoba: the OpenSoba logo in the application shell and the node list, a teal and orange theme (covering Helios buttons, focus rings and form controls), and the official OpenBao, OpenTofu and OpenWonton logos for those external sources.
+* ui: Rework the sidebar after Consul 2.0: a single navigation column that leaves the rest of the window to the content, the account/help/token controls as two icon menus at the top, and section headings that are aligned to the nav edge with a divider instead of looking like list items.
+* ui: Replace the OIDC popup flow with a full page redirect, so the session survives the round trip to the identity provider.
+
+BUG FIXES:
+
+* agent: Remove the HashiCorp Checkpoint based update check; the agent no longer contacts `checkpoint-api.hashicorp.com` on startup. The `disable_update_check` and `disable_anonymous_signature` options are still accepted for backwards compatibility, but no longer have any effect.
+* agent: Accept node names containing dots. The default node name is the machine hostname, which on macOS (and for any host with a search domain) is a FQDN such as `my-mac.local`, and that is now no longer reported as invalid.
+* ui: Fix the washed out contrast of the datacenter selector in the top bar and of the sidebar dropdown menus.
+
 ## 1.16.6 (October 14, 2026)
 
 IMPROVEMENTS:

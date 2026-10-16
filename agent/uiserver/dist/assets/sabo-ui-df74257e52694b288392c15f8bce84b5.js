@@ -4458,4 +4458,4 @@ let r=e.split("."),i=r.pop(),l=r.join("."),s=(0,t.get)(o,l)
 return s&&s.hasOwnProperty&&s.hasOwnProperty(i)?n:(0,t.get)(a,e)}return o.hasOwnProperty(e)?(0,t.get)(o,e):(0,t.get)(a,e)}}
 return!n.call(s,o,a)||e(r,i,l,o,a)}}(e)}})),define("sabo-ui/validations/token",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={}})),define("sabo-ui/config/environment",[],(function(){try{var e="sabo-ui/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),n={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(r){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("sabo-ui/app").default.create({name:"sabo-ui",version:"v1.16.6+ce2fa730"})
+return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(r){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("sabo-ui/app").default.create({name:"sabo-ui",version:"v1.16.7+78f7c2e3"})
