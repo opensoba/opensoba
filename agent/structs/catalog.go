@@ -18,12 +18,33 @@ const (
 	SerfCheckFailedOutput               = "Agent not live or unreachable"
 )
 
-const (
-	// These are used to manage the "consul" service that's attached to every
-	// Consul server node in the catalog.
+var (
+	// These are used to manage the service that's attached to every Consul
+	// server node in the catalog.
+	//
+	// OpenSoba: the name is configurable through the "server_service_name"
+	// agent configuration option so that a rebranded build can register
+	// itself as e.g. "sabo". The default is still "consul" for backwards
+	// compatibility. Everything that looks up the server service (DNS, mesh
+	// gateways, the state store, ...) reads these variables so that the name
+	// stays consistent across the agent.
 	ConsulServiceID   = "consul"
 	ConsulServiceName = "consul"
 )
+
+// SetConsulServiceName overrides the service name and ID that is registered in
+// the catalog for every Consul server. An empty name is ignored so that the
+// built-in default ("consul") is kept.
+//
+// This is a process-wide setting and is expected to be applied once during
+// agent startup, from the resolved configuration.
+func SetConsulServiceName(name string) {
+	if name == "" {
+		return
+	}
+	ConsulServiceName = name
+	ConsulServiceID = name
+}
 
 type CatalogContents struct {
 	Nodes    []*Node

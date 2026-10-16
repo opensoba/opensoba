@@ -1093,6 +1093,7 @@ func (b *builder) build() (rt RuntimeConfig, err error) {
 		ServerName:                        stringVal(c.ServerName),
 		ServerPort:                        serverPort,
 		ServerRejoinAgeMax:                b.durationValWithDefaultMin("server_rejoin_age_max", c.ServerRejoinAgeMax, 24*7*time.Hour, 6*time.Hour),
+		ServerServiceName:                 stringVal(c.ServerServiceName),
 		Services:                          services,
 		SessionTTLMin:                     b.durationVal("session_ttl_min", c.SessionTTLMin),
 		SkipLeaveOnInt:                    skipLeaveOnInt,
@@ -1156,6 +1157,14 @@ func (b *builder) build() (rt RuntimeConfig, err error) {
 		b.warn(`BootstrapExpect is set to 1; this is the same as Bootstrap mode.`)
 	}
 
+	// OpenSoba: allow the name (and ID) of the service that servers register
+	// in the catalog for themselves to be rebranded. The rest of the agent
+	// looks this service up through structs.ConsulServiceName/ID, so applying
+	// the configured name here - before the agent starts - keeps DNS name
+	// servers, mesh gateways, intentions and the state store consistent. An
+	// empty value keeps the built-in default ("consul").
+	structs.SetConsulServiceName(rt.ServerServiceName)
+
 	return rt, nil
 }
 
@@ -1212,6 +1221,11 @@ func (b *builder) validate(rt RuntimeConfig) error {
 	}
 
 	if err := validateBasicName("datacenter", rt.Datacenter, false); err != nil {
+		return err
+	}
+	// OpenSoba: the server service name is validated like any other service
+	// name so that DNS records, catalog entries, ... stay well-formed.
+	if err := validateBasicName("server_service_name", rt.ServerServiceName, true); err != nil {
 		return err
 	}
 	if rt.DataDir == "" && !rt.DevMode {
@@ -1278,10 +1292,10 @@ func (b *builder) validate(rt RuntimeConfig) error {
 	switch {
 	case rt.NodeName == "":
 		return fmt.Errorf("node_name cannot be empty")
-	case dns.InvalidNameRe.MatchString(rt.NodeName):
+	case dns.InvalidNodeNameRe.MatchString(rt.NodeName):
 		b.warn("Node name %q will not be discoverable "+
 			"via DNS due to invalid characters. Valid characters include "+
-			"all alpha-numerics and dashes.", rt.NodeName)
+			"all alpha-numerics, dashes and dots.", rt.NodeName)
 	case sabo.InvalidNodeName.MatchString(rt.NodeName):
 		// todo(kyhavlov): Add stronger validation here for node names.
 		b.warn("Found invalid characters in node name %q - whitespace and quotes "+

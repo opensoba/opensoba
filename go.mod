@@ -38,13 +38,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/consul-awsauth v0.0.0-20220713182709-05ac1c5c2706
 	github.com/hashicorp/consul-net-rpc v0.0.0-20221205195236-156cfab66a69
-	github.com/opensoba/opensoba/api v1.25.1
-	github.com/opensoba/opensoba/envoyextensions v0.4.1
-	github.com/opensoba/opensoba/proto-public v0.4.1
-	github.com/opensoba/opensoba/sdk v0.15.0
-	github.com/opensoba/opensoba/troubleshoot v0.3.1
 	github.com/hashicorp/go-bexpr v0.1.2
-	github.com/hashicorp/go-checkpoint v0.5.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-connlimit v0.3.0
 	github.com/hashicorp/go-discover v0.0.0-20220714221025-1c234a67149a
@@ -89,6 +83,11 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/olekukonko/tablewriter v0.0.4
+	github.com/opensoba/opensoba/api v1.25.1
+	github.com/opensoba/opensoba/envoyextensions v0.4.1
+	github.com/opensoba/opensoba/proto-public v0.4.1
+	github.com/opensoba/opensoba/sdk v0.15.0
+	github.com/opensoba/opensoba/troubleshoot v0.3.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0

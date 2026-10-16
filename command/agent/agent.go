@@ -10,12 +10,10 @@ import (
 	"io"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
-	"github.com/hashicorp/go-checkpoint"
 	"github.com/hashicorp/go-hclog"
 	mcli "github.com/mitchellh/cli"
 
@@ -25,7 +23,6 @@ import (
 	hcpclient "github.com/opensoba/opensoba/agent/hcp/client"
 	"github.com/opensoba/opensoba/command/cli"
 	"github.com/opensoba/opensoba/command/flags"
-	"github.com/opensoba/opensoba/lib"
 	"github.com/opensoba/opensoba/logging"
 	"github.com/opensoba/opensoba/service_os"
 	consulversion "github.com/opensoba/opensoba/version"
@@ -41,8 +38,6 @@ func New(ui cli.Ui) *cmd {
 	c := &cmd{
 		ui:                ui,
 		revision:          consulversion.GitCommit,
-		version:           consulversion.Version,
-		versionPrerelease: consulversion.VersionPrerelease,
 		versionHuman:      consulversion.GetHumanVersion(),
 		buildDate:         buildDate,
 		flags:             flag.NewFlagSet("", flag.ContinueOnError),
@@ -62,8 +57,6 @@ type cmd struct {
 	http              *flags.HTTPFlags
 	help              string
 	revision          string
-	version           string
-	versionPrerelease string
 	versionHuman      string
 	buildDate         time.Time
 	configLoadOpts    config.LoadOpts
@@ -76,48 +69,6 @@ func (c *cmd) Run(args []string) int {
 		c.logger.Info("Exit code", "code", code)
 	}
 	return code
-}
-
-// checkpointResults is used to handler periodic results from our update checker
-func (c *cmd) checkpointResults(results *checkpoint.CheckResponse, err error) {
-	if err != nil {
-		c.logger.Error("Failed to check for updates", "error", err)
-		return
-	}
-	if results.Outdated {
-		c.logger.Info("Newer OpenSoba version available", "new_version", results.CurrentVersion, "current_version", c.version)
-	}
-	for _, alert := range results.Alerts {
-		switch alert.Level {
-		case "info":
-			c.logger.Info("Bulletin", "alert_level", alert.Level, "alert_message", alert.Message, "alert_URL", alert.URL)
-		default:
-			c.logger.Error("Bulletin", "alert_level", alert.Level, "alert_message", alert.Message, "alert_URL", alert.URL)
-		}
-	}
-}
-
-func (c *cmd) startupUpdateCheck(config *config.RuntimeConfig) {
-	version := config.Version
-	if config.VersionPrerelease != "" {
-		version += fmt.Sprintf("-%s", config.VersionPrerelease)
-	}
-	updateParams := &checkpoint.CheckParams{
-		Product: "consul",
-		Version: version,
-	}
-	if !config.DisableAnonymousSignature {
-		updateParams.SignatureFile = filepath.Join(config.DataDir, "checkpoint-signature")
-	}
-
-	// Schedule a periodic check with expected interval of 24 hours
-	checkpoint.CheckInterval(updateParams, 24*time.Hour, c.checkpointResults)
-
-	// Do an immediate check within the next 30 seconds
-	go func() {
-		time.Sleep(lib.RandomStagger(30 * time.Second))
-		c.checkpointResults(checkpoint.Check(updateParams))
-	}()
 }
 
 func (c *cmd) run(args []string) int {
@@ -257,10 +208,6 @@ func (c *cmd) run(args []string) int {
 	// shutdown agent before endpoints
 	defer agent.ShutdownEndpoints()
 	defer agent.ShutdownAgent()
-
-	if !config.DisableUpdateCheck && !config.DevMode {
-		c.startupUpdateCheck(config)
-	}
 
 	// Let the agent know we've finished registration
 	agent.StartSync()

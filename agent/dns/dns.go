@@ -15,6 +15,16 @@ const MaxLabelLength = 63
 // a DNS name.
 var InvalidNameRe = regexp.MustCompile(`[^A-Za-z0-9\\-]+`)
 
+// InvalidNodeNameRe is a regex that matches characters which can not be
+// included in a node name.
+//
+// Node names are allowed to contain dots, unlike service names. The default
+// node name is the hostname of the machine, which on macOS (and on any other
+// host configured with a search domain) is a FQDN such as "my-mac.local".
+// Lookups for such nodes still work, because the DNS parser joins the
+// remaining labels back together (see parseRequest in agent/dns.go).
+var InvalidNodeNameRe = regexp.MustCompile(`[^A-Za-z0-9\-.]+`)
+
 type RecursorStrategy string
 
 const (

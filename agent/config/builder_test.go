@@ -147,6 +147,10 @@ func TestLoad_NodeName(t *testing.T) {
 		patchLoadOptsShims(&opts)
 		result, err := Load(opts)
 		require.NoError(t, err)
+		if tc.expectedWarn == "" {
+			require.Empty(t, result.Warnings)
+			return
+		}
 		require.Len(t, result.Warnings, 1)
 		require.Contains(t, result.Warnings[0], tc.expectedWarn)
 	}
@@ -166,6 +170,18 @@ func TestLoad_NodeName(t *testing.T) {
 			name:         "too long",
 			nodeName:     strings.Repeat("a", 66),
 			expectedWarn: "due to it being too long.",
+		},
+		{
+			// The default node name is the machine hostname. On macOS (and on
+			// any host with a search domain) that is a FQDN such as
+			// "my-mac.local", which is a valid node name: the DNS parser joins
+			// the labels back together when looking the node up.
+			name:     "valid - macOS default hostname with a dot",
+			nodeName: "m4c.local",
+		},
+		{
+			name:     "valid - fully qualified hostname",
+			nodeName: "my-mac.example.internal",
 		},
 	}
 

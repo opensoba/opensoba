@@ -613,7 +613,7 @@ func (d *DNSServer) nameservers(questionName string, cfg *dnsConfig, maxRecursio
 	for _, o := range out.Nodes {
 		name, dc := o.Node.Node, o.Node.Datacenter
 
-		if agentdns.InvalidNameRe.MatchString(name) {
+		if agentdns.InvalidNodeNameRe.MatchString(name) {
 			d.logger.Warn("Skipping invalid node for NS records", "node", name)
 			continue
 		}

@@ -29,7 +29,7 @@ func TestDevModeHasNoServices(t *testing.T) {
 	require.Len(t, result.RuntimeConfig.Services, 0)
 }
 
-func TestInvalidNodeNameWarning(t *testing.T) {
+func TestNodeNameWithDotsIsAccepted(t *testing.T) {
 	devMode := true
 	opts := config.LoadOpts{
 		DevMode: &devMode,
@@ -37,8 +37,21 @@ func TestInvalidNodeNameWarning(t *testing.T) {
 	}
 	result, err := config.Load(opts)
 	require.NoError(t, err)
+	// The macOS default hostname is a FQDN ("my-mac.local"), so dots are valid
+	// characters in a node name and no warning should be produced.
+	require.Empty(t, result.Warnings)
+}
+
+func TestInvalidNodeNameWarning(t *testing.T) {
+	devMode := true
+	opts := config.LoadOpts{
+		DevMode: &devMode,
+		HCL:     []string{`node_name = "dummy/other"`},
+	}
+	result, err := config.Load(opts)
+	require.NoError(t, err)
 	require.Len(t, result.Warnings, 1)
-	require.Contains(t, result.Warnings[0], "will not be discoverable via DNS due to invalid characters. Valid characters include all alpha-numerics and dashes.")
+	require.Contains(t, result.Warnings[0], "will not be discoverable via DNS due to invalid characters.")
 }
 
 func TestStructsToAgentService(t *testing.T) {

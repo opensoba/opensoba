@@ -447,8 +447,7 @@ Refer to the [formatting specification](https://golang.org/pkg/time/#ParseDurati
 
 - `data_dir` Equivalent to the [`-data-dir` command-line flag](/consul/docs/agent/config/cli-flags#_data_dir).
 
-- `disable_anonymous_signature` Disables providing an anonymous
-  signature for de-duplication with the update check. See [`disable_update_check`](#disable_update_check).
+- `disable_anonymous_signature` Retained for backwards compatibility; it no longer has any effect because the update check has been removed from OpenSoba.
 
 - `disable_http_unprintable_char_filter` Defaults to false. OpenSoba 1.0.3 fixed a potential security vulnerability where malicious users could craft KV keys with unprintable chars that would confuse operators using the CLI or UI into taking wrong actions. Users who had data written in older versions of OpenSoba that did not have this restriction will be unable to delete those values by default in 1.0.3 or later. This setting enables those users to **temporarily** disable the filter such that delete operations can work on those keys again to get back to a healthy state. It is strongly recommended that this filter is not disabled permanently as it exposes the original security vulnerability.
 
@@ -457,7 +456,7 @@ Refer to the [formatting specification](https://golang.org/pkg/time/#ParseDurati
   to false. In OpenSoba 0.8 the default was changed to true, to make remote exec opt-in
   instead of opt-out.
 
-- `disable_update_check` Disables automatic checking for security bulletins and new version releases. This is disabled in OpenSoba Enterprise.
+- `disable_update_check` Retained for backwards compatibility; it no longer has any effect because the update check has been removed from OpenSoba. OpenSoba never contacts HashiCorp for update or security bulletin information.
 
 - `discard_check_output` Discards the output of health checks before storing them. This reduces the number of writes to the OpenSoba raft log in environments where health checks have volatile output like timestamps, process ids, ...
 

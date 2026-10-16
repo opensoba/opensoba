@@ -230,6 +230,7 @@ type Config struct {
 	ServerMode                       *bool               `mapstructure:"server" json:"server,omitempty"`
 	ServerName                       *string             `mapstructure:"server_name" json:"server_name,omitempty"`
 	ServerRejoinAgeMax               *string             `mapstructure:"server_rejoin_age_max" json:"server_rejoin_age_max,omitempty"`
+	ServerServiceName                *string             `mapstructure:"server_service_name" json:"server_service_name,omitempty"`
 	Service                          *ServiceDefinition  `mapstructure:"service" json:"-"`
 	Services                         []ServiceDefinition `mapstructure:"services" json:"-"`
 	SessionTTLMin                    *string             `mapstructure:"session_ttl_min" json:"session_ttl_min,omitempty"`

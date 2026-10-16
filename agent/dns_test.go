@@ -8141,6 +8141,31 @@ func TestDNSInvalidRegex(t *testing.T) {
 	}
 }
 
+func TestDNSInvalidNodeNameRegex(t *testing.T) {
+	tests := []struct {
+		desc    string
+		in      string
+		invalid bool
+	}{
+		{"Valid Hostname", "testnode", false},
+		{"Valid Hostname with dashes", "test-node", false},
+		{"Valid macOS default hostname", "m4c.local", false},
+		{"Valid FQDN hostname", "my-mac.example.internal", false},
+		{"Invalid Hostname with special chars", "test#$$!node", true},
+		{"Invalid Hostname with a slash", "thing/other/ok", true},
+		{"Whitespace", "  ", true},
+		{"Only special chars", "/$", true},
+	}
+	for _, test := range tests {
+		t.Run(test.desc, func(t *testing.T) {
+			if got, want := agentdns.InvalidNodeNameRe.MatchString(test.in), test.invalid; got != want {
+				t.Fatalf("Expected %v to return %v", test.in, want)
+			}
+		})
+
+	}
+}
+
 func TestDNS_ConfigReload(t *testing.T) {
 	if testing.Short() {
 		t.Skip("too slow for testing.Short")

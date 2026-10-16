@@ -579,8 +579,9 @@ type RuntimeConfig struct {
 	// flag: -dev
 	DevMode bool
 
-	// DisableAnonymousSignature is used to turn off the anonymous signature
-	// send with the update check. This is used to deduplicate messages.
+	// DisableAnonymousSignature is retained for backwards compatibility. The
+	// update check that used an anonymous signature for de-duplication has been
+	// removed from OpenSoba, so this setting no longer has any effect.
 	//
 	// hcl: disable_anonymous_signature = (true|false)
 	DisableAnonymousSignature bool
@@ -620,8 +621,10 @@ type RuntimeConfig struct {
 	// hcl: disable_remote_exec = (true|false)
 	DisableRemoteExec bool
 
-	// DisableUpdateCheck is used to turn off the automatic update and
-	// security bulletin checking.
+	// DisableUpdateCheck is retained for backwards compatibility. The automatic
+	// update and security bulletin check (which phoned home to HashiCorp's
+	// Checkpoint service) has been removed from OpenSoba, so this setting no
+	// longer has any effect.
 	//
 	// hcl: disable_update_check = (true|false)
 	DisableUpdateCheck bool
@@ -1382,6 +1385,17 @@ type RuntimeConfig struct {
 	//
 	// hcl: server_rejoin_age_max = "duration"
 	ServerRejoinAgeMax time.Duration
+
+	// ServerServiceName is the name (and ID) of the service that Consul
+	// servers register in the catalog for themselves, and that is looked up
+	// for DNS name servers, mesh gateways, intentions and so on.
+	//
+	// The default is "consul"; OpenSoba allows overriding it so a rebranded
+	// build can register itself as e.g. "sabo". It must be set to the same
+	// value on every server.
+	//
+	// hcl: server_service_name = string
+	ServerServiceName string
 
 	// Services contains the provided service definitions:
 	//

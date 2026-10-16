@@ -54,18 +54,16 @@ $ which tcpdump
 
 ## Generic OpenSoba Questions
 
-### Q: What is Checkpoint? / Does OpenSoba call home?
+### Q: Does OpenSoba call home?
 
-OpenSoba makes use of a HashiCorp service called [Checkpoint](http://checkpoint.hashicorp.com)
-which is used to check for updates and critical security bulletins.
-Only anonymous information, which cannot be used to identify the user or host,
-is sent to Checkpoint. An anonymous ID is sent which helps de-duplicate warning
-messages.
-This anonymous ID can be disabled. In fact, using the Checkpoint service is
-optional and can be disabled.
+No. OpenSoba does not contact HashiCorp (or any other third party) to check for
+updates or security bulletins. The update check that used the HashiCorp
+Checkpoint service has been removed from the code, so the agent never makes
+outbound calls to `checkpoint-api.hashicorp.com`.
 
-See [`disable_anonymous_signature`](/consul/docs/agent/config/config-files#disable_anonymous_signature)
-and [`disable_update_check`](/consul/docs/agent/config/config-files#disable_update_check).
+The legacy `disable_update_check` and `disable_anonymous_signature`
+configuration options are still accepted for backwards compatibility, but they
+no longer have any effect.
 
 ### Q: Does OpenSoba rely on UDP Broadcast or Multicast?
 
