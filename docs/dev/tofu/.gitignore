@@ -1,0 +1,5 @@
+# Provider plugins and the dependency lock file are created by
+# `tofu init` / `terraform init`; the lock file records platform-specific
+# hashes, so it is deliberately not checked in.
+.terraform/
+.terraform.lock.hcl

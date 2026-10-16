@@ -38,6 +38,8 @@ Also see the [FAQ](./faq.md).
 
 ## Other Docs
 
+1. [Local development environment](./dev/README.md)
+1. [OIDC single sign-on](./oidc.md)
 1. [Integration Tests](../test/integration/connect/envoy/README.md)
 1. [Upgrade Tests](../test/integration/sabo-container/test/upgrade/README.md)
 

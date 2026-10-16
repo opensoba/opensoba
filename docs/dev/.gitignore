@@ -1,0 +1,5 @@
+# Agent state written by `soba agent -config-file=soba.hcl`.
+data/
+
+# Token written by `soba login -token-sink-file=./soba.token`.
+soba.token
