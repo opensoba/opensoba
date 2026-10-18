@@ -205,7 +205,12 @@ CONSUL_HTTP_TOKEN_FILE=./soba.token ../../bin/soba logout
 
 The UI shows a logo next to a service when its metadata carries an
 `external-source` value the front end knows (see
-`ui/packages/sabo-ui/app/helpers/service/external-source.js`):
+`ui/packages/sabo-ui/app/helpers/service/external-source.js`). The three
+services stand in for external products that register themselves: OpenBao,
+OpenTofu and OpenWonton.
+
+If you provision with OpenTofu or Terraform (step 6), `tofu apply` creates them
+for you. Without OpenTofu, register the same three by hand:
 
 ```shell
 for svc in openbao:8200 opentofu:8080 openwonton:4646; do
@@ -216,14 +221,24 @@ for svc in openbao:8200 opentofu:8080 openwonton:4646; do
     -port=$port \
     -meta=external-source=$name
 done
+```
 
+Either way, check that they are there:
+
+```shell
 ../../bin/soba catalog services      # demo-openbao, demo-opentofu, demo-openwonton
 dig @127.0.0.1 -p 8600 demo-openbao.service.sabo +short
 ```
 
+Pick **one** of the two routes: the CLI registers the services through the
+local agent (on the agent's own node), while OpenTofu registers them on a
+dedicated, agent-less node — see
+[step 6](#6-provisioning-with-opentofu-or-terraform) for why. Running both
+leaves you with two instances of every service.
+
 ## 6. Provisioning with OpenTofu or Terraform
 
-Everything from steps 3 and 4 can be applied declaratively instead. The
+Everything from steps 3 to 5 can be applied declaratively instead. The
 configuration in [`tofu/`](./tofu) uses the Consul provider, which speaks the
 same HTTP API as OpenSoba:
 
@@ -249,8 +264,13 @@ Notes:
   that fails. Use the CLI from step 4 if you have no IdP handy.
 - The OIDC client secret is write-only at the API level, so the auth method
   resource ignores changes to `config_json` to keep plans clean.
-- The provider writes service metadata but does not read it back, so the demo
-  services stay a CLI step (step 5) rather than a managed resource.
+- The demo services from [step 5](#5-demo-services) are provisioned here as
+  well ([`services.tf`](./tofu/services.tf)). They are registered on a
+  dedicated, agent-less node (`demo-external`): the provider writes straight to
+  the catalog, and a service placed on a node that runs an agent is pruned by
+  anti-entropy. Because the provider reserves the `external-source` meta key
+  for itself, the resource writes the value on create and then ignores later
+  changes to `meta`.
 - `tofu destroy` removes everything it created. It does not stop the agent.
 
 ## DNS and ACLs

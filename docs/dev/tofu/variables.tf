@@ -57,3 +57,13 @@ variable "oidc_bind_selector" {
   type        = string
   default     = ""
 }
+
+variable "demo_services" {
+  description = "Demo services to register so the UI can show their external-source logo. The key is the external-source value the front end looks for (the service is registered as `demo-<key>`); the value is the port it advertises."
+  type        = map(number)
+  default = {
+    openbao    = 8200
+    opentofu   = 8080
+    openwonton = 4646
+  }
+}
