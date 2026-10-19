@@ -93,7 +93,10 @@ function build_ui {
    fi
 
    # TODO(spatel): CE refactor
-   local logo_type="${CONSUL_BINARY_TYPE}"
+   # Default to the community logo when CONSUL_BINARY_TYPE is unset, matching
+   # the default in ui/packages/sabo-ui/config/environment.js; otherwise a
+   # plain `make ui` always trips the logo check further down.
+   local logo_type="${CONSUL_BINARY_TYPE:-oss}"
    if test "$logo_type" != "oss"
    then
      logo_type="enterprise"
@@ -109,7 +112,17 @@ function build_ui {
    then
       status "Copying the source from '${ui_dir}' to /consul-src within the container"
       (
-         tar -c $(ls -A | grep -v "^(node_modules\|dist\|tmp)") | docker cp - ${container_id}:/consul-src &&
+         # Archive the working tree directly rather than listing it with `ls`:
+         # a colourising ls (CLICOLOR_FORCE/CLICOLOR on macOS) injects ANSI
+         # escape codes into the names and tar then fails to stat them. The
+         # ustar format cannot store extended attributes or ACLs, which keeps
+         # macOS xattrs such as com.apple.provenance out of the stream (the
+         # Linux daemon refuses to set them: lsetxattr ... no such file or
+         # directory) and avoids AppleDouble `._*` sidecars that ember-intl
+         # cannot parse (null byte is not allowed in input).
+         COPYFILE_DISABLE=1 tar --format ustar \
+            --exclude='./node_modules' --exclude='./dist' --exclude='./tmp' \
+            -c -f - . | docker cp - ${container_id}:/consul-src &&
          status "Running build in container" && docker start -i ${container_id} &&
          rm -rf ${1}/ui/dist &&
          status "Copying back artifacts" && docker cp ${container_id}:/consul-src/packages/sabo-ui/dist ${1}/ui/dist
