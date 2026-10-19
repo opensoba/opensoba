@@ -6,8 +6,9 @@
 {{!
   Renders the logo for a service's external source. Sources that ship with the
   Helios/Flight icon set fall through to <FlightIcon>; the open source
-  alternatives (OpenBao, OpenTofu, OpenWonton) are not part of that set, so
-  their official marks are inlined below. Renders nothing for unknown sources.
+  alternatives (OpenBao, OpenTofu, OpenWonton and OpenDumpling) are not part of
+  that set, so their official marks are inlined below. Renders nothing for
+  unknown sources.
 }}
 
 {{#if (eq @source "openbao")}}
@@ -52,6 +53,60 @@
     focusable="false"
     ...attributes
   />
+{{else if (eq @source "opendumpling")}}
+  {{!
+    OpenDumpling's official mark (logo-opendumpling.svg in the opendumpling
+    repository). It ships as an SVG, so it is inlined like OpenBao's and
+    OpenTofu's rather than served as an image. The <title>, role and aria-label
+    of the source file are dropped: the surrounding "Registered via ..." label
+    already names the product. The gradient ids repeat when several logos share
+    a page; every copy defines the same stops, so they all resolve to the same
+    paint.
+  }}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 256 256"
+    aria-hidden="true"
+    focusable="false"
+    ...attributes
+  >
+    <defs>
+      <linearGradient id="odBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FFF6E2" />
+        <stop offset="1" stop-color="#F0CE86" />
+      </linearGradient>
+      <linearGradient id="odBowl" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2A9683" />
+        <stop offset="1" stop-color="#146356" />
+      </linearGradient>
+    </defs>
+
+    {{! Steam }}
+    <g fill="none" stroke="#7FD1BE" stroke-width="7" stroke-linecap="round" opacity="0.9">
+      <path d="M104 46 q-9 -13 0 -26" />
+      <path d="M128 50 q-9 -15 0 -30" />
+      <path d="M152 46 q-9 -13 0 -26" />
+    </g>
+
+    {{! Bowl }}
+    <path d="M34 150 A94 94 0 0 0 222 150 Z" fill="url(#odBowl)" />
+
+    {{! Dumpling }}
+    <path
+      d="M68 148 C68 96 188 96 188 148 C188 161 161 170 128 170 C95 170 68 161 68 148 Z"
+      fill="url(#odBody)"
+    />
+
+    {{! Pleats }}
+    <g fill="none" stroke="#C97F1E" stroke-width="6" stroke-linecap="round">
+      <path d="M90 128 q9 -12 19 -3" />
+      <path d="M117 117 q11 -13 21 -3" />
+      <path d="M146 128 q9 -12 19 -3" />
+    </g>
+
+    {{! Bowl rim, in front of the dumpling so it looks nested }}
+    <rect x="24" y="138" width="208" height="18" rx="9" fill="#17423B" />
+  </svg>
 {{else if (icon-mapping @source)}}
   <FlightIcon
     @name={{icon-mapping @source}}

@@ -45,6 +45,12 @@ OpenSoba provides several key features:
   indexed objects, like configuration parameters and application metadata,
   within OpenSoba.
 
+* **External Sources** — A service that registers itself with an
+  `external-source` metadata value is shown in the web UI with the logo of
+  that product. OpenBao, OpenTofu, OpenWonton and OpenDumpling are recognised
+  out of the box, and [docs/dev](./docs/dev/README.md) registers a demo
+  service for each of them.
+
 * **SSO Login (OIDC)** — Users can log in to the web UI and the `soba` CLI
   through an OpenID Connect provider (for example Keycloak, Okta, Auth0, or
   Google) using the `oidc` auth method type. See

@@ -23,6 +23,7 @@ export function serviceExternalSource(params, hash) {
       'opentofu',
       'nomad',
       'openwonton',
+      'opendumpling',
       'consul',
       'aws',
       'lambda',

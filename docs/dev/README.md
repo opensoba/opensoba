@@ -205,15 +205,15 @@ CONSUL_HTTP_TOKEN_FILE=./soba.token ../../bin/soba logout
 
 The UI shows a logo next to a service when its metadata carries an
 `external-source` value the front end knows (see
-`ui/packages/sabo-ui/app/helpers/service/external-source.js`). The three
+`ui/packages/sabo-ui/app/helpers/service/external-source.js`). The four
 services stand in for external products that register themselves: OpenBao,
-OpenTofu and OpenWonton.
+OpenTofu, OpenWonton and OpenDumpling.
 
 If you provision with OpenTofu or Terraform (step 6), `tofu apply` creates them
-for you. Without OpenTofu, register the same three by hand:
+for you. Without OpenTofu, register the same four by hand:
 
 ```shell
-for svc in openbao:8200 opentofu:8080 openwonton:4646; do
+for svc in openbao:8200 opentofu:8080 openwonton:4646 opendumpling:9200; do
   name=${svc%%:*}; port=${svc##*:}
   ../../bin/soba services register \
     -name=demo-$name \
@@ -226,7 +226,7 @@ done
 Either way, check that they are there:
 
 ```shell
-../../bin/soba catalog services      # demo-openbao, demo-opentofu, demo-openwonton
+../../bin/soba catalog services      # demo-openbao, demo-opentofu, demo-openwonton, demo-opendumpling
 dig @127.0.0.1 -p 8600 demo-openbao.service.sabo +short
 ```
 

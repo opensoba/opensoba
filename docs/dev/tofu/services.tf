@@ -5,7 +5,7 @@
 # `external-source` value it knows (see
 # ui/packages/sabo-ui/app/helpers/service/external-source.js). The services
 # below stand in for external products that register themselves: OpenBao,
-# OpenTofu and OpenWonton.
+# OpenTofu, OpenWonton and OpenDumpling.
 #
 # They live on their own node (`demo-external`) on purpose. `consul_service`
 # writes straight into the catalog, and a service parked on a node that runs an

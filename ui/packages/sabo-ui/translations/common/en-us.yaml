@@ -8,6 +8,7 @@ brand:
   opentofu: OpenTofu
   nomad: Nomad
   openwonton: OpenWonton
+  opendumpling: OpenDumpling
   vault: Vault
   openbao: OpenBao
   aws: AWS

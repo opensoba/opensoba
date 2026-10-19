@@ -28,7 +28,10 @@ module('Integration | Helper | service/external-source', function (hooks) {
   });
   // open source alternatives to vault/terraform/nomad are supported too
   test('it renders the open source alternatives', async function (assert) {
-    for (const source of ['openbao', 'opentofu', 'openwonton']) {
+    const sources = ['openbao', 'opentofu', 'openwonton', 'opendumpling'];
+    assert.expect(sources.length);
+
+    for (const source of sources) {
       this.set('inputValue', { Meta: { 'external-source': source } });
 
       await render(hbs`{{service/external-source inputValue}}`);
