@@ -164,6 +164,22 @@ function parse_version {
    version_main=$(awk '$1 == "Version" && $2 == "=" { gsub(/"/, "", $3); print $3 }' < ${vfile})
    release_main=$(awk '$1 == "VersionPrerelease" && $2 == "=" { gsub(/"/, "", $3); print $3 }' < ${vfile})
 
+   # The version can also live in the embedded version/VERSION file instead of
+   # a literal in the source. version/version.go splits that file on the first
+   # '-' into Version and VersionPrerelease, so do the same here; without this
+   # fallback a dev build ends up with a bare "-dev (<sha>)" version.
+   if test -z "${version_main}" && test -f "${1}/version/VERSION"
+   then
+      local full_version
+      full_version=$(tr -d '[:space:]' < "${1}/version/VERSION")
+      version_main="${full_version%%-*}"
+      release_main="${full_version#*-}"
+      if test "${release_main}" = "${full_version}"
+      then
+         release_main=""
+      fi
+   fi
+
 
    # try to determine the version if we have build tags
    for tag in "$GOTAGS"
