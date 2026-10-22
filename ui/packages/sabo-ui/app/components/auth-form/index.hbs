@@ -46,7 +46,7 @@
                 <A.Title>
                   {{#if this.value.Name}}
                     {{#if (eq this.error.status '403')}}
-                      Sabo login failed
+                      Soba login failed
                     {{else if (eq this.error.status '401')}}
                       Could not log in to provider
                     {{else if (eq this.error.status '499')}}
@@ -67,7 +67,7 @@
                 <A.Description>
                   {{#if this.value.Name}}
                     {{#if (eq this.error.status '403')}}
-                      We received a token from your OIDC provider but could not log in to Sabo
+                      We received a token from your OIDC provider but could not log in to Soba
                       with it.
                     {{else if (eq this.error.status '401')}}
                       The OIDC provider has rejected this access token. Please have an

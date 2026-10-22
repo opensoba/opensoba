@@ -1,3 +1,15 @@
+## 1.16.8 (October 22, 2026)
+
+IMPROVEMENTS:
+
+* ui: Add OpenDumpling as an external source, with the official logo, and document how to provision local demo services with OpenTofu.
+
+BUG FIXES:
+
+* ui: Fix the remaining `Sabo` typos in user-visible text — the footer and help menu version, the login dialog, the screen reader announcements and several messages, tooltips and descriptions now all read `Soba`.
+* ui: Drop the "by HashiCorp" suffix from the page title; the UI is titled `OpenSoba`.
+* ui: Trim the trailing newline off the version read from `version/VERSION`, so the UI no longer renders the version as `1.16.7\n`.
+
 ## 1.16.7 (October 16, 2026)
 
 FEATURES:

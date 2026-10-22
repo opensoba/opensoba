@@ -78,7 +78,7 @@ as |dc partition nspace id item create|}}
   {{#if (or (eq (policy/typeof item) 'policy-management') (eq (policy/typeof item) 'read-only'))}}
     <Hds::Alert @type="inline" @icon="star-fill" class="mb-3 mt-2" as |A|>
       <A.Title>Built-in policy</A.Title>
-      <A.Description>This policy is built into Sabo's ACL system. You can use this special policy by adding it to a token. This policy is not editable or removable, but can be ignored by not applying it to any tokens.
+      <A.Description>This policy is built into Soba's ACL system. You can use this special policy by adding it to a token. This policy is not editable or removable, but can be ignored by not applying it to any tokens.
       </A.Description>
       <A.Link::Standalone @text='Learn more'
                           @href="{{env 'CONSUL_DOCS_URL'}}/guides/acl.html#builtin-policies"

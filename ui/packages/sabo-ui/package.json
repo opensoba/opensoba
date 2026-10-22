@@ -2,7 +2,7 @@
   "name": "sabo-ui",
   "version": "2.2.0",
   "private": true,
-  "description": "The web UI for OpenSoba, by HashiCorp.",
+  "description": "The web UI for OpenSoba.",
   "repository": "",
   "directories": {
     "doc": "doc",

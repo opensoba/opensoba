@@ -19,7 +19,7 @@
               @searchField="Name"
               @selected={{SourceName}}
               @searchPlaceholder="Type service name"
-              @buildSuggestion={{action "createNewLabel" "Use a Sabo Service called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a Soba Service called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" services}}
               @onCreate={{action onchange "SourceName"}}
               @onChange={{action onchange "SourceName"}} as |service|>
@@ -41,7 +41,7 @@
               @options={{nspaces}}
               @selected={{SourceNS}}
               @searchPlaceholder="Type namespace name"
-              @buildSuggestion={{action "createNewLabel" "Use a Sabo Namespace called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a Soba Namespace called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" nspaces}}
               @onCreate={{action onchange "SourceNS"}}
               @onChange={{action onchange "SourceNS"}} as |nspace|>
@@ -64,7 +64,7 @@
               @options={{partitions}}
               @selected={{SourcePartition}}
               @searchPlaceholder="Type partition name"
-              @buildSuggestion={{action "createNewLabel" "Use a Sabo Partition called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a Soba Partition called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" partitions}}
               @onCreate={{action onchange "SourcePartition"}}
               @onChange={{action onchange "SourcePartition"}} as |partition|>
@@ -86,7 +86,7 @@
               @searchField="Name"
               @selected={{DestinationName}}
               @searchPlaceholder="Type service name"
-              @buildSuggestion={{action "createNewLabel" "Use a Sabo Service called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a Soba Service called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" services}}
               @onCreate={{action onchange "DestinationName"}}
               @onChange={{action onchange "DestinationName"}} as |service|>
@@ -109,7 +109,7 @@
               @searchField="Name"
               @selected={{DestinationNS}}
               @searchPlaceholder="Type namespace name"
-              @buildSuggestion={{action "createNewLabel" "Use a future Sabo Namespace called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a future Soba Namespace called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" nspaces}}
               @onCreate={{action onchange "DestinationNS"}}
               @onChange={{action onchange "DestinationNS"}} as |nspace|>
@@ -133,7 +133,7 @@
               @searchField="Name"
               @selected={{DestinationPartition}}
               @searchPlaceholder="Type partition name"
-              @buildSuggestion={{action "createNewLabel" "Use a future Sabo Partition called '{{term}}'"}}
+              @buildSuggestion={{action "createNewLabel" "Use a future Soba Partition called '{{term}}'"}}
               @showCreateWhen={{action "isUnique" partitions}}
               @onCreate={{action onchange "DestinationPartition"}}
               @onChange={{action onchange "DestinationPartition"}} as |partition|>

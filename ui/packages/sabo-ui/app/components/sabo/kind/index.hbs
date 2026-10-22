@@ -15,13 +15,13 @@
         <MenuPanel @position="left">
           <BlockSlot @name="header">
             {{#if (eq item.Kind 'ingress-gateway')}}
-              Ingress gateways enable ingress traffic from services outside the Sabo service mesh to services inside the Sabo service mesh.
+              Ingress gateways enable ingress traffic from services outside the Soba service mesh to services inside the Soba service mesh.
             {{else if (eq item.Kind 'terminating-gateway')}}
-              Terminating gateways allow connect-enabled services in Sabo service mesh to communicate with services outside the service mesh.
+              Terminating gateways allow connect-enabled services in Soba service mesh to communicate with services outside the service mesh.
             {{else if (eq item.Kind 'api-gateway')}}
-              API gateways enable ingress traffic from services outside the Sabo service mesh to services inside the Sabo service mesh.
+              API gateways enable ingress traffic from services outside the Soba service mesh to services inside the Soba service mesh.
             {{else}}
-              Mesh gateways enable routing of Connect traffic between different Sabo datacenters.
+              Mesh gateways enable routing of Connect traffic between different Soba datacenters.
             {{/if}}
           </BlockSlot>
           <BlockSlot @name="menu">
